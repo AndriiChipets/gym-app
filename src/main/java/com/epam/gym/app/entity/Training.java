@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 
 @Builder
 @Getter
+@Setter
 @EqualsAndHashCode
 @ToString
-@Setter
 public class Training {
     private Long id;
     private String name;
