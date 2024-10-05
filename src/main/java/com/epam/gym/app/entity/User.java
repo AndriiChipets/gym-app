@@ -1,6 +1,5 @@
 package com.epam.gym.app.entity;
 
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
