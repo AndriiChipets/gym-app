@@ -6,6 +6,8 @@ import com.epam.gym.app.service.exception.NoEntityException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class TraineeService {
@@ -27,5 +29,9 @@ public class TraineeService {
     public Trainee find(long id) {
         return traineeDao.findById(id).orElseThrow(
                 () -> new NoEntityException("There is no Trainee with provided id: " + id));
+    }
+
+    public List<Trainee> findAll() {
+        return traineeDao.findAll();
     }
 }

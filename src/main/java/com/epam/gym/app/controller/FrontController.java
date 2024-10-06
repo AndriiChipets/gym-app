@@ -21,17 +21,21 @@ import java.util.Arrays;
 public class FrontController {
 
     private static final String MENU = """
+            
             ============ Please, choose the operation ============
-            1 -> Create Trainee profile
-            2 -> Update Trainee profile
-            3 -> Delete Trainee profile
-            4 -> Select Trainee profile
-            5 -> Create Trainer profile
-            6 -> Update Trainer profile
-            7 -> Select Trainer profile
-            8 -> Create Training profile
-            9 -> Select Training profile
-            0 -> To exit from the program profile""";
+            1 -> Create Trainee
+            2 -> Update Trainee
+            3 -> Delete Trainee
+            4 -> Select Trainee
+            5 -> Create Trainer
+            6 -> Update Trainer
+            7 -> Select Trainer
+            8 -> Create Training
+            9 -> Select Training
+            10 -> Select All Trainees
+            11 -> Select All Trainers
+            12 -> Select All Trainings
+            0 -> To exit from the program""";
     private static final String WRONG_CHOICE_MESSAGE =
             "Please, choose from the MENU or enter \"0\" to exit from the application";
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -56,6 +60,9 @@ public class FrontController {
                 case 7 -> selectTrainer();
                 case 8 -> createTraining();
                 case 9 -> selectTraining();
+                case 10 -> selectAllTrainee();
+                case 11 -> selectAllTrainer();
+                case 12 -> selectAllTraining();
                 default -> viewProvider.printMessage(WRONG_CHOICE_MESSAGE);
             }
         }
@@ -70,6 +77,7 @@ public class FrontController {
         LocalDate dateOfBirth = LocalDate.parse(viewProvider.read());
         viewProvider.printMessage("Enter Trainee address: ");
         String address = viewProvider.read();
+
         Trainee trainee = Trainee.builder()
                 .firstname(firstName)
                 .lastname(lastName)
@@ -77,12 +85,17 @@ public class FrontController {
                 .dateOfBirth(dateOfBirth)
                 .address(address)
                 .build();
+
         traineeService.save(trainee);
     }
 
     private void updateTrainee() {
         viewProvider.printMessage("Enter Trainee id: ");
         long id = viewProvider.readLong();
+
+        Trainee beforeUpd = traineeService.find(id);
+        viewProvider.printMessage(beforeUpd.toString());
+
         viewProvider.printMessage("Enter Trainee first name: ");
         String firstName = viewProvider.read();
         viewProvider.printMessage("Enter Trainee last name: ");
@@ -91,6 +104,7 @@ public class FrontController {
         LocalDate dateOfBirth = LocalDate.parse(viewProvider.read());
         viewProvider.printMessage("Enter Trainee address: ");
         String address = viewProvider.read();
+
         Trainee trainee = Trainee.builder()
                 .id(id)
                 .firstname(firstName)
@@ -99,12 +113,14 @@ public class FrontController {
                 .dateOfBirth(dateOfBirth)
                 .address(address)
                 .build();
+
         traineeService.update(trainee);
     }
 
     private void deleteTrainee() {
         viewProvider.printMessage("Enter Trainee id: ");
         long id = viewProvider.readLong();
+
         traineeService.delete(id);
     }
 
@@ -112,6 +128,7 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainee id: ");
         long id = viewProvider.readLong();
         Trainee trainee = traineeService.find(id);
+
         viewProvider.printMessage(trainee.toString());
     }
 
@@ -123,18 +140,24 @@ public class FrontController {
         viewProvider.printMessage("Choose Training Type from the list: ");
         viewProvider.printMessage(Arrays.asList(TrainingType.values()).toString());
         TrainingType trainingType = TrainingType.valueOf(viewProvider.read());
+
         Trainer trainer = Trainer.builder()
                 .firstname(firstName)
                 .lastname(lastName)
                 .isActive(true)
                 .trainingType(trainingType)
                 .build();
+
         trainerService.save(trainer);
     }
 
     private void updateTrainer() {
         viewProvider.printMessage("Enter Trainer id: ");
         long id = viewProvider.readLong();
+
+        Trainer beforeUpd = trainerService.find(id);
+        viewProvider.printMessage(beforeUpd.toString());
+
         viewProvider.printMessage("Enter Trainer first name: ");
         String firstName = viewProvider.read();
         viewProvider.printMessage("Enter Trainer last name: ");
@@ -142,6 +165,7 @@ public class FrontController {
         viewProvider.printMessage("Choose Training Type from the list: ");
         viewProvider.printMessage(Arrays.asList(TrainingType.values()).toString());
         TrainingType trainingType = TrainingType.valueOf(viewProvider.read());
+
         Trainer trainer = Trainer.builder()
                 .id(id)
                 .firstname(firstName)
@@ -149,6 +173,7 @@ public class FrontController {
                 .isActive(true)
                 .trainingType(trainingType)
                 .build();
+
         trainerService.save(trainer);
     }
 
@@ -156,6 +181,7 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainer id: ");
         long id = viewProvider.readLong();
         Trainer trainer = trainerService.find(id);
+
         viewProvider.printMessage(trainer.toString());
     }
 
@@ -175,6 +201,7 @@ public class FrontController {
         Trainee trainee = traineeService.find(traineeId);
         viewProvider.printMessage("Enter Training duration in minutes: ");
         int duration = viewProvider.readInt();
+
         Training training = Training.builder()
                 .name(name)
                 .type(trainingType)
@@ -183,6 +210,7 @@ public class FrontController {
                 .trainer(trainer)
                 .duration(duration)
                 .build();
+
         trainingService.save(training);
     }
 
@@ -190,6 +218,19 @@ public class FrontController {
         viewProvider.printMessage("Enter Training id: ");
         long id = viewProvider.readLong();
         Training training = trainingService.find(id);
+
         viewProvider.printMessage(training.toString());
+    }
+
+    private void selectAllTrainee() {
+        traineeService.findAll().forEach(System.out::println);
+    }
+
+    private void selectAllTrainer() {
+        trainerService.findAll().forEach(System.out::println);
+    }
+
+    private void selectAllTraining() {
+        trainingService.findAll().forEach(System.out::println);
     }
 }

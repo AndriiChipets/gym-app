@@ -33,4 +33,9 @@ public class TrainingDaoImpl extends AbstractCrudDaoImpl<Long, Training> impleme
                 .max(Long::compareTo)
                 .get();
     }
+
+    @Override
+    protected void setEntityId(Long id, Training entity) {
+        entity.setId(id);
+    }
 }

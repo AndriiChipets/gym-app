@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -17,6 +18,7 @@ public abstract class AbstractCrudDaoImpl<ID, E> implements CrudDao<ID, E> {
     @Override
     public void save(E entity) {
         ID id = generateNextId();
+        setEntityId(id, entity);
         storage.getData().put(id, entity);
     }
 
@@ -32,6 +34,11 @@ public abstract class AbstractCrudDaoImpl<ID, E> implements CrudDao<ID, E> {
     }
 
     @Override
+    public List<E> findAll() {
+        return storage.getData().values().stream().toList();
+    }
+
+    @Override
     public void deleteById(ID id) {
         storage.getData().remove(id);
     }
@@ -39,5 +46,7 @@ public abstract class AbstractCrudDaoImpl<ID, E> implements CrudDao<ID, E> {
     protected abstract ID generateNextId();
 
     protected abstract ID getEntityId(E entity);
+
+    protected abstract void setEntityId(ID id, E entity);
 
 }
