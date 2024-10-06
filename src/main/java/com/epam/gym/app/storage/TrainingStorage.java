@@ -1,13 +1,24 @@
 package com.epam.gym.app.storage;
 
 import com.epam.gym.app.entity.Training;
+import com.fasterxml.jackson.core.type.TypeReference;
 
-import java.util.Map;
+import java.util.List;
 
-public class TrainingStorage implements Storage<Long, Training> {
+public class TrainingStorage extends Storage<Long, Training> {
+
+    public TrainingStorage(String path) {
+        super(path);
+    }
 
     @Override
-    public Map<Long, Training> getData() {
-        return Map.of();
+    protected Long getEntityId(Training entity) {
+        return entity.getId();
+    }
+
+    @Override
+    protected TypeReference<List<Training>> getTypeReference() {
+        return new TypeReference<List<Training>>() {
+        };
     }
 }
