@@ -2,13 +2,16 @@ package com.epam.gym.app.storage;
 
 import com.epam.gym.app.entity.Training;
 import com.fasterxml.jackson.core.type.TypeReference;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.core.io.Resource;
 
 import java.util.List;
 
+@Log4j2
 public class TrainingStorage extends Storage<Long, Training> {
 
-    public TrainingStorage(String path) {
-        super(path);
+    public TrainingStorage(Resource resource) {
+        super(resource);
     }
 
     @Override

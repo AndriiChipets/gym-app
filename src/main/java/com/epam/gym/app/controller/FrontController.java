@@ -7,21 +7,24 @@ import com.epam.gym.app.entity.TrainingType;
 import com.epam.gym.app.service.TraineeService;
 import com.epam.gym.app.service.TrainerService;
 import com.epam.gym.app.service.TrainingService;
+import com.epam.gym.app.utils.UtilClass;
 import com.epam.gym.app.view.ViewProvider;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 
 @Controller
 @AllArgsConstructor
+@Log4j2
 public class FrontController {
 
     private static final String MENU = """
-            
+                        
             ============ Please, choose the operation ============
             1 -> Create Trainee
             2 -> Update Trainee
@@ -38,7 +41,6 @@ public class FrontController {
             0 -> To exit from the program""";
     private static final String WRONG_CHOICE_MESSAGE =
             "Please, choose from the MENU or enter \"0\" to exit from the application";
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final TraineeService traineeService;
     private final TrainerService trainerService;
     private final TrainingService trainingService;
@@ -73,7 +75,7 @@ public class FrontController {
         String firstName = viewProvider.read();
         viewProvider.printMessage("Enter Trainee last name: ");
         String lastName = viewProvider.read();
-        viewProvider.printMessage("Enter Trainee date of birth in format YYYY-DD-MM: ");
+        viewProvider.printMessage("Enter Trainee date of birth in format " + UtilClass.DATE_TEMPLATE);
         LocalDate dateOfBirth = LocalDate.parse(viewProvider.read());
         viewProvider.printMessage("Enter Trainee address: ");
         String address = viewProvider.read();
@@ -100,7 +102,7 @@ public class FrontController {
         String firstName = viewProvider.read();
         viewProvider.printMessage("Enter Trainee last name: ");
         String lastName = viewProvider.read();
-        viewProvider.printMessage("Enter Trainee date of birth in format yyyy-MM-dd: ");
+        viewProvider.printMessage("Enter Trainee date of birth in format " + UtilClass.DATE_TEMPLATE);
         LocalDate dateOfBirth = LocalDate.parse(viewProvider.read());
         viewProvider.printMessage("Enter Trainee address: ");
         String address = viewProvider.read();
@@ -191,8 +193,8 @@ public class FrontController {
         viewProvider.printMessage("Choose Training Type from the list: ");
         viewProvider.printMessage(Arrays.asList(TrainingType.values()).toString());
         TrainingType trainingType = TrainingType.valueOf(viewProvider.read());
-        viewProvider.printMessage("Enter Training date and time in the format yyyy-MM-dd HH:mm:ss: ");
-        LocalDateTime dateTime = LocalDateTime.parse(viewProvider.read(), FORMATTER);
+        viewProvider.printMessage("Enter Training date and time in the format " + UtilClass.DATE_TIME_TEMPLATE);
+        LocalDateTime dateTime = LocalDateTime.parse(viewProvider.read(), UtilClass.FORMATTER);
         viewProvider.printMessage("Enter Trainer id: ");
         long trainerId = viewProvider.readLong();
         Trainer trainer = trainerService.find(trainerId);
@@ -223,14 +225,17 @@ public class FrontController {
     }
 
     private void selectAllTrainee() {
-        traineeService.findAll().forEach(System.out::println);
+        List<Trainee> trainees = traineeService.findAll();
+        viewProvider.printEntities(trainees);
     }
 
     private void selectAllTrainer() {
-        trainerService.findAll().forEach(System.out::println);
+        List<Trainer> trainers = trainerService.findAll();
+        viewProvider.printEntities(trainers);
     }
 
     private void selectAllTraining() {
-        trainingService.findAll().forEach(System.out::println);
+        List<Training> trainings = trainingService.findAll();
+        viewProvider.printEntities(trainings);
     }
 }

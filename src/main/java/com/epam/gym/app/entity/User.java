@@ -4,19 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
 
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
-
 @SuperBuilder
 @Getter
 @Setter
 @EqualsAndHashCode
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class User {
@@ -26,4 +22,13 @@ public class User {
     private String username;
     private String password;
     private Boolean isActive;
+
+    @Override
+    public String toString() {
+        return "id=" + id +
+                ", firstName=" + firstname +
+                ", lastName=" + lastname +
+                ", userName=" + username +
+                ", isActive=" + isActive;
+    }
 }

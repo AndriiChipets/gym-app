@@ -5,8 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.core.io.Resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -15,13 +16,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Getter
+@Log4j2
 public abstract class Storage<ID, E> {
 
-    private final String path;
+    private final Resource resource;
     private final Map<ID, E> data;
 
-    protected Storage(String path) {
-        this.path = path;
+    protected Storage(Resource resource) {
+        this.resource = resource;
         this.data = new HashMap<>();
     }
 
@@ -31,11 +33,13 @@ public abstract class Storage<ID, E> {
         mapper.registerModule(new JavaTimeModule());
         List<E> entities;
         try {
-            entities = mapper.readValue(new File(path), getTypeReference());
+            entities = mapper.readValue(resource.getInputStream(), getTypeReference());
         } catch (IOException e) {
+            log.error("Storage initialization from the file {} is failed", resource.getFilename());
             throw new IllegalArgumentException(e);
         }
         data.putAll(addDataToStore(entities));
+        log.info("Storage from the file {} initialized successfully", resource.getFilename());
     }
 
     private Map<ID, E> addDataToStore(List<E> entities) {
@@ -45,5 +49,4 @@ public abstract class Storage<ID, E> {
     protected abstract ID getEntityId(E entity);
 
     protected abstract TypeReference<List<E>> getTypeReference();
-
 }

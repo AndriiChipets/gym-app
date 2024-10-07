@@ -2,6 +2,7 @@ package com.epam.gym.app.view;
 
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Scanner;
 
 @Component
@@ -15,6 +16,12 @@ public class ViewProvider {
 
     public void printMessage(String message) {
         System.out.println(message);
+    }
+
+    public void printEntities(List<?> entities) {
+        entities.stream()
+                .map(String::valueOf)
+                .forEach(this::printMessage);
     }
 
     public String read() {

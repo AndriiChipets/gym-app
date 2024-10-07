@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
 import lombok.experimental.SuperBuilder;
@@ -13,7 +12,6 @@ import java.time.LocalDate;
 
 @SuperBuilder
 @Getter
-@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Setter
 @NoArgsConstructor
@@ -21,4 +19,13 @@ import java.time.LocalDate;
 public class Trainee extends User {
     private LocalDate dateOfBirth;
     private String address;
+
+    @Override
+    public String toString() {
+        return "Trainee{" +
+                super.toString() +
+                ", address=" + address +
+                ", dateOfBirth=" + dateOfBirth +
+                "} ";
+    }
 }
