@@ -16,7 +16,6 @@ public class TraineeDaoImpl extends AbstractCrudDaoImpl<Long, Trainee> implement
     @Override
     public void save(Trainee trainee) {
         super.save(trainee);
-        register(trainee);
     }
 
     @Override
@@ -44,16 +43,5 @@ public class TraineeDaoImpl extends AbstractCrudDaoImpl<Long, Trainee> implement
     @Override
     protected void setEntityId(Long id, Trainee entity) {
         entity.setId(id);
-    }
-
-    @Override
-    public void register(Trainee trainee) {
-        String firstName = trainee.getFirstname();
-        String lastName = trainee.getLastname();
-        String userName = UtilClass.generateUserName(firstName, lastName);
-        String password = UtilClass.generateRandomPassword();
-
-        trainee.setUsername(userName);
-        trainee.setPassword(password);
     }
 }

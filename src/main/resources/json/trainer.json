@@ -52,5 +52,23 @@
     "password": "",
     "isActive": true,
     "trainingType": "STRETCHING"
+  },
+  {
+    "id": 7,
+    "firstname": "Liam",
+    "lastname": "Moore",
+    "username": "",
+    "password": "",
+    "isActive": true,
+    "trainingType": "STRETCHING"
+  },
+  {
+    "id": 8,
+    "firstname": "Liam",
+    "lastname": "Moore",
+    "username": "",
+    "password": "",
+    "isActive": true,
+    "trainingType": "STRETCHING"
   }
 ]

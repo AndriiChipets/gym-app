@@ -3,7 +3,6 @@ package com.epam.gym.app.dao.impl;
 import com.epam.gym.app.dao.TrainerDao;
 import com.epam.gym.app.entity.Trainer;
 import com.epam.gym.app.storage.Storage;
-import com.epam.gym.app.utils.UtilClass;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -16,7 +15,6 @@ public class TrainerDaoImpl extends AbstractCrudDaoImpl<Long, Trainer> implement
     @Override
     public void save(Trainer trainer) {
         super.save(trainer);
-        register(trainer);
     }
 
     @Override
@@ -44,16 +42,5 @@ public class TrainerDaoImpl extends AbstractCrudDaoImpl<Long, Trainer> implement
     @Override
     protected void setEntityId(Long id, Trainer entity) {
         entity.setId(id);
-    }
-
-    @Override
-    public void register(Trainer trainer) {
-        String firstName = trainer.getFirstname();
-        String lastName = trainer.getLastname();
-        String userName = UtilClass.generateUserName(firstName, lastName);
-        String password = UtilClass.generateRandomPassword();
-
-        trainer.setUsername(userName);
-        trainer.setPassword(password);
     }
 }

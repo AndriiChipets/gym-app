@@ -9,6 +9,7 @@ import com.epam.gym.app.service.TrainerService;
 import com.epam.gym.app.service.TrainingService;
 import com.epam.gym.app.utils.UtilClass;
 import com.epam.gym.app.view.ViewProvider;
+import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import lombok.AllArgsConstructor;
@@ -72,21 +73,28 @@ public class FrontController {
 
     private void createTrainee() {
         viewProvider.printMessage("Enter Trainee first name: ");
-        String firstName = viewProvider.read();
+        String firstname = viewProvider.read();
         viewProvider.printMessage("Enter Trainee last name: ");
-        String lastName = viewProvider.read();
+        String lastname = viewProvider.read();
         viewProvider.printMessage("Enter Trainee date of birth in format " + UtilClass.DATE_TEMPLATE);
         LocalDate dateOfBirth = LocalDate.parse(viewProvider.read());
         viewProvider.printMessage("Enter Trainee address: ");
         String address = viewProvider.read();
 
         Trainee trainee = Trainee.builder()
-                .firstname(firstName)
-                .lastname(lastName)
+                .firstname(firstname)
+                .lastname(lastname)
                 .isActive(true)
                 .dateOfBirth(dateOfBirth)
                 .address(address)
                 .build();
+
+        String password = UtilClass.generateRandomPassword();
+        String username = UtilClass.generateUsername(firstname, lastname,
+                trainerService.findAll(), traineeService.findAll());
+
+        trainee.setPassword(password);
+        trainee.setUsername(username);
 
         traineeService.save(trainee);
     }
@@ -99,9 +107,9 @@ public class FrontController {
         viewProvider.printMessage(beforeUpd.toString());
 
         viewProvider.printMessage("Enter Trainee first name: ");
-        String firstName = viewProvider.read();
+        String firstname = viewProvider.read();
         viewProvider.printMessage("Enter Trainee last name: ");
-        String lastName = viewProvider.read();
+        String lastname = viewProvider.read();
         viewProvider.printMessage("Enter Trainee date of birth in format " + UtilClass.DATE_TEMPLATE);
         LocalDate dateOfBirth = LocalDate.parse(viewProvider.read());
         viewProvider.printMessage("Enter Trainee address: ");
@@ -109,12 +117,19 @@ public class FrontController {
 
         Trainee trainee = Trainee.builder()
                 .id(id)
-                .firstname(firstName)
-                .lastname(lastName)
+                .firstname(firstname)
+                .lastname(lastname)
                 .isActive(true)
                 .dateOfBirth(dateOfBirth)
                 .address(address)
                 .build();
+
+        String password = UtilClass.generateRandomPassword();
+        String username = UtilClass.generateUsername(firstname, lastname,
+                trainerService.findAll(), traineeService.findAll());
+
+        trainee.setPassword(password);
+        trainee.setUsername(username);
 
         traineeService.update(trainee);
     }
@@ -136,19 +151,26 @@ public class FrontController {
 
     private void createTrainer() {
         viewProvider.printMessage("Enter Trainer first name: ");
-        String firstName = viewProvider.read();
+        String firstname = viewProvider.read();
         viewProvider.printMessage("Enter Trainer last name: ");
-        String lastName = viewProvider.read();
+        String lastname = viewProvider.read();
         viewProvider.printMessage("Choose Training Type from the list: ");
         viewProvider.printMessage(Arrays.asList(TrainingType.values()).toString());
         TrainingType trainingType = TrainingType.valueOf(viewProvider.read());
 
         Trainer trainer = Trainer.builder()
-                .firstname(firstName)
-                .lastname(lastName)
+                .firstname(firstname)
+                .lastname(lastname)
                 .isActive(true)
                 .trainingType(trainingType)
                 .build();
+
+        String password = UtilClass.generateRandomPassword();
+        String username = UtilClass.generateUsername(firstname, lastname,
+                trainerService.findAll(), traineeService.findAll());
+
+        trainer.setPassword(password);
+        trainer.setUsername(username);
 
         trainerService.save(trainer);
     }
@@ -161,22 +183,29 @@ public class FrontController {
         viewProvider.printMessage(beforeUpd.toString());
 
         viewProvider.printMessage("Enter Trainer first name: ");
-        String firstName = viewProvider.read();
+        String firstname = viewProvider.read();
         viewProvider.printMessage("Enter Trainer last name: ");
-        String lastName = viewProvider.read();
+        String lastname = viewProvider.read();
         viewProvider.printMessage("Choose Training Type from the list: ");
         viewProvider.printMessage(Arrays.asList(TrainingType.values()).toString());
         TrainingType trainingType = TrainingType.valueOf(viewProvider.read());
 
         Trainer trainer = Trainer.builder()
                 .id(id)
-                .firstname(firstName)
-                .lastname(lastName)
+                .firstname(firstname)
+                .lastname(lastname)
                 .isActive(true)
                 .trainingType(trainingType)
                 .build();
 
-        trainerService.save(trainer);
+        String password = UtilClass.generateRandomPassword();
+        String username = UtilClass.generateUsername(firstname, lastname,
+                trainerService.findAll(), traineeService.findAll());
+
+        trainer.setPassword(password);
+        trainer.setUsername(username);
+
+        trainerService.update(trainer);
     }
 
     private void selectTrainer() {

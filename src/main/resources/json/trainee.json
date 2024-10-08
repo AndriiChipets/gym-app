@@ -32,7 +32,7 @@
   {
     "id": 4,
     "firstname": "Emma",
-    "lastname": "",
+    "lastname": "Moore",
     "username": "",
     "password": "emmaSecurePass",
     "isActive": true,
@@ -53,6 +53,46 @@
     "id": 6,
     "firstname": "Liam",
     "lastname": "Moore",
+    "username": "",
+    "password": "",
+    "isActive": false,
+    "dateOfBirth": "1974-03-21",
+    "address": "101 Elm St, New York, NY"
+  },
+  {
+    "id": 7,
+    "firstname": "Liam",
+    "lastname": "Moore",
+    "username": "",
+    "password": "",
+    "isActive": false,
+    "dateOfBirth": "1974-03-21",
+    "address": "101 Elm St, New York, NY"
+  },
+  {
+    "id": 8,
+    "firstname": "Liam",
+    "lastname": "Moore",
+    "username": "",
+    "password": "",
+    "isActive": false,
+    "dateOfBirth": "1974-03-21",
+    "address": "101 Elm St, New York, NY"
+  },
+  {
+    "id": 9,
+    "firstname": "Olivia",
+    "lastname": "Johnson",
+    "username": "",
+    "password": "",
+    "isActive": false,
+    "dateOfBirth": "1974-03-21",
+    "address": "101 Elm St, New York, NY"
+  },
+  {
+    "id": 10,
+    "firstname": "Olivia",
+    "lastname": "Johnson",
     "username": "",
     "password": "",
     "isActive": false,
