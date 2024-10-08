@@ -9,7 +9,6 @@ import com.epam.gym.app.service.TrainerService;
 import com.epam.gym.app.service.TrainingService;
 import com.epam.gym.app.utils.UtilClass;
 import com.epam.gym.app.view.ViewProvider;
-import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import lombok.AllArgsConstructor;
@@ -255,16 +254,16 @@ public class FrontController {
 
     private void selectAllTrainee() {
         List<Trainee> trainees = traineeService.findAll();
-        viewProvider.printEntities(trainees);
+        viewProvider.printList(trainees);
     }
 
     private void selectAllTrainer() {
         List<Trainer> trainers = trainerService.findAll();
-        viewProvider.printEntities(trainers);
+        viewProvider.printList(trainers);
     }
 
     private void selectAllTraining() {
         List<Training> trainings = trainingService.findAll();
-        viewProvider.printEntities(trainings);
+        viewProvider.printList(trainings);
     }
 }

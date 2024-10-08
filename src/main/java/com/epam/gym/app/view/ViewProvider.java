@@ -18,7 +18,7 @@ public class ViewProvider {
         System.out.println(message);
     }
 
-    public void printEntities(List<?> entities) {
+    public void printList(List<?> entities) {
         entities.stream()
                 .map(String::valueOf)
                 .forEach(this::printMessage);
