@@ -23,7 +23,7 @@ import java.util.List;
 @Log4j2
 public class FrontController {
 
-    private static final String MENU = """
+    public static final String MENU = """
                         
             ============ Please, choose the operation ============
             1 -> Create Trainee
@@ -39,7 +39,7 @@ public class FrontController {
             11 -> Select All Trainers
             12 -> Select All Trainings
             0 -> To exit from the program""";
-    private static final String WRONG_CHOICE_MESSAGE =
+    public static final String WRONG_CHOICE_MESSAGE =
             "Please, choose from the MENU or enter \"0\" to exit from the application";
     private final TraineeService traineeService;
     private final TrainerService trainerService;

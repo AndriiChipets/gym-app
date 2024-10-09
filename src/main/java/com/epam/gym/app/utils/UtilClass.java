@@ -68,7 +68,7 @@ public class UtilClass {
                     .filter(s -> !s.isEmpty() && !s.isBlank())
                     .mapToLong(Long::parseLong)
                     .max()
-                    .getAsLong() + 1;
+                    .orElse(0) + 1;
         }
         return serNum;
     }
