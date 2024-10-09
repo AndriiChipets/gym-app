@@ -38,7 +38,7 @@ to classpath e.g. classpath:json/trainee.json. But it didn't help me because of 
 - to build an application jar file, please run in cmd following command: mvn clean package
 - move to the target folder: cd target
 - to run an application jar file, please execute following command: java -jar gym-app-1.0-SNAPSHOT.jar
-- you should be able to see program interface:
+- you should be able to see program interface:  
 ============ Please, choose the operation ============  
 1 -> Create Trainee  
 2 -> Update Trainee  
