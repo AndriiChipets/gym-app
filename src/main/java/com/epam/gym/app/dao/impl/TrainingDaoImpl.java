@@ -31,7 +31,7 @@ public class TrainingDaoImpl extends AbstractCrudDaoImpl<Long, Training> impleme
                 .keySet()
                 .stream()
                 .max(Long::compareTo)
-                .get();
+                .orElse(0L);
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.epam.gym.app.dao.impl;
 import com.epam.gym.app.dao.TraineeDao;
 import com.epam.gym.app.entity.Trainee;
 import com.epam.gym.app.storage.Storage;
-import com.epam.gym.app.utils.UtilClass;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -11,11 +10,6 @@ public class TraineeDaoImpl extends AbstractCrudDaoImpl<Long, Trainee> implement
 
     public TraineeDaoImpl(Storage<Long, Trainee> storage) {
         super(storage);
-    }
-
-    @Override
-    public void save(Trainee trainee) {
-        super.save(trainee);
     }
 
     @Override
@@ -37,7 +31,7 @@ public class TraineeDaoImpl extends AbstractCrudDaoImpl<Long, Trainee> implement
                 .keySet()
                 .stream()
                 .max(Long::compareTo)
-                .get();
+                .orElse(0L);
     }
 
     @Override

@@ -13,11 +13,6 @@ public class TrainerDaoImpl extends AbstractCrudDaoImpl<Long, Trainer> implement
     }
 
     @Override
-    public void save(Trainer trainer) {
-        super.save(trainer);
-    }
-
-    @Override
     protected Long generateNextId() {
         return getLastId() + 1;
     }
@@ -36,7 +31,7 @@ public class TrainerDaoImpl extends AbstractCrudDaoImpl<Long, Trainer> implement
                 .keySet()
                 .stream()
                 .max(Long::compareTo)
-                .get();
+                .orElse(0L);
     }
 
     @Override
