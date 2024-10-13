@@ -2,15 +2,16 @@ package com.epam.gym.app.storage;
 
 import com.epam.gym.app.entity.Trainee;
 import com.epam.gym.app.entity.Trainer;
-import com.epam.gym.app.utils.UtilClass;
+import com.epam.gym.app.utils.UserUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Log4j2
 public class TraineeStorage extends Storage<Long, Trainee> {
 
@@ -18,11 +19,6 @@ public class TraineeStorage extends Storage<Long, Trainee> {
 
     public TraineeStorage(Resource resource) {
         super(resource);
-    }
-
-    @Autowired
-    public TrainerStorage getTrainerStorage() {
-        return trainerStorage;
     }
 
     public void setTrainerStorage(TrainerStorage trainerStorage) {
@@ -55,7 +51,7 @@ public class TraineeStorage extends Storage<Long, Trainee> {
     private void setUserName(List<Trainee> trainees, List<Trainer> trainers) {
         log.info("Set userName to Trainees while Storage initialization");
         trainees.forEach(trainee ->
-                trainee.setUsername(UtilClass.generateUsername(
+                trainee.setUsername(UserUtil.generateUsername(
                         trainee.getFirstname(),
                         trainee.getLastname(),
                         trainers,
@@ -65,6 +61,6 @@ public class TraineeStorage extends Storage<Long, Trainee> {
     private void setPassword(List<Trainee> trainees) {
         log.info("Set Password to Trainees while Storage initialization");
         trainees.forEach(trainee ->
-                trainee.setPassword(UtilClass.generateRandomPassword()));
+                trainee.setPassword(UserUtil.generateRandomPassword()));
     }
 }

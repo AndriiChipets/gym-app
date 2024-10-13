@@ -16,27 +16,34 @@ public class TraineeService {
 
     private final TraineeDao traineeDao;
 
-    public void save(Trainee trainee) {
-        log.info("Save Trainee with first name {} and last name {}",
+    public Trainee save(Trainee trainee) {
+        log.debug("Save Trainee with first name {} and last name {}",
                 trainee.getFirstname(), trainee.getLastname());
-        traineeDao.save(trainee);
-        log.info("Trainee saved successfully");
+        Trainee savedTrainee = traineeDao.save(trainee);
+        if (savedTrainee != null) {
+            log.debug("Trainee was saved successfully");
+            return savedTrainee;
+        } else {
+            log.error("Trainee wasn't saved successfully");
+            throw new NoEntityPresentException("Trainee wasn't saved successfully");
+        }
     }
 
-    public void update(Trainee trainee) {
-        log.info("Update Trainee with id {}", trainee.getId());
-        traineeDao.update(trainee);
-        log.info("Trainee with id {} updated successfully", trainee.getId());
+    public Trainee update(Trainee trainee) {
+        log.debug("Update Trainee with id {}", trainee.getId());
+        Trainee updatedTrainee = traineeDao.update(trainee);
+        log.debug("Trainee with id {} updated successfully", trainee.getId());
+        return updatedTrainee;
     }
 
     public void delete(long id) {
-        log.info("Delete Trainee with id {}", id);
+        log.debug("Delete Trainee with id {}", id);
         traineeDao.deleteById(id);
-        log.info("Trainee with id {} deleted successfully", id);
+        log.debug("Trainee with id {} deleted successfully", id);
     }
 
     public Trainee find(long id) {
-        log.info("Find Trainee with id {}", id);
+        log.debug("Find Trainee with id {}", id);
         return traineeDao.findById(id).orElseThrow(
                 () -> {
                     log.error("There is no Trainee with provided id {}", id);
@@ -45,7 +52,7 @@ public class TraineeService {
     }
 
     public List<Trainee> findAll() {
-        log.info("Find all Trainees");
+        log.debug("Find all Trainees");
         return traineeDao.findAll();
     }
 }

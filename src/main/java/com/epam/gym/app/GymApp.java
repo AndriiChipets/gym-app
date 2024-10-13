@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 @SpringBootApplication
-public class Main {
+public class GymApp {
     public static void main(String[] args) {
         try (ConfigurableApplicationContext context = SpringApplication.run(GymAppConfig.class)) {
             FrontController controller = context.getBean(FrontController.class);

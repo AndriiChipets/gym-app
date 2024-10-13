@@ -27,14 +27,32 @@ class TrainingServiceTest {
     TrainingService trainingService;
 
     @Test
-    @DisplayName("save() method should save Training")
-    void save_shouldSaveTraining() {
+    @DisplayName("save() method should return saved Training when saving is successful")
+    void save_shouldReturnTrainingWhenSavingIsSuccessful() {
 
-        Training training = Training.builder().build();
+        long trainingId = 1L;
+        Training expected = Training.builder().build();
+        Training expectedWithId = Training.builder().id(trainingId).build();
 
-        trainingService.save(training);
+        when(trainingDao.save(expected)).thenReturn(expectedWithId);
+        Training actual = trainingService.save(expected);
 
-        verify(trainingDao).save(training);
+        assertNotNull(actual);
+        verify(trainingDao).save(expected);
+    }
+
+    @Test
+    @DisplayName("save() method should throw NoEntityPresentException when saving isn't successful")
+    void save_shouldThrowNoEntityPresentExceptionWhenSavingIsNotSuccessful() {
+
+        Training expected = Training.builder().build();
+
+        when(trainingDao.save(expected)).thenReturn(null);
+        Exception exception = assertThrows(NoEntityPresentException.class,
+                () -> trainingService.save(expected));
+
+        assertEquals("Training wasn't saved successfully", exception.getMessage());
+        verify(trainingDao, times(1)).save(expected);
     }
 
     @Test

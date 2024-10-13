@@ -16,21 +16,28 @@ public class TrainerService {
 
     private final TrainerDao trainerDao;
 
-    public void save(Trainer trainer) {
-        log.info("Save Trainer with first name {} and last name {}",
+    public Trainer save(Trainer trainer) {
+        log.debug("Save Trainer with first name {} and last name {}",
                 trainer.getFirstname(), trainer.getLastname());
-        trainerDao.save(trainer);
-        log.info("Trainer saved successfully");
+        Trainer savedTrainer = trainerDao.save(trainer);
+        if (savedTrainer != null) {
+            log.debug("Trainer saved successfully");
+            return savedTrainer;
+        } else {
+            log.error("Trainer wasn't saved successfully");
+            throw new NoEntityPresentException("Trainer wasn't saved successfully");
+        }
     }
 
-    public void update(Trainer trainer) {
-        log.info("Update Trainer with id {}", trainer.getId());
-        trainerDao.update(trainer);
-        log.info("Trainer with id {} deleted successfully", trainer.getId());
+    public Trainer update(Trainer trainer) {
+        log.debug("Update Trainer with id {}", trainer.getId());
+        Trainer updatedTrainer = trainerDao.update(trainer);
+        log.debug("Trainer with id {} deleted successfully", trainer.getId());
+        return updatedTrainer;
     }
 
     public Trainer find(long id) {
-        log.info("Find Trainer with id {}", id);
+        log.debug("Find Trainer with id {}", id);
         return trainerDao.findById(id).orElseThrow(
                 () -> {
                     log.error("There is no Trainer with provided id {}", id);
@@ -39,7 +46,7 @@ public class TrainerService {
     }
 
     public List<Trainer> findAll() {
-        log.info("Find all Trainers");
+        log.debug("Find all Trainers");
         return trainerDao.findAll();
     }
 }

@@ -48,8 +48,7 @@ class TrainingDaoImplTest {
                 .duration(duration)
                 .build();
 
-        trainingDao.save(expected);
-        Training actual = trainingDao.findById(id).get();
+        Training actual = trainingDao.save(expected);
 
         assertNotNull(actual);
         assertEquals(expected.getName(), actual.getName());

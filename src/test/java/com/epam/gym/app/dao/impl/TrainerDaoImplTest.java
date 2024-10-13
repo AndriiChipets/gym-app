@@ -42,8 +42,7 @@ class TrainerDaoImplTest {
                 .trainingType(type)
                 .build();
 
-        trainerDao.save(expected);
-        Trainer actual = trainerDao.findById(id).get();
+        Trainer actual = trainerDao.save(expected);
 
         assertNotNull(actual);
         assertEquals(expected.getFirstname(), actual.getFirstname());
@@ -69,14 +68,13 @@ class TrainerDaoImplTest {
         TrainingType typeUpd = TrainingType.YOGA;
         Trainer afterUpd = Trainer.builder()
                 .id(id)
-                .firstname(firstname)
-                .lastname(lastname)
-                .trainingType(type)
+                .firstname(firstnameUpd)
+                .lastname(lastnameUpd)
+                .trainingType(typeUpd)
                 .build();
 
         trainerDao.save(beforeUpd);
-        trainerDao.update(afterUpd);
-        Trainer actual = trainerDao.findById(id).get();
+        Trainer actual = trainerDao.update(afterUpd);
 
         assertNotNull(actual);
         assertEquals(afterUpd.getFirstname(), actual.getFirstname());

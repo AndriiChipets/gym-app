@@ -44,8 +44,7 @@ class TraineeDaoImplTest {
                 .address(address)
                 .build();
 
-        traineeDao.save(expected);
-        Trainee actual = traineeDao.findById(id).get();
+        Trainee actual = traineeDao.save(expected);
 
         assertNotNull(actual);
         assertEquals(expected.getFirstname(), actual.getFirstname());
@@ -81,8 +80,7 @@ class TraineeDaoImplTest {
                 .build();
 
         traineeDao.save(beforeUpd);
-        traineeDao.update(afterUpd);
-        Trainee actual = traineeDao.findById(id).get();
+        Trainee actual = traineeDao.update(afterUpd);
 
         assertNotNull(actual);
         assertEquals(afterUpd.getFirstname(), actual.getFirstname());

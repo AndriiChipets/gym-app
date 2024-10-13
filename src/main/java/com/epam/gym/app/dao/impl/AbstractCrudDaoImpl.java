@@ -18,20 +18,22 @@ public abstract class AbstractCrudDaoImpl<ID, E> implements CrudDao<ID, E> {
     private final Storage<ID, E> storage;
 
     @Override
-    public void save(E entity) {
+    public E save(E entity) {
         ID id = generateNextId();
         log.info("Save entity with id {}", id);
         setEntityId(id, entity);
         storage.getData().put(id, entity);
         log.info("Entity with id {} saved successfully", id);
+        return storage.getData().get(id);
     }
 
     @Override
-    public void update(E entity) {
+    public E update(E entity) {
         ID id = getEntityId(entity);
         log.info("Update entity with id {}", id);
         storage.getData().put(id, entity);
         log.info("Entity with id {} updated successfully", id);
+        return storage.getData().get(id);
     }
 
     @Override

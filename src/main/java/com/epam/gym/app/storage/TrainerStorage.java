@@ -2,8 +2,9 @@ package com.epam.gym.app.storage;
 
 import com.epam.gym.app.entity.Trainee;
 import com.epam.gym.app.entity.Trainer;
-import com.epam.gym.app.utils.UtilClass;
+import com.epam.gym.app.utils.UserUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -11,6 +12,7 @@ import org.springframework.core.io.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 @Log4j2
 public class TrainerStorage extends Storage<Long, Trainer> {
 
@@ -51,7 +53,7 @@ public class TrainerStorage extends Storage<Long, Trainer> {
     private void setUserName(List<Trainer> trainers, List<Trainee> trainees) {
         log.info("Set userName to Trainers while Storage initialization");
         trainers.forEach(trainer ->
-                trainer.setUsername(UtilClass.generateUsername(
+                trainer.setUsername(UserUtil.generateUsername(
                         trainer.getFirstname(),
                         trainer.getLastname(),
                         trainers,
@@ -61,6 +63,6 @@ public class TrainerStorage extends Storage<Long, Trainer> {
     private void setPassword(List<Trainer> trainers) {
         log.info("Set Password to Trainers while Storage initialization");
         trainers.forEach(trainee ->
-                trainee.setPassword(UtilClass.generateRandomPassword()));
+                trainee.setPassword(UserUtil.generateRandomPassword()));
     }
 }

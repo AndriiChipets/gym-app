@@ -1,6 +1,6 @@
 package com.epam.gym.app.entity;
 
-import com.epam.gym.app.utils.UtilClass;
+import com.epam.gym.app.utils.UserUtil;
 import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -29,7 +29,7 @@ public class Training {
     @Override
     public String toString() {
         return "Training{" +
-                "date=" + date.format(UtilClass.FORMATTER) +
+                "date=" + date.format(UserUtil.FORMATTER) +
                 ", id=" + id +
                 ", name='" + name +
                 ", type=" + type.name() +

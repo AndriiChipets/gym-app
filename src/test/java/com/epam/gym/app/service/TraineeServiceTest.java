@@ -31,14 +31,32 @@ class TraineeServiceTest {
     TraineeService traineeService;
 
     @Test
-    @DisplayName("save() method should save Trainee")
-    void save_shouldSaveTrainee() {
+    @DisplayName("save() method should return saved Trainee when saving is successful")
+    void save_shouldReturnTraineeWhenSavingIsSuccessful() {
 
-        Trainee trainee = Trainee.builder().build();
+        long traineeId = 1L;
+        Trainee expected = Trainee.builder().build();
+        Trainee expectedWithId = Trainee.builder().id(traineeId).build();
 
-        traineeService.save(trainee);
+        when(traineeDao.save(expected)).thenReturn(expectedWithId);
+        Trainee actual = traineeService.save(expected);
 
-        verify(traineeDao).save(trainee);
+        assertNotNull(actual);
+        verify(traineeDao).save(expected);
+    }
+
+    @Test
+    @DisplayName("save() method should throw NoEntityPresentException when saving isn't successful")
+    void save_shouldThrowNoEntityPresentExceptionWhenSavingIsNotSuccessful() {
+
+        Trainee expected = Trainee.builder().build();
+
+        when(traineeDao.save(expected)).thenReturn(null);
+        Exception exception = assertThrows(NoEntityPresentException.class,
+                () -> traineeService.save(expected));
+
+        assertEquals("Trainee wasn't saved successfully", exception.getMessage());
+        verify(traineeDao, times(1)).save(expected);
     }
 
     @Test

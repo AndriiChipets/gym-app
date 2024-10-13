@@ -7,7 +7,7 @@ import com.epam.gym.app.entity.TrainingType;
 import com.epam.gym.app.service.TraineeService;
 import com.epam.gym.app.service.TrainerService;
 import com.epam.gym.app.service.TrainingService;
-import com.epam.gym.app.utils.UtilClass;
+import com.epam.gym.app.utils.UserUtil;
 import com.epam.gym.app.view.ViewProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,16 +64,17 @@ class FrontControllerTest {
                 .password(password)
                 .build();
 
-        try (MockedStatic<UtilClass> utilClassMockedStatic = mockStatic(UtilClass.class)) {
+        try (MockedStatic<UserUtil> utilClassMockedStatic = mockStatic(UserUtil.class)) {
             when(viewProvider.read())
                     .thenReturn(firstname)
                     .thenReturn(lastname)
                     .thenReturn(dateOfBirth.toString())
                     .thenReturn(address);
-            utilClassMockedStatic.when(UtilClass::generateRandomPassword).thenReturn(password);
-            utilClassMockedStatic.when(() -> UtilClass.generateUsername(
+            utilClassMockedStatic.when(UserUtil::generateRandomPassword).thenReturn(password);
+            utilClassMockedStatic.when(() -> UserUtil.generateUsername(
                     anyString(), anyString(), anyList(), anyList())).thenReturn(username);
             when(viewProvider.readInt()).thenReturn(choice).thenReturn(0);
+            when(traineeService.save(trainee)).thenReturn(trainee);
             frontController.run();
         }
 
@@ -104,7 +105,7 @@ class FrontControllerTest {
                 .password(password)
                 .build();
 
-        try (MockedStatic<UtilClass> utilClassMockedStatic = mockStatic(UtilClass.class)) {
+        try (MockedStatic<UserUtil> utilClassMockedStatic = mockStatic(UserUtil.class)) {
             when(viewProvider.read())
                     .thenReturn(firstname)
                     .thenReturn(lastname)
@@ -112,10 +113,11 @@ class FrontControllerTest {
                     .thenReturn(address);
             when(viewProvider.readInt()).thenReturn(choice).thenReturn(0);
             when(viewProvider.readLong()).thenReturn(traineeId);
-            utilClassMockedStatic.when(UtilClass::generateRandomPassword).thenReturn(password);
-            utilClassMockedStatic.when(() -> UtilClass.generateUsername(
+            utilClassMockedStatic.when(UserUtil::generateRandomPassword).thenReturn(password);
+            utilClassMockedStatic.when(() -> UserUtil.generateUsername(
                     anyString(), anyString(), anyList(), anyList())).thenReturn(username);
             when(traineeService.find(anyLong())).thenReturn(beforeUpd);
+            when(traineeService.update(trainee)).thenReturn(trainee);
             frontController.run();
         }
 
@@ -171,15 +173,16 @@ class FrontControllerTest {
                 .password(password)
                 .build();
 
-        try (MockedStatic<UtilClass> utilClassMockedStatic = mockStatic(UtilClass.class)) {
+        try (MockedStatic<UserUtil> utilClassMockedStatic = mockStatic(UserUtil.class)) {
             when(viewProvider.read())
                     .thenReturn(firstname)
                     .thenReturn(lastname)
                     .thenReturn(trainingType.toString());
-            utilClassMockedStatic.when(UtilClass::generateRandomPassword).thenReturn(password);
-            utilClassMockedStatic.when(() -> UtilClass.generateUsername(
+            utilClassMockedStatic.when(UserUtil::generateRandomPassword).thenReturn(password);
+            utilClassMockedStatic.when(() -> UserUtil.generateUsername(
                     anyString(), anyString(), anyList(), anyList())).thenReturn(username);
             when(viewProvider.readInt()).thenReturn(choice).thenReturn(0);
+            when(trainerService.save(trainer)).thenReturn(trainer);
             frontController.run();
         }
 
@@ -208,17 +211,18 @@ class FrontControllerTest {
                 .password(password)
                 .build();
 
-        try (MockedStatic<UtilClass> utilClassMockedStatic = mockStatic(UtilClass.class)) {
+        try (MockedStatic<UserUtil> utilClassMockedStatic = mockStatic(UserUtil.class)) {
             when(viewProvider.read())
                     .thenReturn(firstname)
                     .thenReturn(lastname)
                     .thenReturn(trainingType.toString());
             when(viewProvider.readInt()).thenReturn(choice).thenReturn(0);
             when(viewProvider.readLong()).thenReturn(trainerId);
-            utilClassMockedStatic.when(UtilClass::generateRandomPassword).thenReturn(password);
-            utilClassMockedStatic.when(() -> UtilClass.generateUsername(
+            utilClassMockedStatic.when(UserUtil::generateRandomPassword).thenReturn(password);
+            utilClassMockedStatic.when(() -> UserUtil.generateUsername(
                     anyString(), anyString(), anyList(), anyList())).thenReturn(username);
             when(trainerService.find(anyLong())).thenReturn(beforeUpd);
+            when(trainerService.update(trainer)).thenReturn(trainer);
             frontController.run();
 
             verify(trainerService).update(trainer);
@@ -259,7 +263,7 @@ class FrontControllerTest {
         Training training = Training.builder()
                 .name(name)
                 .type(TrainingType.valueOf(trainingType))
-                .date(LocalDateTime.parse(dateTime, UtilClass.FORMATTER))
+                .date(LocalDateTime.parse(dateTime, UserUtil.FORMATTER))
                 .trainer(trainer)
                 .trainee(trainee)
                 .duration(duration)
@@ -275,6 +279,7 @@ class FrontControllerTest {
         when(viewProvider.readInt()).thenReturn(choice).thenReturn(duration).thenReturn(0);
         when(trainerService.find(anyLong())).thenReturn(trainer);
         when(traineeService.find(anyLong())).thenReturn(trainee);
+        when(trainingService.save(training)).thenReturn(training);
         frontController.run();
 
         verify(trainingService).save(training);

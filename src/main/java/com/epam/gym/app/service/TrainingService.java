@@ -16,14 +16,20 @@ public class TrainingService {
 
     private final TrainingDao trainingDao;
 
-    public void save(Training training) {
-        log.info("Save Training with name {}", training.getName());
-        trainingDao.save(training);
-        log.info("Training saved successfully");
+    public Training save(Training training) {
+        log.debug("Save Training with name {}", training.getName());
+        Training savedTraining = trainingDao.save(training);
+        if (savedTraining != null) {
+            log.debug("Training saved successfully");
+            return savedTraining;
+        } else {
+            log.error("Training wasn't saved successfully");
+            throw new NoEntityPresentException("Training wasn't saved successfully");
+        }
     }
 
     public Training find(long id) {
-        log.info("Find Training with id {}", id);
+        log.debug("Find Training with id {}", id);
         return trainingDao.findById(id).orElseThrow(
                 () -> {
                     log.error("There is no Training with provided id {}", id);
@@ -32,7 +38,7 @@ public class TrainingService {
     }
 
     public List<Training> findAll() {
-        log.info("Find all Trainings");
+        log.debug("Find all Trainings");
         return trainingDao.findAll();
     }
 }
