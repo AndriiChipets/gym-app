@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "firstname": "Sophia",
+    "lastname": "Williams",
+    "username": "",
+    "password": "",
+    "isActive": true,
+    "trainingType": "FITNESS"
+  },
+  {
+    "id": 2,
+    "firstname": "Michael",
+    "lastname": "Brown",
+    "username": "",
+    "password": "",
+    "isActive": false,
+    "trainingType": "YOGA"
+  },
+  {
+    "id": 3,
+    "firstname": "Emily",
+    "lastname": "Clark",
+    "username": "",
+    "password": "",
+    "isActive": true,
+    "trainingType": "ZUMBA"
+  },
+  {
+    "id": 4,
+    "firstname": "Daniel",
+    "lastname": "Davis",
+    "username": "",
+    "password": "",
+    "isActive": true,
+    "trainingType": "STRETCHING"
+  },
+  {
+    "id": 5,
+    "firstname": "Olivia",
+    "lastname": "Johnson",
+    "username": "",
+    "password": "",
+    "isActive": true,
+    "trainingType": "RESISTANCE"
+  },
+  {
+    "id": 6,
+    "firstname": "Olivia",
+    "lastname": "Johnson",
+    "username": "",
+    "password": "",
+    "isActive": true,
+    "trainingType": "STRETCHING"
+  },
+  {
+    "id": 7,
+    "firstname": "Liam",
+    "lastname": "Moore",
+    "username": "",
+    "password": "",
+    "isActive": true,
+    "trainingType": "STRETCHING"
+  },
+  {
+    "id": 8,
+    "firstname": "Liam",
+    "lastname": "Moore",
+    "username": "",
+    "password": "",
+    "isActive": true,
+    "trainingType": "STRETCHING"
+  }
+]

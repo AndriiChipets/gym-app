@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "firstname": "John",
+    "lastname": "Doe",
+    "username": "",
+    "password": "",
+    "isActive": true,
+    "dateOfBirth": "1990-05-20",
+    "address": "123 Main St, Springfield, IL"
+  },
+  {
+    "id": 2,
+    "firstname": "Alice",
+    "lastname": "Johnson",
+    "username": "",
+    "password": "",
+    "isActive": true,
+    "dateOfBirth": "1988-11-15",
+    "address": "456 Oak Dr, Chicago, IL"
+  },
+  {
+    "id": 3,
+    "firstname": "Chris",
+    "lastname": "Evans",
+    "username": "",
+    "password": "",
+    "isActive": false,
+    "dateOfBirth": "1992-02-10",
+    "address": "789 Pine Ln, Boston, MA"
+  },
+  {
+    "id": 4,
+    "firstname": "Emma",
+    "lastname": "Moore",
+    "username": "",
+    "password": "emmaSecurePass",
+    "isActive": true,
+    "dateOfBirth": "1985-09-05",
+    "address": "101 Elm St, New York, NY"
+  },
+  {
+    "id": 5,
+    "firstname": "Liam",
+    "lastname": "Moore",
+    "username": "",
+    "password": "",
+    "isActive": false,
+    "dateOfBirth": "1994-07-23",
+    "address": "202 Cedar Ave, Los Angeles, CA"
+  },
+  {
+    "id": 6,
+    "firstname": "Liam",
+    "lastname": "Moore",
+    "username": "",
+    "password": "",
+    "isActive": false,
+    "dateOfBirth": "1974-03-21",
+    "address": "101 Elm St, New York, NY"
+  },
+  {
+    "id": 7,
+    "firstname": "Liam",
+    "lastname": "Moore",
+    "username": "",
+    "password": "",
+    "isActive": false,
+    "dateOfBirth": "1974-03-21",
+    "address": "101 Elm St, New York, NY"
+  },
+  {
+    "id": 8,
+    "firstname": "Liam",
+    "lastname": "Moore",
+    "username": "",
+    "password": "",
+    "isActive": false,
+    "dateOfBirth": "1974-03-21",
+    "address": "101 Elm St, New York, NY"
+  },
+  {
+    "id": 9,
+    "firstname": "Olivia",
+    "lastname": "Johnson",
+    "username": "",
+    "password": "",
+    "isActive": false,
+    "dateOfBirth": "1974-03-21",
+    "address": "101 Elm St, New York, NY"
+  },
+  {
+    "id": 10,
+    "firstname": "Olivia",
+    "lastname": "Johnson",
+    "username": "",
+    "password": "",
+    "isActive": false,
+    "dateOfBirth": "1974-03-21",
+    "address": "101 Elm St, New York, NY"
+  }
+]
