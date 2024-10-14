@@ -168,7 +168,7 @@ class FrontControllerTest {
                 .firstname(firstname)
                 .lastname(lastname)
                 .isActive(true)
-                .trainingType(trainingType)
+                .specialization(trainingType)
                 .username(username)
                 .password(password)
                 .build();
@@ -206,7 +206,7 @@ class FrontControllerTest {
                 .firstname(firstname)
                 .lastname(lastname)
                 .isActive(true)
-                .trainingType(trainingType)
+                .specialization(trainingType)
                 .username(username)
                 .password(password)
                 .build();

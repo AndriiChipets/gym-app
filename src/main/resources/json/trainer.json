@@ -6,7 +6,8 @@
     "username": "",
     "password": "",
     "isActive": true,
-    "trainingType": "FITNESS"
+    "specialization": {}
+
   },
   {
     "id": 2,
@@ -15,7 +16,7 @@
     "username": "",
     "password": "",
     "isActive": false,
-    "trainingType": "YOGA"
+    "specialization": {}
   },
   {
     "id": 3,
@@ -24,7 +25,7 @@
     "username": "",
     "password": "",
     "isActive": true,
-    "trainingType": "ZUMBA"
+    "specialization": {}
   },
   {
     "id": 4,
@@ -33,7 +34,7 @@
     "username": "",
     "password": "",
     "isActive": true,
-    "trainingType": "STRETCHING"
+    "specialization": {}
   },
   {
     "id": 5,
@@ -42,7 +43,7 @@
     "username": "",
     "password": "",
     "isActive": true,
-    "trainingType": "RESISTANCE"
+    "specialization": {}
   },
   {
     "id": 6,
@@ -51,7 +52,7 @@
     "username": "",
     "password": "",
     "isActive": true,
-    "trainingType": "STRETCHING"
+    "specialization": {}
   },
   {
     "id": 7,
@@ -60,7 +61,7 @@
     "username": "",
     "password": "",
     "isActive": true,
-    "trainingType": "STRETCHING"
+    "specialization": {}
   },
   {
     "id": 8,
@@ -69,6 +70,6 @@
     "username": "",
     "password": "",
     "isActive": true,
-    "trainingType": "STRETCHING"
+    "specialization": {}
   }
 ]

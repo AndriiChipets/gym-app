@@ -33,10 +33,10 @@ to classpath e.g. classpath:json/trainee.json. But it didn't help me because of 
 
 ## Getting Started
 - to build application the installed on your computer maven application is required
-- please, download to your PC the Number gym-app folder from the GitHub repository and extract files from the archive: https://github.com/AndriiChipets/gym-app
-- run the command line interface inside folder of the Number Processor application: gym-app
+- please, download to your PC the gym-app folder from the GitHub repository and extract files from the archive: https://github.com/AndriiChipets/gym-app
+- run the command line interface inside the folder: gym-app
 - to build an application jar file, please run in cmd following command: mvn clean package
-- move to the target folder: cd target
+- go to the target folder: cd target
 - to run an application jar file, please execute following command: java -jar gym-app-1.0-SNAPSHOT.jar
 - you should be able to see program interface:  
 ============ Please, choose the operation ============  

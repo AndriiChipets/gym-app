@@ -16,8 +16,6 @@ import java.util.Random;
 public class UserUtil {
 
     public static final String DATE_TEMPLATE = "yyyy-MM-dd";
-    public static final String DATE_TIME_TEMPLATE = "yyyy-MM-dd HH:mm:ss";
-    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_TEMPLATE);
     public static final String SYMBOLS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
     public static final Random RANDOM = new Random();
     public static final int PASSWORD_LENGTH = 10;

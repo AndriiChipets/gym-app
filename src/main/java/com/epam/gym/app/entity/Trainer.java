@@ -1,5 +1,16 @@
 package com.epam.gym.app.entity;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Column;
+import jakarta.persistence.FetchType;
+import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -8,6 +19,11 @@ import lombok.NoArgsConstructor;
 import lombok.AccessLevel;
 import lombok.experimental.SuperBuilder;
 
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "trainers")
 @SuperBuilder
 @Getter
 @Setter
@@ -15,13 +31,25 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Trainer extends User {
-    TrainingType trainingType;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "training_type_id", nullable = false)
+    TrainingType specialization;
+
+    @Builder.Default
+    @EqualsAndHashCode.Exclude
+    @ManyToMany(mappedBy = "trainers", fetch = FetchType.EAGER)
+    private Set<Trainee> students = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "trainer_id")
+    private Set<Training> trainings = new HashSet<>();
 
     @Override
     public String toString() {
         return "Trainer{" +
                 super.toString() +
-                ", trainingType=" + trainingType +
+                ", trainingType=" + specialization +
                 "} ";
     }
 }

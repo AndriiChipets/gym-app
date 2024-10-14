@@ -156,14 +156,14 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainer last name: ");
         String lastname = viewProvider.read();
         viewProvider.printMessage("Choose Training Type from the list: ");
-        viewProvider.printMessage(Arrays.asList(TrainingType.values()).toString());
-        TrainingType trainingType = TrainingType.valueOf(viewProvider.read());
+        viewProvider.printMessage(Arrays.asList().toString());
+        TrainingType trainingType = TrainingType.builder().name(viewProvider.read()).build();
 
         Trainer trainer = Trainer.builder()
                 .firstname(firstname)
                 .lastname(lastname)
                 .isActive(true)
-                .trainingType(trainingType)
+                .specialization(trainingType)
                 .build();
 
         String password = UserUtil.generateRandomPassword();
@@ -189,15 +189,15 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainer last name: ");
         String lastname = viewProvider.read();
         viewProvider.printMessage("Choose Training Type from the list: ");
-        viewProvider.printMessage(Arrays.asList(TrainingType.values()).toString());
-        TrainingType trainingType = TrainingType.valueOf(viewProvider.read());
+        viewProvider.printMessage(Arrays.asList().toString());
+        TrainingType trainingType = TrainingType.builder().name(viewProvider.read()).build();
 
         Trainer trainer = Trainer.builder()
                 .id(id)
                 .firstname(firstname)
                 .lastname(lastname)
                 .isActive(true)
-                .trainingType(trainingType)
+                .specialization(trainingType)
                 .build();
 
         String password = UserUtil.generateRandomPassword();
@@ -223,10 +223,10 @@ public class FrontController {
         viewProvider.printMessage("Enter Training name: ");
         String name = viewProvider.read();
         viewProvider.printMessage("Choose Training Type from the list: ");
-        viewProvider.printMessage(Arrays.asList(TrainingType.values()).toString());
-        TrainingType trainingType = TrainingType.valueOf(viewProvider.read());
-        viewProvider.printMessage("Enter Training date and time in the format " + UserUtil.DATE_TIME_TEMPLATE);
-        LocalDateTime dateTime = LocalDateTime.parse(viewProvider.read(), UserUtil.FORMATTER);
+        viewProvider.printMessage(Arrays.asList().toString());
+        TrainingType trainingType = TrainingType.builder().name(viewProvider.read()).build();
+        viewProvider.printMessage("Enter Training date and time in the format " + UserUtil.DATE_TEMPLATE);
+        LocalDate date = LocalDate.parse(viewProvider.read());
         viewProvider.printMessage("Enter Trainer id: ");
         long trainerId = viewProvider.readLong();
         Trainer trainer = trainerService.find(trainerId);
@@ -239,7 +239,7 @@ public class FrontController {
         Training training = Training.builder()
                 .name(name)
                 .type(trainingType)
-                .date(dateTime)
+                .date(date)
                 .trainee(trainee)
                 .trainer(trainer)
                 .duration(duration)

@@ -39,7 +39,7 @@ class TrainerDaoImplTest {
         Trainer expected = Trainer.builder()
                 .firstname(firstname)
                 .lastname(lastname)
-                .trainingType(type)
+                .specialization(type)
                 .build();
 
         Trainer actual = trainerDao.save(expected);
@@ -59,7 +59,7 @@ class TrainerDaoImplTest {
         Trainer beforeUpd = Trainer.builder()
                 .firstname(firstname)
                 .lastname(lastname)
-                .trainingType(type)
+                .specialization(type)
                 .build();
 
         long id = 1L;
@@ -70,7 +70,7 @@ class TrainerDaoImplTest {
                 .id(id)
                 .firstname(firstnameUpd)
                 .lastname(lastnameUpd)
-                .trainingType(typeUpd)
+                .specialization(typeUpd)
                 .build();
 
         trainerDao.save(beforeUpd);
@@ -93,7 +93,7 @@ class TrainerDaoImplTest {
         Trainer expected = Trainer.builder()
                 .firstname(firstname)
                 .lastname(lastname)
-                .trainingType(type)
+                .specialization(type)
                 .build();
 
         trainerDao.save(expected);
