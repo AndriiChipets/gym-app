@@ -2,11 +2,13 @@ package com.epam.gym.app.service;
 
 import com.epam.gym.app.dao.TrainerDao;
 import com.epam.gym.app.entity.Trainer;
+import com.epam.gym.app.entity.Training;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -36,17 +38,29 @@ public class TrainerService {
         return updatedTrainer;
     }
 
-    public Trainer find(long id) {
-        log.debug("Find Trainer with id {}", id);
-        return trainerDao.findById(id).orElseThrow(
+    public Trainer find(String username) {
+        log.debug("Find Trainer with username {}", username);
+        return trainerDao.findByUserName(username).orElseThrow(
                 () -> {
-                    log.error("There is no Trainer with provided id {}", id);
-                    throw new NoEntityPresentException("There is no Trainer with provided id: " + id);
+                    log.error("There is no Trainer with provided username {}", username);
+                    throw new NoEntityPresentException("There is no Trainer with provided username: " + username);
                 });
     }
 
     public List<Trainer> findAll() {
         log.debug("Find all Trainers");
         return trainerDao.findAll();
+    }
+
+    public boolean login(String username, String password) {
+        return true;
+    }
+
+    public List<Training> findTrainersTrainingListNotAssignedOnTrainee(String trainerUsername, String traineeUsername) {
+        return List.of();
+    }
+
+    public List<Training> getTrainingsList(String username, LocalDate dateFrom, LocalDate dateTo, String traineeName) {
+        return List.of();
     }
 }

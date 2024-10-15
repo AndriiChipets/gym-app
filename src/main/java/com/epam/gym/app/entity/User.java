@@ -53,6 +53,7 @@ public class User {
                 ", firstName=" + firstname +
                 ", lastName=" + lastname +
                 ", userName=" + username +
+                ", password=" + password +
                 ", isActive=" + isActive;
     }
 }

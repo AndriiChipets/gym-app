@@ -2,11 +2,13 @@ package com.epam.gym.app.service;
 
 import com.epam.gym.app.dao.TraineeDao;
 import com.epam.gym.app.entity.Trainee;
+import com.epam.gym.app.entity.Training;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -42,17 +44,25 @@ public class TraineeService {
         log.debug("Trainee with id {} deleted successfully", id);
     }
 
-    public Trainee find(long id) {
-        log.debug("Find Trainee with id {}", id);
-        return traineeDao.findById(id).orElseThrow(
+    public Trainee find(String username) {
+        log.debug("Find Trainee with username {}", username);
+        return traineeDao.findUsername(username).orElseThrow(
                 () -> {
-                    log.error("There is no Trainee with provided id {}", id);
-                    throw new NoEntityPresentException("There is no Trainee with provided id: " + id);
+                    log.error("There is no Trainee with provided username {}", username);
+                    throw new NoEntityPresentException("There is no Trainee with provided username: " + username);
                 });
     }
 
     public List<Trainee> findAll() {
         log.debug("Find all Trainees");
         return traineeDao.findAll();
+    }
+
+    public boolean login(String username, String password) {
+        return true;
+    }
+
+    public List<Training> getTrainingsList(String username, LocalDate dateFrom, LocalDate dateTo, String trainerName) {
+        return List.of();
     }
 }
