@@ -1,6 +1,5 @@
 package com.epam.gym.app.entity;
 
-import com.epam.gym.app.utils.UserUtil;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

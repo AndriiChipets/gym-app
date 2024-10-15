@@ -3,12 +3,10 @@ package com.epam.gym.app.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import lombok.Builder;
 import lombok.AllArgsConstructor;
@@ -39,7 +37,7 @@ public class Trainer extends User {
     @Builder.Default
     @EqualsAndHashCode.Exclude
     @ManyToMany(mappedBy = "trainers", fetch = FetchType.EAGER)
-    private Set<Trainee> students = new HashSet<>();
+    private Set<Trainee> trainees = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "trainer_id")

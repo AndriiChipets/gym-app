@@ -52,6 +52,16 @@ public class Trainee extends User {
     @JoinColumn(name = "trainee_id")
     private Set<Training> trainings = new HashSet<>();
 
+    public void removeTrainer(Trainer trainer) {
+        this.trainers.remove(trainer);
+        trainer.getTrainees().remove(this);
+    }
+
+    public void addTrainer(Trainer trainer) {
+        this.trainers.add(trainer);
+        trainer.getTrainees().add(this);
+    }
+
     @Override
     public String toString() {
         return "Trainee{" +

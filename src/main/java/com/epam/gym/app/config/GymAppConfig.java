@@ -9,11 +9,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.util.Scanner;
 
 @Configuration
 @ComponentScan(basePackages = "com.epam.gym.app")
+@EnableJpaRepositories(basePackages = "com.epam.gym.app.repository")
+@EnableTransactionManagement
 @Log4j2
 public class GymAppConfig {
 

@@ -100,7 +100,7 @@ public class FrontController {
                 case 5 -> changeTraineePassword();
                 case 6 -> activateDeactivateTrainee();
                 case 7 -> getTraineeTrainingsList();
-                case 8 -> getTrainersTrainingListNotAssignedOnTrainee();
+                case 8 -> getTrainersListNotAssignedOnTrainee();
                 case 9 -> updateTraineeTrainersList();
                 case 10 -> createTrainer();
                 case 11 -> updateTrainer();
@@ -183,10 +183,10 @@ public class FrontController {
     }
 
     private void deleteTraineeByUserName() {
-        viewProvider.printMessage("Enter Trainee id: ");
-        long id = viewProvider.readLong();
+        viewProvider.printMessage("Enter Trainee username: ");
+        String username = viewProvider.read();
 
-        traineeService.delete(id);
+        traineeService.delete(username);
     }
 
     private void selectTraineeByUserName() {
@@ -236,9 +236,9 @@ public class FrontController {
 
     private void getTraineeTrainingsList() {
         viewProvider.printMessage("Enter Trainee username: ");
-        String username = viewProvider.read();
+        String traineeUsername = viewProvider.read();
 
-        Trainee trainee = traineeService.find(username);
+        Trainee trainee = traineeService.find(traineeUsername);
         viewProvider.printMessage(trainee.toString());
 
         viewProvider.printMessage("Enter START date from in format" + UserUtil.DATE_TEMPLATE);
@@ -249,31 +249,25 @@ public class FrontController {
         selectAllTrainers();
 
         viewProvider.printMessage("Enter Trainer name: ");
-        String trainerName = viewProvider.read();
+        String trainerUsername = viewProvider.read();
 
-        List<Training> trainings = traineeService.getTrainingsList(username, dateFrom, dateTo, trainerName);
+        List<Training> trainings = traineeService.getTrainingsList(traineeUsername, dateFrom, dateTo, trainerUsername);
 
         viewProvider.printList(trainings);
 
     }
 
-    private void getTrainersTrainingListNotAssignedOnTrainee() {
-        viewProvider.printMessage("Enter Trainer username: ");
-        String trainerUsername = viewProvider.read();
-
-        Trainer trainer = trainerService.find(trainerUsername);
-        viewProvider.printMessage(trainer.toString());
-
+    private void getTrainersListNotAssignedOnTrainee() {
         viewProvider.printMessage("Enter Trainee username: ");
         String traineeUsername = viewProvider.read();
 
         Trainee trainee = traineeService.find(traineeUsername);
         viewProvider.printMessage(trainee.toString());
 
-        List<Training> trainings =
-                trainerService.findTrainersTrainingListNotAssignedOnTrainee(trainerUsername, traineeUsername);
+        List<Trainer> trainers =
+                trainerService.getTrainersListNotAssignedOnTrainee(traineeUsername);
 
-        viewProvider.printList(trainings);
+        viewProvider.printList(trainers);
     }
 
     private void updateTraineeTrainersList() {
@@ -291,13 +285,16 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainer username: ");
         String trainerUsername = viewProvider.read();
 
+        Trainer trainer = trainerService.find(trainerUsername);
+        viewProvider.printMessage(trainee.toString());
+
         if (shouldAddTrainer) {
-            addTrainerToTraineeList(trainerUsername, trainers);
+            traineeService.addTrainerToTraineeList(trainee, trainer);
         } else {
-            removeTrainerToTraineeList(trainerUsername, trainers);
+            traineeService.removeTrainerToTraineeList(trainee, trainer);
         }
 
-        viewProvider.printList(trainers.stream().toList());
+        viewProvider.printList(traineeService.find(traineeUsername).getTrainers().stream().toList());
     }
 
     private void createTrainer() {
@@ -358,7 +355,7 @@ public class FrontController {
                 .password(password)
                 .build();
 
-        Trainer updatedTrainer = trainerService.update(trainer);
+        Trainer updatedTrainer = trainerService.save(trainer);
         viewProvider.printMessage(updatedTrainer.toString());
     }
 
@@ -530,17 +527,5 @@ public class FrontController {
         viewProvider.printMessage(SHOULD_ADD_TRAINER_TO_TRAINEE_LIST_MENU);
         int choice = viewProvider.readInt();
         return choice == 1;
-    }
-
-    private void addTrainerToTraineeList(String trainerUsername, Set<Trainer> trainers) {
-        Trainer trainer = trainerService.find(trainerUsername);
-        trainers.add(trainer);
-        viewProvider.printList(trainers.stream().toList());
-    }
-
-    private void removeTrainerToTraineeList(String trainerUsername, Set<Trainer> trainers) {
-        Trainer trainer = trainerService.find(trainerUsername);
-        trainers.remove(trainer);
-        viewProvider.printList(trainers.stream().toList());
     }
 }
