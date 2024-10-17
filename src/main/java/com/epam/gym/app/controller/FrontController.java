@@ -1,9 +1,9 @@
 package com.epam.gym.app.controller;
 
-import com.epam.gym.app.entity.Trainee;
-import com.epam.gym.app.entity.Trainer;
-import com.epam.gym.app.entity.Training;
-import com.epam.gym.app.entity.TrainingType;
+import com.epam.gym.app.dto.TraineeDto;
+import com.epam.gym.app.dto.TrainerDto;
+import com.epam.gym.app.dto.TrainingDto;
+import com.epam.gym.app.dto.TrainingTypeDto;
 import com.epam.gym.app.service.TraineeService;
 import com.epam.gym.app.service.TrainerService;
 import com.epam.gym.app.service.TrainingService;
@@ -16,7 +16,6 @@ import lombok.AllArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 @Component
 @AllArgsConstructor
@@ -53,8 +52,7 @@ public class FrontController {
                         
             ============ Please, choose who are you ============
             1 -> Trainee
-            2 -> Trainer
-            0 -> To exit from the program""";
+            2 -> Trainer """;
 
     public static final String ACTIVATE_OR_DEACTIVATE_MENU = """
                         
@@ -70,6 +68,8 @@ public class FrontController {
 
     public static final String WRONG_CHOICE_MESSAGE =
             "Please, choose from the MENU or enter \"0\" to exit from the application";
+    public static final String WRONG_USER_CHOICE_MESSAGE =
+            "Please, choose from the MENU";
 
     public static final String TRAINEE = "Trainee";
     public static final String TRAINER = "Trainer";
@@ -129,7 +129,7 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainee address: ");
         String address = viewProvider.read();
 
-        Trainee trainee = Trainee.builder()
+        TraineeDto traineeDto = TraineeDto.builder()
                 .firstname(firstname)
                 .lastname(lastname)
                 .isActive(true)
@@ -141,10 +141,10 @@ public class FrontController {
         String username = UserUtil.generateUsername(firstname, lastname,
                 trainerService.findAll(), traineeService.findAll());
 
-        trainee.setPassword(password);
-        trainee.setUsername(username);
+        traineeDto.setPassword(password);
+        traineeDto.setUsername(username);
 
-        Trainee savedTrainee = traineeService.save(trainee);
+        TraineeDto savedTrainee = traineeService.save(traineeDto);
         viewProvider.printMessage(savedTrainee.toString());
     }
 
@@ -152,7 +152,7 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainee username: ");
         String username = viewProvider.read();
 
-        Trainee beforeUpd = traineeService.find(username);
+        TraineeDto beforeUpd = traineeService.find(username);
         viewProvider.printMessage(beforeUpd.toString());
 
         viewProvider.printMessage("Enter Trainee first name: ");
@@ -167,7 +167,7 @@ public class FrontController {
         long id = beforeUpd.getId();
         String password = beforeUpd.getPassword();
 
-        Trainee trainee = Trainee.builder()
+        TraineeDto trainee = TraineeDto.builder()
                 .id(id)
                 .firstname(firstname)
                 .lastname(lastname)
@@ -178,7 +178,7 @@ public class FrontController {
                 .address(address)
                 .build();
 
-        Trainee updatedTrainee = traineeService.save(trainee);
+        TraineeDto updatedTrainee = traineeService.save(trainee);
         viewProvider.printMessage(updatedTrainee.toString());
     }
 
@@ -192,7 +192,7 @@ public class FrontController {
     private void selectTraineeByUserName() {
         viewProvider.printMessage("Enter Trainee username: ");
         String username = viewProvider.read();
-        Trainee trainee = traineeService.find(username);
+        TraineeDto trainee = traineeService.find(username);
 
         viewProvider.printMessage(trainee.toString());
     }
@@ -201,10 +201,10 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainee username: ");
         String username = viewProvider.read();
 
-        Trainee trainee = traineeService.find(username);
+        TraineeDto trainee = traineeService.find(username);
         viewProvider.printMessage(trainee.toString());
 
-        viewProvider.printMessage("Enter new password: ");
+        viewProvider.printMessage("Enter new password" + UserUtil.PASSWORD_LENGTH + " characters length:");
         String password = viewProvider.read();
         viewProvider.printMessage("Repeat new password: ");
         String repeatPassword = viewProvider.read();
@@ -214,7 +214,7 @@ public class FrontController {
         }
 
         trainee.setPassword(password);
-        Trainee updatedTrainee = traineeService.save(trainee);
+        TraineeDto updatedTrainee = traineeService.save(trainee);
 
         viewProvider.printMessage(updatedTrainee.toString());
     }
@@ -223,13 +223,13 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainee username: ");
         String username = viewProvider.read();
 
-        Trainee trainee = traineeService.find(username);
+        TraineeDto trainee = traineeService.find(username);
         viewProvider.printMessage(trainee.toString());
 
         boolean isActive = changeToActive();
 
         trainee.setIsActive(isActive);
-        Trainee updatedTrainee = traineeService.save(trainee);
+        TraineeDto updatedTrainee = traineeService.save(trainee);
 
         viewProvider.printMessage(updatedTrainee.toString());
     }
@@ -238,7 +238,7 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainee username: ");
         String traineeUsername = viewProvider.read();
 
-        Trainee trainee = traineeService.find(traineeUsername);
+        TraineeDto trainee = traineeService.find(traineeUsername);
         viewProvider.printMessage(trainee.toString());
 
         viewProvider.printMessage("Enter START date from in format" + UserUtil.DATE_TEMPLATE);
@@ -251,20 +251,19 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainer name: ");
         String trainerUsername = viewProvider.read();
 
-        List<Training> trainings = traineeService.getTrainingsList(traineeUsername, dateFrom, dateTo, trainerUsername);
+        List<TrainingDto> trainings = traineeService.getTrainingsList(traineeUsername, dateFrom, dateTo, trainerUsername);
 
         viewProvider.printList(trainings);
-
     }
 
     private void getTrainersListNotAssignedOnTrainee() {
         viewProvider.printMessage("Enter Trainee username: ");
         String traineeUsername = viewProvider.read();
 
-        Trainee trainee = traineeService.find(traineeUsername);
+        TraineeDto trainee = traineeService.find(traineeUsername);
         viewProvider.printMessage(trainee.toString());
 
-        List<Trainer> trainers =
+        List<TrainerDto> trainers =
                 trainerService.getTrainersListNotAssignedOnTrainee(traineeUsername);
 
         viewProvider.printList(trainers);
@@ -274,27 +273,22 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainee username: ");
         String traineeUsername = viewProvider.read();
 
-        Trainee trainee = traineeService.find(traineeUsername);
-        viewProvider.printMessage(trainee.toString());
-
-        Set<Trainer> trainers = trainee.getTrainers();
-        viewProvider.printList(trainers.stream().toList());
+        TraineeDto traineeDto = traineeService.find(traineeUsername);
+        viewProvider.printMessage(traineeDto.toString());
 
         boolean shouldAddTrainer = shouldAddTrainerToTraineeList();
 
         viewProvider.printMessage("Enter Trainer username: ");
         String trainerUsername = viewProvider.read();
 
-        Trainer trainer = trainerService.find(trainerUsername);
-        viewProvider.printMessage(trainee.toString());
+        TrainerDto trainerDto = trainerService.find(trainerUsername);
+        viewProvider.printMessage(traineeDto.toString());
 
         if (shouldAddTrainer) {
-            traineeService.addTrainerToTraineeList(trainee, trainer);
+            traineeService.addTrainerToTraineeList(traineeDto, trainerDto);
         } else {
-            traineeService.removeTrainerToTraineeList(trainee, trainer);
+            traineeService.removeTrainerToTraineeList(traineeDto, trainerDto);
         }
-
-        viewProvider.printList(traineeService.find(traineeUsername).getTrainers().stream().toList());
     }
 
     private void createTrainer() {
@@ -306,13 +300,13 @@ public class FrontController {
         selectAllTrainingTypes();
         viewProvider.printMessage("Enter TrainingType name: ");
         String trainingTypeName = viewProvider.read();
-        TrainingType trainingType = trainingTypeService.find(trainingTypeName);
+        TrainingTypeDto typeDto = trainingTypeService.find(trainingTypeName);
 
-        Trainer trainer = Trainer.builder()
+        TrainerDto trainer = TrainerDto.builder()
                 .firstname(firstname)
                 .lastname(lastname)
                 .isActive(true)
-                .specialization(trainingType)
+                .specialization(typeDto)
                 .build();
 
         String password = UserUtil.generateRandomPassword();
@@ -322,7 +316,7 @@ public class FrontController {
         trainer.setPassword(password);
         trainer.setUsername(username);
 
-        Trainer savedTrainer = trainerService.save(trainer);
+        TrainerDto savedTrainer = trainerService.save(trainer);
         viewProvider.printMessage(savedTrainer.toString());
     }
 
@@ -330,7 +324,7 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainer username: ");
         String username = viewProvider.read();
 
-        Trainer beforeUpd = trainerService.find(username);
+        TrainerDto beforeUpd = trainerService.find(username);
         viewProvider.printMessage(beforeUpd.toString());
 
         viewProvider.printMessage("Enter Trainer first name: ");
@@ -341,29 +335,28 @@ public class FrontController {
         selectAllTrainingTypes();
         viewProvider.printMessage("Enter TrainingType name: ");
         String trainingTypeName = viewProvider.read();
-        TrainingType trainingType = trainingTypeService.find(trainingTypeName);
+        TrainingTypeDto typeDto = trainingTypeService.find(trainingTypeName);
         boolean isActive = changeToActive();
         long id = beforeUpd.getId();
         String password = beforeUpd.getPassword();
 
-        Trainer trainer = Trainer.builder()
+        TrainerDto trainer = TrainerDto.builder()
                 .id(id)
                 .firstname(firstname)
                 .lastname(lastname)
                 .isActive(isActive)
-                .specialization(trainingType)
+                .specialization(typeDto)
                 .password(password)
                 .build();
 
-        Trainer updatedTrainer = trainerService.save(trainer);
+        TrainerDto updatedTrainer = trainerService.save(trainer);
         viewProvider.printMessage(updatedTrainer.toString());
     }
 
     private void selectTrainerByUserName() {
         viewProvider.printMessage("Enter Trainer username: ");
         String username = viewProvider.read();
-        Trainer trainer = trainerService.find(username);
-
+        TrainerDto trainer = trainerService.find(username);
         viewProvider.printMessage(trainer.toString());
     }
 
@@ -371,10 +364,10 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainer username: ");
         String username = viewProvider.read();
 
-        Trainer trainer = trainerService.find(username);
+        TrainerDto trainer = trainerService.find(username);
         viewProvider.printMessage(trainer.toString());
 
-        viewProvider.printMessage("Enter new password: ");
+        viewProvider.printMessage("Enter new password" + UserUtil.PASSWORD_LENGTH + " characters length:");
         String password = viewProvider.read();
         viewProvider.printMessage("Repeat new password: ");
         String repeatPassword = viewProvider.read();
@@ -384,7 +377,7 @@ public class FrontController {
         }
 
         trainer.setPassword(password);
-        Trainer updatedTrainer = trainerService.save(trainer);
+        TrainerDto updatedTrainer = trainerService.save(trainer);
 
         viewProvider.printMessage(updatedTrainer.toString());
     }
@@ -393,13 +386,13 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainer username: ");
         String username = viewProvider.read();
 
-        Trainer trainer = trainerService.find(username);
+        TrainerDto trainer = trainerService.find(username);
         viewProvider.printMessage(trainer.toString());
 
         boolean isActive = changeToActive();
 
         trainer.setIsActive(isActive);
-        Trainer updatedTrainer = trainerService.save(trainer);
+        TrainerDto updatedTrainer = trainerService.save(trainer);
 
         viewProvider.printMessage(updatedTrainer.toString());
     }
@@ -408,7 +401,7 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainer username: ");
         String username = viewProvider.read();
 
-        Trainer trainer = trainerService.find(username);
+        TrainerDto trainer = trainerService.find(username);
         viewProvider.printMessage(trainer.toString());
 
         viewProvider.printMessage("Enter START date from in format" + UserUtil.DATE_TEMPLATE);
@@ -421,7 +414,7 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainee name: ");
         String traineeName = viewProvider.read();
 
-        List<Training> trainings = trainerService.getTrainingsList(username, dateFrom, dateTo, traineeName);
+        List<TrainingDto> trainings = trainerService.getTrainingsList(username, dateFrom, dateTo, traineeName);
 
         viewProvider.printList(trainings);
     }
@@ -431,57 +424,56 @@ public class FrontController {
         String name = viewProvider.read();
         viewProvider.printMessage("Choose Training Type from the list: ");
         String trainingTypeName = viewProvider.read();
-        TrainingType trainingType = trainingTypeService.find(trainingTypeName);
+        TrainingTypeDto typeDto = trainingTypeService.find(trainingTypeName);
         viewProvider.printMessage("Enter Training date and time in the format " + UserUtil.DATE_TEMPLATE);
         LocalDate date = LocalDate.parse(viewProvider.read());
         viewProvider.printMessage("Enter Trainer username: ");
         String trainerUsername = viewProvider.read();
-        Trainer trainer = trainerService.find(trainerUsername);
+        TrainerDto trainer = trainerService.find(trainerUsername);
         viewProvider.printMessage("Enter Trainee username: ");
         String traineeUsername = viewProvider.read();
-        Trainee trainee = traineeService.find(traineeUsername);
+        TraineeDto trainee = traineeService.find(traineeUsername);
         viewProvider.printMessage("Enter Training duration in minutes: ");
         int duration = viewProvider.readInt();
 
-        Training training = Training.builder()
+        TrainingDto training = TrainingDto.builder()
                 .name(name)
-                .type(trainingType)
+                .type(typeDto)
                 .date(date)
                 .trainee(trainee)
                 .trainer(trainer)
                 .duration(duration)
                 .build();
 
-        Training savedTraining = trainingService.save(training);
+        TrainingDto savedTraining = trainingService.save(training);
         viewProvider.printMessage(savedTraining.toString());
     }
 
     private void selectTraining() {
         viewProvider.printMessage("Enter Training id: ");
         long id = viewProvider.readLong();
-        Training training = trainingService.find(id);
-
+        TrainingDto training = trainingService.find(id);
         viewProvider.printMessage(training.toString());
     }
 
     private void selectAllTrainees() {
-        List<Trainee> trainees = traineeService.findAll();
+        List<TraineeDto> trainees = traineeService.findAll();
         viewProvider.printList(trainees);
     }
 
     private void selectAllTrainers() {
-        List<Trainer> trainers = trainerService.findAll();
+        List<TrainerDto> trainers = trainerService.findAll();
         viewProvider.printList(trainers);
     }
 
     private void selectAllTrainings() {
-        List<Training> trainings = trainingService.findAll();
+        List<TrainingDto> trainings = trainingService.findAll();
         viewProvider.printList(trainings);
     }
 
     private void selectAllTrainingTypes() {
-        List<TrainingType> trainingTypes = trainingTypeService.findAll();
-        viewProvider.printList(trainingTypes);
+        List<TrainingTypeDto> types = trainingTypeService.findAll();
+        viewProvider.printList(types);
     }
 
     private String identifyUser() {
@@ -495,7 +487,7 @@ public class FrontController {
                 case 2 -> {
                     return TRAINER;
                 }
-                default -> viewProvider.printMessage(WRONG_CHOICE_MESSAGE);
+                default -> viewProvider.printMessage(WRONG_USER_CHOICE_MESSAGE);
             }
         }
     }

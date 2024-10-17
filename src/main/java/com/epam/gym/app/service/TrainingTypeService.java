@@ -1,6 +1,8 @@
 package com.epam.gym.app.service;
 
+import com.epam.gym.app.dto.TrainingTypeDto;
 import com.epam.gym.app.entity.TrainingType;
+import com.epam.gym.app.mapper.TypeMapperStruct;
 import com.epam.gym.app.repository.TrainingTypeRepository;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
 import lombok.AllArgsConstructor;
@@ -16,21 +18,26 @@ import java.util.List;
 public class TrainingTypeService {
 
     TrainingTypeRepository trainingTypeRepository;
+    TypeMapperStruct typeMapper;
 
     @Transactional(readOnly = true)
-    public List<TrainingType> findAll() {
+    public List<TrainingTypeDto> findAll() {
         log.debug("Find all TrainingTypes");
-        return trainingTypeRepository.findAll();
+        return trainingTypeRepository.findAll()
+                .stream()
+                .map(typeMapper::mapTypeToTypeDto)
+                .toList();
     }
 
     @Transactional(readOnly = true)
-    public TrainingType find(String name) {
+    public TrainingTypeDto find(String name) {
         log.debug("Find TrainingType with name {}", name);
 
-        return trainingTypeRepository.findByName(name).orElseThrow(
+        TrainingType trainingType = trainingTypeRepository.findByName(name).orElseThrow(
                 () -> {
                     log.error("There is no Training type with name {}", name);
                     return new NoEntityPresentException("There is no Training type with name: " + name);
                 });
+        return typeMapper.mapTypeToTypeDto(trainingType);
     }
 }

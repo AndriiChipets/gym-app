@@ -61,8 +61,8 @@ public class Training {
                 ", id=" + id +
                 ", name='" + name +
                 ", type=" + type +
-                ", trainee id=" + trainee.getId() +
-                ", trainer id=" + trainer.getId() +
+                ", trainee username=" + trainee.getUsername() +
+                ", trainer username=" + trainer.getUsername() +
                 ", duration=" + duration +
                 '}';
     }

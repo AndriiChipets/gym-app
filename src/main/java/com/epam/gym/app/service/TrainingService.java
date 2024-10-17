@@ -1,6 +1,8 @@
 package com.epam.gym.app.service;
 
+import com.epam.gym.app.dto.TrainingDto;
 import com.epam.gym.app.entity.Training;
+import com.epam.gym.app.mapper.TrainingMapperStruct;
 import com.epam.gym.app.repository.TrainingRepository;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
 import lombok.AllArgsConstructor;
@@ -16,29 +18,35 @@ import java.util.List;
 public class TrainingService {
 
     private final TrainingRepository trainingRepository;
+    private final TrainingMapperStruct trainingMapper;
 
     @Transactional
-    public Training save(Training training) {
-        log.debug("Save Training with name {}", training.getName());
-        Training savedTraining = trainingRepository.save(training);
+    public TrainingDto save(TrainingDto trainingDto) {
+        log.debug("Save Training with name {}", trainingDto.getName());
+        Training training = trainingMapper.mapTrainingDtoToTraining(trainingDto);
+        training = trainingRepository.save(training);
         log.debug("Training saved successfully");
-        return savedTraining;
+        return trainingMapper.mapTrainingToTrainingDto(training);
     }
 
     @Transactional(readOnly = true)
-    public Training find(long id) {
+    public TrainingDto find(long id) {
         log.debug("Find Training with id {}", id);
 
-        return trainingRepository.findById(id).orElseThrow(
+        Training training = trainingRepository.findById(id).orElseThrow(
                 () -> {
                     log.error("There is no Training with provided id {}", id);
                     return new NoEntityPresentException("There is no Training with provided id: " + id);
                 });
+        return trainingMapper.mapTrainingToTrainingDto(training);
     }
 
     @Transactional(readOnly = true)
-    public List<Training> findAll() {
+    public List<TrainingDto> findAll() {
         log.debug("Find all Trainings");
-        return trainingRepository.findAll();
+        return trainingRepository.findAll()
+                .stream()
+                .map(trainingMapper::mapTrainingToTrainingDto)
+                .toList();
     }
 }

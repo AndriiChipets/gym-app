@@ -1,7 +1,10 @@
 package com.epam.gym.app.service;
 
+import com.epam.gym.app.dto.TrainerDto;
+import com.epam.gym.app.dto.TrainingDto;
 import com.epam.gym.app.entity.Trainer;
-import com.epam.gym.app.entity.Training;
+import com.epam.gym.app.mapper.TrainerMapperStruct;
+import com.epam.gym.app.mapper.TrainingMapperStruct;
 import com.epam.gym.app.repository.TrainerRepository;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
 import lombok.AllArgsConstructor;
@@ -18,31 +21,36 @@ import java.util.List;
 public class TrainerService {
 
     private final TrainerRepository trainerRepository;
+    private final TrainerMapperStruct trainerMapper;
+    private final TrainingMapperStruct trainingMapper;
 
     @Transactional
-    public Trainer save(Trainer trainer) {
+    public TrainerDto save(TrainerDto trainerDto) {
         log.debug("Save Trainer with first name {} and last name {}",
-                trainer.getFirstname(), trainer.getLastname());
-        Trainer savedTrainer = trainerRepository.save(trainer);
+                trainerDto.getFirstname(), trainerDto.getLastname());
+
+        Trainer trainer = trainerMapper.mapTrainerDtoToTrainer(trainerDto);
+        trainer = trainerRepository.save(trainer);
+
         log.debug("Trainer has been saved successfully");
-        return savedTrainer;
+        return trainerMapper.mapTrainerToTrainerDto(trainer);
     }
 
     @Transactional(readOnly = true)
-    public Trainer find(String username) {
+    public TrainerDto find(String username) {
         log.debug("Find Trainer with username {}", username);
 
-        return trainerRepository.findByUsername(username).orElseThrow(
-                () -> {
-                    log.error("There is no Trainer with provided username {}", username);
-                    return new NoEntityPresentException("There is no Trainer with provided username: " + username);
-                });
+        Trainer trainer = findTrainer(username);
+        return trainerMapper.mapTrainerToTrainerDto(trainer);
     }
 
     @Transactional(readOnly = true)
-    public List<Trainer> findAll() {
+    public List<TrainerDto> findAll() {
         log.debug("Find all Trainers");
-        return trainerRepository.findAll();
+        return trainerRepository.findAll()
+                .stream()
+                .map(trainerMapper::mapTrainerToTrainerDto)
+                .toList();
     }
 
     @Transactional(readOnly = true)
@@ -59,25 +67,39 @@ public class TrainerService {
     }
 
     @Transactional(readOnly = true)
-    public List<Training> getTrainingsList(String trainerUsername,
-                                           LocalDate dateFrom,
-                                           LocalDate dateTo,
-                                           String traineeUsername) {
+    public List<TrainingDto> getTrainingsList(String trainerUsername,
+                                              LocalDate dateFrom,
+                                              LocalDate dateTo,
+                                              String traineeUsername) {
 
-        Trainer trainer = this.find(trainerUsername);
         log.debug("Find Trainer's Training list with username {} and criteria: " +
                 "Trainee username {}, from date {}, to date {}", trainerUsername, traineeUsername, dateFrom, dateTo);
+
+        Trainer trainer = findTrainer(trainerUsername);
 
         return trainer.getTrainings()
                 .stream()
                 .filter(training -> training.getTrainer().getUsername().equals(traineeUsername))
                 .filter(training -> training.getDate().isAfter(dateFrom) && training.getDate().isBefore(dateTo))
+                .map(trainingMapper::mapTrainingToTrainingDto)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<Trainer> getTrainersListNotAssignedOnTrainee(String traineeUsername) {
+    public List<TrainerDto> getTrainersListNotAssignedOnTrainee(String traineeUsername) {
         log.debug("Find Trainer list not assign on Trainee with username {}", traineeUsername);
-        return trainerRepository.findAllNotAssignedOnTrainee(traineeUsername);
+
+        return trainerRepository.findAllNotAssignedOnTrainee(traineeUsername)
+                .stream()
+                .map(trainerMapper::mapTrainerToTrainerDto)
+                .toList();
+    }
+
+    private Trainer findTrainer(String username) {
+        return trainerRepository.findByUsername(username).orElseThrow(
+                () -> {
+                    log.error("There is no Trainer with provided username {}", username);
+                    return new NoEntityPresentException("There is no Trainer with provided username: " + username);
+                });
     }
 }
