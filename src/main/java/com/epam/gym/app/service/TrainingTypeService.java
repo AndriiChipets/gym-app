@@ -24,12 +24,13 @@ public class TrainingTypeService {
     }
 
     @Transactional(readOnly = true)
-    public TrainingType find(String trainingTypeName) {
-        log.debug("Find TrainingType with name {}", trainingTypeName);
-        return trainingTypeRepository.findByName(trainingTypeName).orElseThrow(
+    public TrainingType find(String name) {
+        log.debug("Find TrainingType with name {}", name);
+
+        return trainingTypeRepository.findByName(name).orElseThrow(
                 () -> {
-                    log.error("There is no Training type with name {}", trainingTypeName);
-                    return new NoEntityPresentException("There is no Training type with name: " + trainingTypeName);
+                    log.error("There is no Training type with name {}", name);
+                    return new NoEntityPresentException("There is no Training type with name: " + name);
                 });
     }
 }

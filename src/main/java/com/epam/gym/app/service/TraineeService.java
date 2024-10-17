@@ -39,6 +39,7 @@ public class TraineeService {
     @Transactional(readOnly = true)
     public Trainee find(String username) {
         log.debug("Find Trainee with username {}", username);
+
         return traineeRepository.findByUsername(username).orElseThrow(
                 () -> {
                     log.error("There is no Trainee with provided username {}", username);
@@ -55,12 +56,13 @@ public class TraineeService {
     @Transactional(readOnly = true)
     public boolean login(String username, String password) {
         log.debug("Trainee if user with username {} is exist in DataBase", username);
+
         boolean isExists = traineeRepository.existsByUsernameAndPassword(username, password);
         if (isExists) {
-            log.debug("Trainee with username {} is exist in DataBase", username);
+            log.info("Trainee with username {} is exist in DataBase", username);
             return true;
         }
-        log.debug("Trainee with username {} isn't exist in DataBase", username);
+        log.info("Trainee with username {} isn't exist in DataBase", username);
         return false;
     }
 
@@ -71,6 +73,9 @@ public class TraineeService {
                                            String trainerUsername) {
 
         Trainee trainee = this.find(traineeUsername);
+        log.debug("Find Trainee's Training list with username {} and criteria: " +
+                "Trainer username {}, from date {}, to date {}", traineeUsername, trainerUsername, dateFrom, dateTo);
+
         return trainee.getTrainings()
                 .stream()
                 .filter(training -> training.getTrainer().getUsername().equals(trainerUsername))
@@ -80,13 +85,25 @@ public class TraineeService {
 
     @Transactional
     public void addTrainerToTraineeList(Trainee trainee, Trainer trainer) {
+        log.debug("Add Trainer with username {} to Trainee's trainer list with username {}",
+                trainer.getUsername(), trainee.getUsername());
+
         trainee.addTrainer(trainer);
         traineeRepository.save(trainee);
+
+        log.debug("Trainer with username {} added successfully to Trainee's trainer list with username {}",
+                trainer.getUsername(), trainee.getUsername());
     }
 
     @Transactional
     public void removeTrainerToTraineeList(Trainee trainee, Trainer trainer) {
+        log.debug("Remove Trainer with username {} from Trainee's trainer list with username {}",
+                trainer.getUsername(), trainee.getUsername());
+
         trainee.removeTrainer(trainer);
         traineeRepository.save(trainee);
+
+        log.debug("Trainer with username {} removed successfully from Trainee's trainer list with username {}",
+                trainer.getUsername(), trainee.getUsername());
     }
 }

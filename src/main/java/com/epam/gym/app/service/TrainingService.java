@@ -28,6 +28,7 @@ public class TrainingService {
     @Transactional(readOnly = true)
     public Training find(long id) {
         log.debug("Find Training with id {}", id);
+
         return trainingRepository.findById(id).orElseThrow(
                 () -> {
                     log.error("There is no Training with provided id {}", id);

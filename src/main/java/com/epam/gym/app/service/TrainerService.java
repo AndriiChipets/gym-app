@@ -31,6 +31,7 @@ public class TrainerService {
     @Transactional(readOnly = true)
     public Trainer find(String username) {
         log.debug("Find Trainer with username {}", username);
+
         return trainerRepository.findByUsername(username).orElseThrow(
                 () -> {
                     log.error("There is no Trainer with provided username {}", username);
@@ -46,24 +47,27 @@ public class TrainerService {
 
     @Transactional(readOnly = true)
     public boolean login(String username, String password) {
-        log.debug("Check if Trainer with username {} is exist in DataBase", username);
+        log.info("Check if Trainer with username {} is exist in DataBase", username);
+
         boolean isExists = trainerRepository.existsByUsernameAndPassword(username, password);
         if (isExists) {
             log.debug("Trainer with username {} is exist in DataBase", username);
             return true;
         }
-        log.debug("Trainer with username {} isn't exist in DataBase", username);
+        log.info("Trainer with username {} isn't exist in DataBase", username);
         return false;
     }
 
     @Transactional(readOnly = true)
-    public List<Training> getTrainingsList(String trainerUsername, LocalDate dateFrom, LocalDate dateTo, String traineeUsername) {
-        log.debug("Get Trainings list for Trainer with username {}", trainerUsername);
-        Trainer trainer = trainerRepository.findByUsername(trainerUsername).orElseThrow(
-                () -> {
-                    log.error("There is no Trainer with provided username {}", trainerUsername);
-                    return new NoEntityPresentException("There is no Trainer with provided username: " + trainerUsername);
-                });
+    public List<Training> getTrainingsList(String trainerUsername,
+                                           LocalDate dateFrom,
+                                           LocalDate dateTo,
+                                           String traineeUsername) {
+
+        Trainer trainer = this.find(trainerUsername);
+        log.debug("Find Trainer's Training list with username {} and criteria: " +
+                "Trainee username {}, from date {}, to date {}", trainerUsername, traineeUsername, dateFrom, dateTo);
+
         return trainer.getTrainings()
                 .stream()
                 .filter(training -> training.getTrainer().getUsername().equals(traineeUsername))
@@ -73,6 +77,7 @@ public class TrainerService {
 
     @Transactional(readOnly = true)
     public List<Trainer> getTrainersListNotAssignedOnTrainee(String traineeUsername) {
+        log.debug("Find Trainer list not assign on Trainee with username {}", traineeUsername);
         return trainerRepository.findAllNotAssignedOnTrainee(traineeUsername);
     }
 }
