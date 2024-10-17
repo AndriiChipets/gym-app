@@ -6,6 +6,7 @@ import com.epam.gym.app.service.exception.NoEntityPresentException;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,11 +17,13 @@ public class TrainingTypeService {
 
     TrainingTypeRepository trainingTypeRepository;
 
+    @Transactional(readOnly = true)
     public List<TrainingType> findAll() {
         log.debug("Find all TrainingTypes");
         return trainingTypeRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public TrainingType find(String trainingTypeName) {
         log.debug("Find TrainingType with name {}", trainingTypeName);
         return trainingTypeRepository.findByName(trainingTypeName).orElseThrow(

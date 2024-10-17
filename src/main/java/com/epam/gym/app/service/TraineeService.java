@@ -8,6 +8,7 @@ import com.epam.gym.app.service.exception.NoEntityPresentException;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,6 +20,7 @@ public class TraineeService {
 
     private final TraineeRepository traineeRepository;
 
+    @Transactional
     public Trainee save(Trainee trainee) {
         log.debug("Save Trainee with first name {} and last name {}",
                 trainee.getFirstname(), trainee.getLastname());
@@ -27,12 +29,14 @@ public class TraineeService {
         return savedTrainee;
     }
 
+    @Transactional
     public void delete(String username) {
         log.debug("Delete Trainee with username {}", username);
         traineeRepository.deleteByUsername(username);
         log.debug("Trainee with username {} deleted successfully", username);
     }
 
+    @Transactional(readOnly = true)
     public Trainee find(String username) {
         log.debug("Find Trainee with username {}", username);
         return traineeRepository.findByUsername(username).orElseThrow(
@@ -42,11 +46,13 @@ public class TraineeService {
                 });
     }
 
+    @Transactional(readOnly = true)
     public List<Trainee> findAll() {
         log.debug("Find all Trainees");
         return traineeRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public boolean login(String username, String password) {
         log.debug("Trainee if user with username {} is exist in DataBase", username);
         boolean isExists = traineeRepository.existsByUsernameAndPassword(username, password);
@@ -58,12 +64,13 @@ public class TraineeService {
         return false;
     }
 
+    @Transactional(readOnly = true)
     public List<Training> getTrainingsList(String traineeUsername,
                                            LocalDate dateFrom,
                                            LocalDate dateTo,
                                            String trainerUsername) {
 
-        Trainee trainee = find(traineeUsername);
+        Trainee trainee = this.find(traineeUsername);
         return trainee.getTrainings()
                 .stream()
                 .filter(training -> training.getTrainer().getUsername().equals(trainerUsername))
@@ -71,11 +78,13 @@ public class TraineeService {
                 .toList();
     }
 
+    @Transactional
     public void addTrainerToTraineeList(Trainee trainee, Trainer trainer) {
         trainee.addTrainer(trainer);
         traineeRepository.save(trainee);
     }
 
+    @Transactional
     public void removeTrainerToTraineeList(Trainee trainee, Trainer trainer) {
         trainee.removeTrainer(trainer);
         traineeRepository.save(trainee);

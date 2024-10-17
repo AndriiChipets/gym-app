@@ -6,6 +6,7 @@ import com.epam.gym.app.service.exception.NoEntityPresentException;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class TrainingService {
 
     private final TrainingRepository trainingRepository;
 
+    @Transactional
     public Training save(Training training) {
         log.debug("Save Training with name {}", training.getName());
         Training savedTraining = trainingRepository.save(training);
@@ -23,6 +25,7 @@ public class TrainingService {
         return savedTraining;
     }
 
+    @Transactional(readOnly = true)
     public Training find(long id) {
         log.debug("Find Training with id {}", id);
         return trainingRepository.findById(id).orElseThrow(
@@ -32,6 +35,7 @@ public class TrainingService {
                 });
     }
 
+    @Transactional(readOnly = true)
     public List<Training> findAll() {
         log.debug("Find all Trainings");
         return trainingRepository.findAll();

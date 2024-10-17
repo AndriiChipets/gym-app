@@ -7,6 +7,7 @@ import com.epam.gym.app.service.exception.NoEntityPresentException;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,6 +19,7 @@ public class TrainerService {
 
     private final TrainerRepository trainerRepository;
 
+    @Transactional
     public Trainer save(Trainer trainer) {
         log.debug("Save Trainer with first name {} and last name {}",
                 trainer.getFirstname(), trainer.getLastname());
@@ -26,6 +28,7 @@ public class TrainerService {
         return savedTrainer;
     }
 
+    @Transactional(readOnly = true)
     public Trainer find(String username) {
         log.debug("Find Trainer with username {}", username);
         return trainerRepository.findByUsername(username).orElseThrow(
@@ -35,11 +38,13 @@ public class TrainerService {
                 });
     }
 
+    @Transactional(readOnly = true)
     public List<Trainer> findAll() {
         log.debug("Find all Trainers");
         return trainerRepository.findAll();
     }
 
+    @Transactional(readOnly = true)
     public boolean login(String username, String password) {
         log.debug("Check if Trainer with username {} is exist in DataBase", username);
         boolean isExists = trainerRepository.existsByUsernameAndPassword(username, password);
@@ -51,6 +56,7 @@ public class TrainerService {
         return false;
     }
 
+    @Transactional(readOnly = true)
     public List<Training> getTrainingsList(String trainerUsername, LocalDate dateFrom, LocalDate dateTo, String traineeUsername) {
         log.debug("Get Trainings list for Trainer with username {}", trainerUsername);
         Trainer trainer = trainerRepository.findByUsername(trainerUsername).orElseThrow(
@@ -65,6 +71,7 @@ public class TrainerService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<Trainer> getTrainersListNotAssignedOnTrainee(String traineeUsername) {
         return trainerRepository.findAllNotAssignedOnTrainee(traineeUsername);
     }
