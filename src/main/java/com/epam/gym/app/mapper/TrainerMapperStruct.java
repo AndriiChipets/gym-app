@@ -9,10 +9,10 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface TrainerMapperStruct {
 
+    @Mapping(target = "password", ignore = true)
     TrainerDto mapTrainerToTrainerDto(Trainer trainer);
 
     @Mapping(target = "trainees", ignore = true)
     @Mapping(target = "trainings", ignore = true)
-    @Mapping(target = "password", ignore = true)
     Trainer mapTrainerDtoToTrainer(TrainerDto trainerDto);
 }

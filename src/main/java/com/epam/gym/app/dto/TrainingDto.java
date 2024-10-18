@@ -1,8 +1,5 @@
 package com.epam.gym.app.dto;
 
-import com.epam.gym.app.entity.Trainee;
-import com.epam.gym.app.entity.Trainer;
-import com.epam.gym.app.entity.TrainingType;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -27,23 +24,23 @@ public class TrainingDto {
 
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Training name can't be blank")
     private String name;
 
-    @NotNull
+    @NotNull(message = "Training must have Training Type")
     private TrainingTypeDto type;
 
-    @NotNull
-    @Future
+    @NotNull(message = "Training must have scheduled date")
+    @Future(message = "Training date can't from the past only in future")
     private LocalDate date;
 
-    @Positive
+    @Positive(message = "Training duration time accepts only positive numbers")
     private Integer duration;
 
-    @NotNull
+    @NotNull(message = "Trainee must be assigned to Training")
     private TraineeDto trainee;
 
-    @NotNull
+    @NotNull(message = "Trainer must be assigned to Training")
     private TrainerDto trainer;
 
     @Override

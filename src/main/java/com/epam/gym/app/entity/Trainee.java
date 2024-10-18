@@ -46,11 +46,12 @@ public class Trainee extends User {
             joinColumns = {@JoinColumn(name = "trainee_id")},
             inverseJoinColumns = {@JoinColumn(name = "trainer_id")}
     )
-    private Set<Trainer> trainers = new HashSet<>();
+    private final Set<Trainer> trainers = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "trainee_id")
-    private Set<Training> trainings = new HashSet<>();
+    private final Set<Training> trainings = new HashSet<>();
 
     public void removeTrainer(Trainer trainer) {
         this.trainers.remove(trainer);

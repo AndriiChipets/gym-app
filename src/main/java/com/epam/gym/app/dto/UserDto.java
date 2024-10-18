@@ -34,7 +34,7 @@ public class UserDto {
             = "password must be exactly " + UserUtil.PASSWORD_LENGTH + " characters length")
     private String password;
 
-    @NotNull
+    @NotNull(message = "Active status can't be null")
     private Boolean isActive;
 
     @Override
@@ -43,7 +43,6 @@ public class UserDto {
                 ", firstName=" + firstname +
                 ", lastName=" + lastname +
                 ", userName=" + username +
-                ", password=" + password +
                 ", isActive=" + isActive;
     }
 }

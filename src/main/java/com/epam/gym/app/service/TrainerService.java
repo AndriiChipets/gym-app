@@ -7,10 +7,12 @@ import com.epam.gym.app.mapper.TrainerMapperStruct;
 import com.epam.gym.app.mapper.TrainingMapperStruct;
 import com.epam.gym.app.repository.TrainerRepository;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 @Log4j2
+@Validated
 public class TrainerService {
 
     private final TrainerRepository trainerRepository;
@@ -25,7 +28,7 @@ public class TrainerService {
     private final TrainingMapperStruct trainingMapper;
 
     @Transactional
-    public TrainerDto save(TrainerDto trainerDto) {
+    public TrainerDto save(@Valid TrainerDto trainerDto) {
         log.debug("Save Trainer with first name {} and last name {}",
                 trainerDto.getFirstname(), trainerDto.getLastname());
 

@@ -37,11 +37,12 @@ public class Trainer extends User {
     @Builder.Default
     @EqualsAndHashCode.Exclude
     @ManyToMany(mappedBy = "trainers", fetch = FetchType.EAGER)
-    private Set<Trainee> trainees = new HashSet<>();
+    private final Set<Trainee> trainees = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "trainer_id")
-    private Set<Training> trainings = new HashSet<>();
+    private final Set<Training> trainings = new HashSet<>();
 
     @Override
     public String toString() {

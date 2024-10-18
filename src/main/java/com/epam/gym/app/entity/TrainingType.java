@@ -37,13 +37,15 @@ public class TrainingType {
     @Column(name = "training_type_name", nullable = false)
     private String name;
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "training_type_id")
-    private Set<Training> trainings = new HashSet<>();
+    private final Set<Training> trainings = new HashSet<>();
 
+    @Builder.Default
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "training_type_id")
-    private Set<Trainer> trainers = new HashSet<>();
+    private final Set<Trainer> trainers = new HashSet<>();
 
     @Override
     public String toString() {

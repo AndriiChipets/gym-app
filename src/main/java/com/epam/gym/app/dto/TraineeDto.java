@@ -19,7 +19,7 @@ import java.time.LocalDate;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TraineeDto extends UserDto {
 
-    @Past
+    @Past(message = "Date of Birth can't be from future")
     private LocalDate dateOfBirth;
     private String address;
 

@@ -10,10 +10,12 @@ import com.epam.gym.app.mapper.TrainerMapperStruct;
 import com.epam.gym.app.mapper.TrainingMapperStruct;
 import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 @Log4j2
+@Validated
 public class TraineeService {
 
     private final TraineeRepository traineeRepository;
@@ -29,7 +32,7 @@ public class TraineeService {
     private final TrainingMapperStruct trainingMapper;
 
     @Transactional
-    public TraineeDto save(TraineeDto traineeDto) {
+    public TraineeDto save(@Valid TraineeDto traineeDto) {
         log.debug("Save Trainee with first name {} and last name {}",
                 traineeDto.getFirstname(), traineeDto.getLastname());
 
@@ -97,7 +100,7 @@ public class TraineeService {
     }
 
     @Transactional
-    public void addTrainerToTraineeList(TraineeDto traineeDto, TrainerDto trainerDto) {
+    public void addTrainerToTraineeList(@Valid TraineeDto traineeDto, @Valid TrainerDto trainerDto) {
         log.debug("Add Trainer with username {} to Trainee's trainer list with username {}",
                 trainerDto.getUsername(), traineeDto.getUsername());
 
@@ -112,7 +115,7 @@ public class TraineeService {
     }
 
     @Transactional
-    public void removeTrainerToTraineeList(TraineeDto traineeDto, TrainerDto trainerDto) {
+    public void removeTrainerToTraineeList(@Valid TraineeDto traineeDto, @Valid TrainerDto trainerDto) {
         log.debug("Remove Trainer with username {} from Trainee's trainer list with username {}",
                 trainerDto.getUsername(), traineeDto.getUsername());
 

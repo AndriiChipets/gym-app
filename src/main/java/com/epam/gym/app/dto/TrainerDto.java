@@ -17,7 +17,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TrainerDto extends UserDto {
 
-    @NotNull
+    @NotNull(message = "Trainer must have specialization")
     TrainingTypeDto specialization;
 
     @Override

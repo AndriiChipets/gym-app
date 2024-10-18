@@ -19,7 +19,7 @@ public class TrainingTypeDto {
 
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "Training Type name can't be blank")
     private String name;
 
     @Override
