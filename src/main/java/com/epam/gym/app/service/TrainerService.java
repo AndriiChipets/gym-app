@@ -82,7 +82,7 @@ public class TrainerService {
 
         return trainer.getTrainings()
                 .stream()
-                .filter(training -> training.getTrainer().getUsername().equals(traineeUsername))
+                .filter(training -> training.getTrainee().getUsername().equals(traineeUsername))
                 .filter(training -> training.getDate().isAfter(dateFrom) && training.getDate().isBefore(dateTo))
                 .map(trainingMapper::mapTrainingToTrainingDto)
                 .toList();

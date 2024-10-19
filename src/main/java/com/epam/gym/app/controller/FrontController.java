@@ -33,19 +33,20 @@ public class FrontController {
             6 -> Activate/deactivate Trainee
             7 -> Get Trainee Trainings list
             8 -> Get Trainers List not assigned on Trainee
-            9 -> Update Trainee's Trainers list
-            10 -> Create Trainer
-            11 -> Update Trainer
-            12 -> Select Trainer
-            13 -> Change Trainer password
-            14 -> Activate/Deactivate Trainer
-            15 -> Get Trainer Trainings list
-            16 -> Create Training
-            17 -> Select Training
-            18 -> Select All Trainee
-            19 -> Select All Trainers
-            20 -> Select All Trainings
-            21 -> Select All TrainingTypes
+            9 -> Add Trainer To Trainee's Trainers List
+            10 -> Remove Trainer From Trainee's Trainers List
+            11 -> Create Trainer
+            12 -> Update Trainer
+            13 -> Select Trainer
+            14 -> Change Trainer password
+            15 -> Activate/Deactivate Trainer
+            16 -> Get Trainer Trainings list
+            17 -> Create Training
+            18 -> Select Training
+            19 -> Select All Trainee
+            20 -> Select All Trainers
+            21 -> Select All Trainings
+            22 -> Select All TrainingTypes
             0 -> To exit from the program""";
 
     public static final String TRAINER_OR_TRAINEE_MENU = """
@@ -101,19 +102,20 @@ public class FrontController {
                 case 6 -> activateDeactivateTrainee();
                 case 7 -> getTraineeTrainingsList();
                 case 8 -> getTrainersListNotAssignedOnTrainee();
-                case 9 -> updateTraineeTrainersList();
-                case 10 -> createTrainer();
-                case 11 -> updateTrainer();
-                case 12 -> selectTrainerByUserName();
-                case 13 -> changeTrainerPassword();
-                case 14 -> activateDeactivateTrainer();
-                case 15 -> getTrainerTrainingsByUserName();
-                case 16 -> createTraining();
-                case 17 -> selectTraining();
-                case 18 -> selectAllTrainees();
-                case 19 -> selectAllTrainers();
-                case 20 -> selectAllTrainings();
-                case 21 -> selectAllTrainingTypes();
+                case 9 -> addTrainerToTraineeTrainersList();
+                case 10 -> removeTrainerFromTraineeTrainersList();
+                case 11 -> createTrainer();
+                case 12 -> updateTrainer();
+                case 13 -> selectTrainerByUserName();
+                case 14 -> changeTrainerPassword();
+                case 15 -> activateDeactivateTrainer();
+                case 16 -> getTrainerTrainingsList();
+                case 17 -> createTraining();
+                case 18 -> selectTraining();
+                case 19 -> selectAllTrainees();
+                case 20 -> selectAllTrainers();
+                case 21 -> selectAllTrainings();
+                case 22 -> selectAllTrainingTypes();
                 default -> viewProvider.printMessage(WRONG_CHOICE_MESSAGE);
             }
         }
@@ -144,8 +146,7 @@ public class FrontController {
         traineeDto.setPassword(password);
         traineeDto.setUsername(username);
 
-        TraineeDto savedTrainee = traineeService.save(traineeDto);
-        viewProvider.printMessage(savedTrainee.toString());
+        traineeService.save(traineeDto);
     }
 
     private void updateTrainee() {
@@ -153,7 +154,6 @@ public class FrontController {
         String username = viewProvider.read();
 
         TraineeDto beforeUpd = traineeService.find(username);
-        viewProvider.printMessage(beforeUpd.toString());
 
         viewProvider.printMessage("Enter Trainee first name: ");
         String firstname = viewProvider.read();
@@ -178,23 +178,19 @@ public class FrontController {
                 .address(address)
                 .build();
 
-        TraineeDto updatedTrainee = traineeService.save(trainee);
-        viewProvider.printMessage(updatedTrainee.toString());
+        traineeService.save(trainee);
     }
 
     private void deleteTraineeByUserName() {
         viewProvider.printMessage("Enter Trainee username: ");
         String username = viewProvider.read();
-
         traineeService.delete(username);
     }
 
     private void selectTraineeByUserName() {
         viewProvider.printMessage("Enter Trainee username: ");
         String username = viewProvider.read();
-        TraineeDto trainee = traineeService.find(username);
-
-        viewProvider.printMessage(trainee.toString());
+        traineeService.find(username);
     }
 
     private void changeTraineePassword() {
@@ -202,44 +198,34 @@ public class FrontController {
         String username = viewProvider.read();
 
         TraineeDto trainee = traineeService.find(username);
-        viewProvider.printMessage(trainee.toString());
 
         viewProvider.printMessage("Enter new password" + UserUtil.PASSWORD_LENGTH + " characters length:");
         String password = viewProvider.read();
         viewProvider.printMessage("Repeat new password: ");
         String repeatPassword = viewProvider.read();
-
         if (!password.equals(repeatPassword)) {
             throw new IllegalArgumentException("password and repeated password are not equal");
         }
-
         trainee.setPassword(password);
-        TraineeDto updatedTrainee = traineeService.save(trainee);
-
-        viewProvider.printMessage(updatedTrainee.toString());
+        traineeService.save(trainee);
     }
 
     private void activateDeactivateTrainee() {
         viewProvider.printMessage("Enter Trainee username: ");
         String username = viewProvider.read();
-
         TraineeDto trainee = traineeService.find(username);
-        viewProvider.printMessage(trainee.toString());
 
         boolean isActive = changeToActive();
-
         trainee.setIsActive(isActive);
-        TraineeDto updatedTrainee = traineeService.save(trainee);
 
-        viewProvider.printMessage(updatedTrainee.toString());
+        traineeService.save(trainee);
     }
 
     private void getTraineeTrainingsList() {
         viewProvider.printMessage("Enter Trainee username: ");
         String traineeUsername = viewProvider.read();
 
-        TraineeDto trainee = traineeService.find(traineeUsername);
-        viewProvider.printMessage(trainee.toString());
+        traineeService.find(traineeUsername);
 
         viewProvider.printMessage("Enter START date from in format" + UserUtil.DATE_TEMPLATE);
         LocalDate dateFrom = LocalDate.parse(viewProvider.read());
@@ -260,8 +246,7 @@ public class FrontController {
         viewProvider.printMessage("Enter Trainee username: ");
         String traineeUsername = viewProvider.read();
 
-        TraineeDto trainee = traineeService.find(traineeUsername);
-        viewProvider.printMessage(trainee.toString());
+        traineeService.find(traineeUsername);
 
         List<TrainerDto> trainers =
                 trainerService.getTrainersListNotAssignedOnTrainee(traineeUsername);
@@ -269,26 +254,28 @@ public class FrontController {
         viewProvider.printList(trainers);
     }
 
-    private void updateTraineeTrainersList() {
+    private void addTrainerToTraineeTrainersList() {
         viewProvider.printMessage("Enter Trainee username: ");
         String traineeUsername = viewProvider.read();
-
         TraineeDto traineeDto = traineeService.find(traineeUsername);
-        viewProvider.printMessage(traineeDto.toString());
-
-        boolean shouldAddTrainer = shouldAddTrainerToTraineeList();
 
         viewProvider.printMessage("Enter Trainer username: ");
         String trainerUsername = viewProvider.read();
-
         TrainerDto trainerDto = trainerService.find(trainerUsername);
-        viewProvider.printMessage(traineeDto.toString());
 
-        if (shouldAddTrainer) {
-            traineeService.addTrainerToTraineeList(traineeDto, trainerDto);
-        } else {
-            traineeService.removeTrainerToTraineeList(traineeDto, trainerDto);
-        }
+        traineeService.addTrainerToTraineeList(traineeDto, trainerDto);
+    }
+
+    private void removeTrainerFromTraineeTrainersList() {
+        viewProvider.printMessage("Enter Trainee username: ");
+        String traineeUsername = viewProvider.read();
+        TraineeDto traineeDto = traineeService.find(traineeUsername);
+
+        viewProvider.printMessage("Enter Trainer username: ");
+        String trainerUsername = viewProvider.read();
+        TrainerDto trainerDto = trainerService.find(trainerUsername);
+
+        traineeService.removeTrainerToTraineeList(traineeDto, trainerDto);
     }
 
     private void createTrainer() {
@@ -316,16 +303,13 @@ public class FrontController {
         trainer.setPassword(password);
         trainer.setUsername(username);
 
-        TrainerDto savedTrainer = trainerService.save(trainer);
-        viewProvider.printMessage(savedTrainer.toString());
+        trainerService.save(trainer);
     }
 
     private void updateTrainer() {
         viewProvider.printMessage("Enter Trainer username: ");
         String username = viewProvider.read();
-
         TrainerDto beforeUpd = trainerService.find(username);
-        viewProvider.printMessage(beforeUpd.toString());
 
         viewProvider.printMessage("Enter Trainer first name: ");
         String firstname = viewProvider.read();
@@ -349,8 +333,7 @@ public class FrontController {
                 .password(password)
                 .build();
 
-        TrainerDto updatedTrainer = trainerService.save(trainer);
-        viewProvider.printMessage(updatedTrainer.toString());
+        trainerService.save(trainer);
     }
 
     private void selectTrainerByUserName() {
@@ -397,7 +380,7 @@ public class FrontController {
         viewProvider.printMessage(updatedTrainer.toString());
     }
 
-    private void getTrainerTrainingsByUserName() {
+    private void getTrainerTrainingsList() {
         viewProvider.printMessage("Enter Trainer username: ");
         String username = viewProvider.read();
 
@@ -445,8 +428,7 @@ public class FrontController {
                 .duration(duration)
                 .build();
 
-        TrainingDto savedTraining = trainingService.save(training);
-        viewProvider.printMessage(savedTraining.toString());
+        trainingService.save(training);
     }
 
     private void selectTraining() {
@@ -511,12 +493,6 @@ public class FrontController {
 
     private boolean changeToActive() {
         viewProvider.printMessage(ACTIVATE_OR_DEACTIVATE_MENU);
-        int choice = viewProvider.readInt();
-        return choice == 1;
-    }
-
-    private boolean shouldAddTrainerToTraineeList() {
-        viewProvider.printMessage(SHOULD_ADD_TRAINER_TO_TRAINEE_LIST_MENU);
         int choice = viewProvider.readInt();
         return choice == 1;
     }

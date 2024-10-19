@@ -23,23 +23,23 @@ public class TrainingTypeService {
     TypeMapperStruct typeMapper;
 
     @Transactional(readOnly = true)
-    public List<TrainingTypeDto> findAll() {
-        log.debug("Find all TrainingTypes");
-        return trainingTypeRepository.findAll()
-                .stream()
-                .map(typeMapper::mapTypeToTypeDto)
-                .toList();
-    }
-
-    @Transactional(readOnly = true)
     public TrainingTypeDto find(String name) {
         log.debug("Find TrainingType with name {}", name);
 
         TrainingType trainingType = trainingTypeRepository.findByName(name).orElseThrow(
                 () -> {
                     log.error("There is no Training type with name {}", name);
-                    return new NoEntityPresentException("There is no Training type with name: " + name);
+                    return new NoEntityPresentException("There is no TrainingType with name: " + name);
                 });
         return typeMapper.mapTypeToTypeDto(trainingType);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TrainingTypeDto> findAll() {
+        log.debug("Find all TrainingTypes");
+        return trainingTypeRepository.findAll()
+                .stream()
+                .map(typeMapper::mapTypeToTypeDto)
+                .toList();
     }
 }

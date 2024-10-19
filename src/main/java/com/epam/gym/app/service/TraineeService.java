@@ -100,7 +100,7 @@ public class TraineeService {
     }
 
     @Transactional
-    public void addTrainerToTraineeList(@Valid TraineeDto traineeDto, @Valid TrainerDto trainerDto) {
+    public List<TrainerDto> addTrainerToTraineeList(@Valid TraineeDto traineeDto, @Valid TrainerDto trainerDto) {
         log.debug("Add Trainer with username {} to Trainee's trainer list with username {}",
                 trainerDto.getUsername(), traineeDto.getUsername());
 
@@ -112,10 +112,15 @@ public class TraineeService {
 
         log.debug("Trainer with username {} added successfully to Trainee's trainer list with username {}",
                 trainerDto.getUsername(), traineeDto.getUsername());
+
+        return trainee.getTrainers()
+                .stream()
+                .map(trainerMapper::mapTrainerToTrainerDto)
+                .toList();
     }
 
     @Transactional
-    public void removeTrainerToTraineeList(@Valid TraineeDto traineeDto, @Valid TrainerDto trainerDto) {
+    public List<TrainerDto> removeTrainerToTraineeList(@Valid TraineeDto traineeDto, @Valid TrainerDto trainerDto) {
         log.debug("Remove Trainer with username {} from Trainee's trainer list with username {}",
                 trainerDto.getUsername(), traineeDto.getUsername());
 
@@ -127,6 +132,11 @@ public class TraineeService {
 
         log.debug("Trainer with username {} removed successfully from Trainee's trainer list with username {}",
                 trainerDto.getUsername(), traineeDto.getUsername());
+
+        return trainee.getTrainers()
+                .stream()
+                .map(trainerMapper::mapTrainerToTrainerDto)
+                .toList();
     }
 
     private Trainee findTrainee(String username) {
