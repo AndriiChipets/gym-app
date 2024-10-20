@@ -1,8 +1,8 @@
 package com.epam.gym.app.entity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,12 +38,12 @@ public class TrainingType {
     private String name;
 
     @Builder.Default
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_type_id")
     private final Set<Training> trainings = new HashSet<>();
 
     @Builder.Default
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_type_id")
     private final Set<Trainer> trainers = new HashSet<>();
 

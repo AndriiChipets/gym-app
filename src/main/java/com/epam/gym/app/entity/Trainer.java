@@ -30,17 +30,17 @@ import java.util.Set;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Trainer extends User {
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_type_id", nullable = false)
     TrainingType specialization;
 
     @Builder.Default
     @EqualsAndHashCode.Exclude
-    @ManyToMany(mappedBy = "trainers", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "trainers", fetch = FetchType.LAZY)
     private final Set<Trainee> trainees = new HashSet<>();
 
     @Builder.Default
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "trainer_id")
     private final Set<Training> trainings = new HashSet<>();
 

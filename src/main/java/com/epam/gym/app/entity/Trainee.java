@@ -40,7 +40,7 @@ public class Trainee extends User {
 
     @Builder.Default
     @EqualsAndHashCode.Exclude
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "trainee_trainer",
             joinColumns = {@JoinColumn(name = "trainee_id")},
