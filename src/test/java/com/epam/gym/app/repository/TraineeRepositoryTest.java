@@ -3,7 +3,6 @@ package com.epam.gym.app.repository;
 import com.epam.gym.app.config.GymAppConfig;
 import com.epam.gym.app.entity.Trainee;
 import com.epam.gym.app.testcontainer.MysqlTestContainer;
-import com.epam.gym.app.utils.UserUtil;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration(classes = GymAppConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql(
-        scripts = "classpath:sql/schema.sql",
+        scripts = {
+                "classpath:sql/schema.sql",
+                "classpath:sql/data.sql",
+        },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
 @DisplayName("TraineeRepositoryTest")
@@ -45,23 +47,13 @@ public class TraineeRepositoryTest {
     void findByName_shouldReturnTrainee_whenThereAreAnyTraineeRelatedToEnteredUsername() {
 
         long id = 1;
-        String firstname = "firstname";
-        String lastname = "lastname";
-        String username = "firstname.lastname";
-        String password = UserUtil.generateRandomPassword();
+        String firstname = "Fn";
+        String lastname = "Ln";
+        String username = "Fn.Ln";
+        String password = "1234567890";
         boolean isActive = true;
-        String address = "address";
-        LocalDate dateOfBirth = LocalDate.parse("2000-12-12");
-
-        Trainee trainee = Trainee.builder()
-                .firstname(firstname)
-                .lastname(lastname)
-                .username(username)
-                .password(password)
-                .isActive(isActive)
-                .address(address)
-                .dateOfBirth(dateOfBirth)
-                .build();
+        String address = "Address1";
+        LocalDate dateOfBirth = LocalDate.parse("2001-12-12");
 
         Optional<Trainee> expTraineeOpt =
                 Optional.of(Trainee.builder()
@@ -75,7 +67,6 @@ public class TraineeRepositoryTest {
                         .dateOfBirth(dateOfBirth)
                         .build());
 
-        traineeRepository.save(trainee);
         Optional<Trainee> actTraineeOpt = traineeRepository.findByUsername(username);
 
         assertEquals(expTraineeOpt, actTraineeOpt);
@@ -97,44 +88,11 @@ public class TraineeRepositoryTest {
     @DisplayName("deleteByUsername method should delete Trainee when Trainee is present")
     void deleteByName_shouldDeleteTrainee_whenThereAreAnyTraineeRelatedToEnteredUsername() {
 
-        long id = 1;
-        String firstname = "firstname";
-        String lastname = "lastname";
-        String username = "firstname.lastname";
-        String password = UserUtil.generateRandomPassword();
-        boolean isActive = true;
-        String address = "address";
-        LocalDate dateOfBirth = LocalDate.parse("2000-12-12");
-
-        Trainee trainee = Trainee.builder()
-                .firstname(firstname)
-                .lastname(lastname)
-                .username(username)
-                .password(password)
-                .isActive(isActive)
-                .address(address)
-                .dateOfBirth(dateOfBirth)
-                .build();
-
-        Optional<Trainee> expTraineeOptBfrDel =
-                Optional.of(Trainee.builder()
-                        .id(id)
-                        .firstname(firstname)
-                        .lastname(lastname)
-                        .username(username)
-                        .password(password)
-                        .isActive(isActive)
-                        .address(address)
-                        .dateOfBirth(dateOfBirth)
-                        .build());
-
+        String username = "Fn.Ln";
         Optional<Trainee> expTraineeOptAftDel = Optional.empty();
 
-        traineeRepository.save(trainee);
-        Optional<Trainee> actTraineeOptBfrDel = traineeRepository.findByUsername(username);
-        assertEquals(expTraineeOptBfrDel, actTraineeOptBfrDel);
-
         traineeRepository.deleteByUsername(username);
+
         Optional<Trainee> actTraineeOptAftDel = traineeRepository.findByUsername(username);
         assertEquals(expTraineeOptAftDel, actTraineeOptAftDel);
     }
@@ -143,27 +101,10 @@ public class TraineeRepositoryTest {
     @DisplayName("existsByUsernameAndPassword method should return true when Trainee is present")
     void existsByUsernameAndPassword_shouldReturnTrue_whenThereAreAnyTraineeRelatedToEnteredUsernameAndPassword() {
 
-        String firstname = "firstname";
-        String lastname = "lastname";
-        String username = "firstname.lastname";
+        String username = "Fn.Ln";
         String password = "1234567890";
-        boolean isActive = true;
-        String address = "address";
-        LocalDate dateOfBirth = LocalDate.parse("2000-12-12");
-
-        Trainee trainee = Trainee.builder()
-                .firstname(firstname)
-                .lastname(lastname)
-                .username(username)
-                .password(password)
-                .isActive(isActive)
-                .address(address)
-                .dateOfBirth(dateOfBirth)
-                .build();
-
         boolean expected = true;
 
-        traineeRepository.save(trainee);
         boolean actual = traineeRepository.existsByUsernameAndPassword(username, password);
 
         assertEquals(expected, actual);
@@ -175,7 +116,6 @@ public class TraineeRepositoryTest {
 
         String username = "wrong.username";
         String password = "1234567890";
-
         boolean expected = false;
 
         boolean actual = traineeRepository.existsByUsernameAndPassword(username, password);

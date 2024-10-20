@@ -199,7 +199,7 @@ public class FrontController {
 
         TraineeDto trainee = traineeService.find(username);
 
-        viewProvider.printMessage("Enter new password" + UserUtil.PASSWORD_LENGTH + " characters length:");
+        viewProvider.printMessage("Enter new password " + UserUtil.PASSWORD_LENGTH + " characters length:");
         String password = viewProvider.read();
         viewProvider.printMessage("Repeat new password: ");
         String repeatPassword = viewProvider.read();
@@ -227,14 +227,14 @@ public class FrontController {
 
         traineeService.find(traineeUsername);
 
-        viewProvider.printMessage("Enter START date from in format" + UserUtil.DATE_TEMPLATE);
+        viewProvider.printMessage("Enter START date from in format " + UserUtil.DATE_TEMPLATE);
         LocalDate dateFrom = LocalDate.parse(viewProvider.read());
-        viewProvider.printMessage("Enter END date in format" + UserUtil.DATE_TEMPLATE);
+        viewProvider.printMessage("Enter END date in format " + UserUtil.DATE_TEMPLATE);
         LocalDate dateTo = LocalDate.parse(viewProvider.read());
 
         selectAllTrainers();
 
-        viewProvider.printMessage("Enter Trainer name: ");
+        viewProvider.printMessage("Enter Trainer Username: ");
         String trainerUsername = viewProvider.read();
 
         List<TrainingDto> trainings = traineeService.getTrainingsList(traineeUsername, dateFrom, dateTo, trainerUsername);
@@ -375,9 +375,7 @@ public class FrontController {
         boolean isActive = changeToActive();
 
         trainer.setIsActive(isActive);
-        TrainerDto updatedTrainer = trainerService.save(trainer);
-
-        viewProvider.printMessage(updatedTrainer.toString());
+        trainerService.save(trainer);
     }
 
     private void getTrainerTrainingsList() {

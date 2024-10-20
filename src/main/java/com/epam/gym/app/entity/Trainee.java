@@ -49,6 +49,7 @@ public class Trainee extends User {
     private final Set<Trainer> trainers = new HashSet<>();
 
     @Builder.Default
+    @EqualsAndHashCode.Exclude
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "trainee_id")
     private final Set<Training> trainings = new HashSet<>();

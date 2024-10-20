@@ -26,7 +26,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration(classes = GymAppConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql(
-        scripts = "classpath:sql/schema.sql",
+        scripts = {
+                "classpath:sql/schema.sql",
+                "classpath:sql/data.sql",
+        },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
 @DisplayName("TrainingTypeRepositoryTest")
@@ -42,13 +45,10 @@ public class TrainingTypeRepositoryTest {
     @DisplayName("findByName method should return TrainingType when TrainingType is present")
     void findByName_shouldReturnTrainingType_whenThereAreAnyTrainingTypeRelatedToEnteredName() {
 
-        long id = 1;
-        String name = "YOGA";
-        TrainingType type = TrainingType.builder().name(name).build();
-        Optional<TrainingType> expTypeOpt =
-                Optional.of(TrainingType.builder().name(name).id(id).build());
+        long id = 2;
+        String name = "Yoga";
+        Optional<TrainingType> expTypeOpt = Optional.of(TrainingType.builder().name(name).id(id).build());
 
-        typeRepository.save(type);
         Optional<TrainingType> actTypeOpt = typeRepository.findByName(name);
 
         assertEquals(expTypeOpt, actTypeOpt);

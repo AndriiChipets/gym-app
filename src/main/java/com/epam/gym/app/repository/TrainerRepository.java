@@ -16,6 +16,7 @@ public interface TrainerRepository extends JpaRepository<Trainer, Long> {
 
     boolean existsByUsernameAndPassword(String username, String password);
 
-    @Query("SELECT t FROM Trainer t JOIN t.trainees ts WHERE ts.username <> :username")
-    List<Trainer> findAllNotAssignedOnTrainee(@Param("username") String traineeUsername);
+    @Query("select tr from Trainer tr where tr not in " +
+            "(select tr2 from Trainer tr2 join tr2.trainees ts where ts.username = :username)")
+    List<Trainer> findAllNotAssignedOnTrainee(@Param("username") String username);
 }

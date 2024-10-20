@@ -9,7 +9,6 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface TraineeMapperStruct {
 
-    @Mapping(target = "password", ignore = true)
     TraineeDto mapTraineeToTraineeDto(Trainee trainee);
 
     @Mapping(target = "trainers", ignore = true)

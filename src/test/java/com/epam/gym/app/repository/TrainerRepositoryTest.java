@@ -4,7 +4,6 @@ import com.epam.gym.app.config.GymAppConfig;
 import com.epam.gym.app.entity.Trainer;
 import com.epam.gym.app.entity.TrainingType;
 import com.epam.gym.app.testcontainer.MysqlTestContainer;
-import com.epam.gym.app.utils.UserUtil;
 import org.junit.ClassRule;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,11 +12,14 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,7 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration(classes = GymAppConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql(
-        scripts = "classpath:sql/schema.sql",
+        scripts = {
+                "classpath:sql/schema.sql",
+                "classpath:sql/data.sql",
+        },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
 @DisplayName("TrainerRepositoryTest")
@@ -40,34 +45,20 @@ public class TrainerRepositoryTest {
     @Autowired
     TrainerRepository trainerRepository;
 
-    @Autowired
-    TrainingTypeRepository typeRepository;
-
     @Test
     @DisplayName("findByUsername method should return Trainer when Trainer is present")
     void findByName_shouldReturnTrainer_whenThereAreAnyTrainerRelatedToEnteredUsername() {
 
-        long trainerId = 1;
-        String firstname = "firstname";
-        String lastname = "lastname";
-        String username = "firstname.lastname";
-        String password = UserUtil.generateRandomPassword();
+        long trainerId = 9;
+        String firstname = "David";
+        String lastname = "Martinez";
+        String username = "David.Martinez";
+        String password = "7777777777";
         boolean isActive = true;
 
         long typeId = 1;
-        String name = "YOGA";
-        TrainingType typeBefSave = TrainingType.builder().name(name).build();
-        typeRepository.save(typeBefSave);
-        TrainingType typeAftSave = TrainingType.builder().id(typeId).name(name).build();
-
-        Trainer trainer = Trainer.builder()
-                .firstname(firstname)
-                .lastname(lastname)
-                .username(username)
-                .password(password)
-                .isActive(isActive)
-                .specialization(typeAftSave)
-                .build();
+        String name = "Fitness";
+        TrainingType specialization = TrainingType.builder().id(typeId).name(name).build();
 
         Optional<Trainer> expTrainerOpt =
                 Optional.of(Trainer.builder()
@@ -77,10 +68,9 @@ public class TrainerRepositoryTest {
                         .username(username)
                         .password(password)
                         .isActive(isActive)
-                        .specialization(typeAftSave)
+                        .specialization(specialization)
                         .build());
 
-        trainerRepository.save(trainer);
         Optional<Trainer> actTrainerOpt = trainerRepository.findByUsername(username);
 
         assertEquals(expTrainerOpt, actTrainerOpt);
@@ -102,30 +92,10 @@ public class TrainerRepositoryTest {
     @DisplayName("existsByUsernameAndPassword method should return true when Trainer is present")
     void existsByUsernameAndPassword_shouldReturnTrue_whenThereAreAnyTrainerRelatedToEnteredUsernameAndPassword() {
 
-        String firstname = "firstname";
-        String lastname = "lastname";
-        String username = "firstname.lastname";
-        String password = UserUtil.generateRandomPassword();
-        boolean isActive = true;
-
-        long typeId = 1;
-        String name = "YOGA";
-        TrainingType typeBefSave = TrainingType.builder().name(name).build();
-        typeRepository.save(typeBefSave);
-        TrainingType typeAftSave = TrainingType.builder().id(typeId).name(name).build();
-
-        Trainer trainer = Trainer.builder()
-                .firstname(firstname)
-                .lastname(lastname)
-                .username(username)
-                .password(password)
-                .isActive(isActive)
-                .specialization(typeAftSave)
-                .build();
-
+        String username = "David.Martinez";
+        String password = "7777777777";
         boolean expected = true;
 
-        trainerRepository.save(trainer);
         boolean actual = trainerRepository.existsByUsernameAndPassword(username, password);
 
         assertEquals(expected, actual);
@@ -137,11 +107,25 @@ public class TrainerRepositoryTest {
 
         String username = "wrong.username";
         String password = "1234567890";
-
         boolean expected = false;
 
         boolean actual = trainerRepository.existsByUsernameAndPassword(username, password);
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    @DisplayName("findAllNotAssignedOnTrainee method should return List of Trainers Not assigned on Trainee")
+    void findAllNotAssignedOnTrainee_shouldReturnListOfTrainers_whenTrainersNotAssignedOnTrainee() {
+
+        String traineeUsername = "Fn.Ln";
+
+        List<Trainer> actualTrainers = trainerRepository.findAllNotAssignedOnTrainee(traineeUsername);
+
+        System.out.println(actualTrainers);
+
+        assertEquals(2, actualTrainers.size());
+    }
 }
+//    @Query("SELECT t FROM Trainer t JOIN t.trainees ts WHERE ts.username <> :username")
+//    List<Trainer> findAllNotAssignedOnTrainee(@Param("username") String traineeUsername);

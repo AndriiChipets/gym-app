@@ -38,11 +38,13 @@ public class TrainingType {
     private String name;
 
     @Builder.Default
+    @EqualsAndHashCode.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_type_id")
     private final Set<Training> trainings = new HashSet<>();
 
     @Builder.Default
+    @EqualsAndHashCode.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_type_id")
     private final Set<Trainer> trainers = new HashSet<>();
