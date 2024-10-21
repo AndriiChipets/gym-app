@@ -12,8 +12,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.MySQLContainer;
@@ -122,10 +120,6 @@ public class TrainerRepositoryTest {
 
         List<Trainer> actualTrainers = trainerRepository.findAllNotAssignedOnTrainee(traineeUsername);
 
-        System.out.println(actualTrainers);
-
         assertEquals(2, actualTrainers.size());
     }
 }
-//    @Query("SELECT t FROM Trainer t JOIN t.trainees ts WHERE ts.username <> :username")
-//    List<Trainer> findAllNotAssignedOnTrainee(@Param("username") String traineeUsername);

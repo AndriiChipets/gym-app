@@ -23,7 +23,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-
 @SpringBootTest(classes = {TrainingService.class})
 @DisplayName("TrainingServiceTest")
 class TrainingServiceTest {
