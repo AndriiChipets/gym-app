@@ -1,7 +1,9 @@
 package com.epam.gym.app.service;
 
-import com.epam.gym.app.dao.TrainingDao;
+import com.epam.gym.app.dto.TrainingDto;
 import com.epam.gym.app.entity.Training;
+import com.epam.gym.app.mapper.TrainingMapperStruct;
+import com.epam.gym.app.repository.TrainingRepository;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,16 +14,24 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {TrainingService.class})
 @DisplayName("TrainingServiceTest")
 class TrainingServiceTest {
 
-    @MockBean(name = "traineeDaoTest")
-    TrainingDao trainingDao;
+    @MockBean
+    TrainingRepository trainingRepository;
+
+    @MockBean
+    TrainingMapperStruct trainingMapper;
 
     @Autowired
     TrainingService trainingService;
@@ -30,29 +40,16 @@ class TrainingServiceTest {
     @DisplayName("save() method should return saved Training when saving is successful")
     void save_shouldReturnTrainingWhenSavingIsSuccessful() {
 
-        long trainingId = 1L;
-        Training expected = Training.builder().build();
-        Training expectedWithId = Training.builder().id(trainingId).build();
+        Training training = Training.builder().build();
+        TrainingDto trainingDto = TrainingDto.builder().build();
 
-        when(trainingDao.save(expected)).thenReturn(expectedWithId);
-        Training actual = trainingService.save(expected);
+        when(trainingMapper.mapTrainingDtoToTraining(any(TrainingDto.class))).thenReturn(training);
+        when(trainingRepository.save(any(Training.class))).thenReturn(training);
+        when(trainingMapper.mapTrainingToTrainingDto(any(Training.class))).thenReturn(trainingDto);
+        TrainingDto actual = trainingService.save(trainingDto);
 
         assertNotNull(actual);
-        verify(trainingDao).save(expected);
-    }
-
-    @Test
-    @DisplayName("save() method should throw NoEntityPresentException when saving isn't successful")
-    void save_shouldThrowNoEntityPresentExceptionWhenSavingIsNotSuccessful() {
-
-        Training expected = Training.builder().build();
-
-        when(trainingDao.save(expected)).thenReturn(null);
-        Exception exception = assertThrows(NoEntityPresentException.class,
-                () -> trainingService.save(expected));
-
-        assertEquals("Training wasn't saved successfully", exception.getMessage());
-        verify(trainingDao, times(1)).save(expected);
+        verify(trainingRepository).save(training);
     }
 
     @Test
@@ -60,14 +57,16 @@ class TrainingServiceTest {
     void find_shouldReturnTraining_whenTrainingPresent() {
 
         long trainingId = 1L;
-        Training expected = Training.builder().id(trainingId).build();
+        Training training = Training.builder().build();
+        TrainingDto expected = TrainingDto.builder().id(trainingId).build();
 
-        when(trainingDao.findById(anyLong())).thenReturn(Optional.of(expected));
-        Training actual = trainingService.find(trainingId);
+        when(trainingRepository.findById(anyLong())).thenReturn(Optional.of(training));
+        when(trainingMapper.mapTrainingToTrainingDto(any(Training.class))).thenReturn(expected);
+        TrainingDto actual = trainingService.find(trainingId);
 
         assertNotNull(actual);
         assertEquals(expected, actual);
-        verify(trainingDao).findById(trainingId);
+        verify(trainingRepository).findById(trainingId);
     }
 
     @Test
@@ -76,28 +75,29 @@ class TrainingServiceTest {
 
         long traineeId = 1000L;
 
-        when(trainingDao.findById(anyLong())).thenReturn(Optional.empty());
+        when(trainingRepository.findById(anyLong())).thenReturn(Optional.empty());
         Exception exception = assertThrows(NoEntityPresentException.class,
                 () -> trainingService.find(traineeId));
 
         assertEquals("There is no Training with provided id: " + traineeId, exception.getMessage());
-        verify(trainingDao, times(1)).findById(traineeId);
+        verify(trainingRepository, times(1)).findById(traineeId);
     }
 
     @Test
     @DisplayName("findAll() method should return List of Trainings when Trainings present")
     void findAll_shouldReturnListTrainings_whenTrainingsPresent() {
 
-        List<Training> expected = List.of(
-                Training.builder().build(),
-                Training.builder().build(),
-                Training.builder().build());
+        Training training = Training.builder().build();
+        List<Training> trainings = List.of(training, training, training);
+        TrainingDto trainingDto = TrainingDto.builder().build();
+        List<TrainingDto> expected = List.of(trainingDto, trainingDto, trainingDto);
 
-        when(trainingDao.findAll()).thenReturn(expected);
-        List<Training> actual = trainingService.findAll();
+        when(trainingRepository.findAll()).thenReturn(trainings);
+        when(trainingMapper.mapTrainingToTrainingDto(any(Training.class))).thenReturn(trainingDto);
+        List<TrainingDto> actual = trainingService.findAll();
 
         assertNotNull(actual);
         assertEquals(expected, actual);
-        verify(trainingDao).findAll();
+        verify(trainingRepository).findAll();
     }
 }

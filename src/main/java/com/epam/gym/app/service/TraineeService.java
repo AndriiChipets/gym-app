@@ -1,58 +1,149 @@
 package com.epam.gym.app.service;
 
-import com.epam.gym.app.dao.TraineeDao;
+import com.epam.gym.app.dto.TraineeDto;
+import com.epam.gym.app.dto.TrainerDto;
+import com.epam.gym.app.dto.TrainingDto;
 import com.epam.gym.app.entity.Trainee;
+import com.epam.gym.app.entity.Trainer;
+import com.epam.gym.app.mapper.TraineeMapperStruct;
+import com.epam.gym.app.mapper.TrainerMapperStruct;
+import com.epam.gym.app.mapper.TrainingMapperStruct;
+import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 @Log4j2
+@Validated
 public class TraineeService {
 
-    private final TraineeDao traineeDao;
+    private final TraineeRepository traineeRepository;
+    private final TraineeMapperStruct traineeMapper;
+    private final TrainerMapperStruct trainerMapper;
+    private final TrainingMapperStruct trainingMapper;
 
-    public Trainee save(Trainee trainee) {
+    @Transactional
+    public TraineeDto save(@Valid TraineeDto traineeDto) {
         log.debug("Save Trainee with first name {} and last name {}",
-                trainee.getFirstname(), trainee.getLastname());
-        Trainee savedTrainee = traineeDao.save(trainee);
-        if (savedTrainee != null) {
-            log.debug("Trainee was saved successfully");
-            return savedTrainee;
-        } else {
-            log.error("Trainee wasn't saved successfully");
-            throw new NoEntityPresentException("Trainee wasn't saved successfully");
-        }
+                traineeDto.getFirstname(), traineeDto.getLastname());
+
+        Trainee trainee = traineeMapper.mapTraineeDtoToTrainee(traineeDto);
+        trainee = traineeRepository.save(trainee);
+
+        log.debug("Trainee has been saved successfully");
+        return traineeMapper.mapTraineeToTraineeDto(trainee);
     }
 
-    public Trainee update(Trainee trainee) {
-        log.debug("Update Trainee with id {}", trainee.getId());
-        Trainee updatedTrainee = traineeDao.update(trainee);
-        log.debug("Trainee with id {} updated successfully", trainee.getId());
-        return updatedTrainee;
+    @Transactional
+    public void delete(String username) {
+        log.debug("Delete Trainee with username {}", username);
+        traineeRepository.deleteByUsername(username);
+        log.debug("Trainee with username {} deleted successfully", username);
     }
 
-    public void delete(long id) {
-        log.debug("Delete Trainee with id {}", id);
-        traineeDao.deleteById(id);
-        log.debug("Trainee with id {} deleted successfully", id);
+    @Transactional(readOnly = true)
+    public TraineeDto find(String username) {
+        log.debug("Find Trainee with username {}", username);
+
+        Trainee trainee = findTrainee(username);
+        return traineeMapper.mapTraineeToTraineeDto(trainee);
     }
 
-    public Trainee find(long id) {
-        log.debug("Find Trainee with id {}", id);
-        return traineeDao.findById(id).orElseThrow(
-                () -> {
-                    log.error("There is no Trainee with provided id {}", id);
-                    throw new NoEntityPresentException("There is no Trainee with provided id: " + id);
-                });
-    }
-
-    public List<Trainee> findAll() {
+    @Transactional(readOnly = true)
+    public List<TraineeDto> findAll() {
         log.debug("Find all Trainees");
-        return traineeDao.findAll();
+        return traineeRepository.findAll()
+                .stream()
+                .map(traineeMapper::mapTraineeToTraineeDto)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean login(String username, String password) {
+        log.debug("Check if Trainee with username {} is exist in DataBase", username);
+
+        boolean isExists = traineeRepository.existsByUsernameAndPassword(username, password);
+        if (isExists) {
+            log.info("Trainee with username {} is exist in DataBase", username);
+            return true;
+        }
+        log.info("Trainee with username {} isn't exist in DataBase", username);
+        return false;
+    }
+
+    @Transactional(readOnly = true)
+    public List<TrainingDto> getTrainingsList(String traineeUsername,
+                                              LocalDate dateFrom,
+                                              LocalDate dateTo,
+                                              String trainerUsername) {
+
+        log.debug("Find Trainee's Training list with username {} and criteria: " +
+                "Trainer username {}, from date {}, to date {}", traineeUsername, trainerUsername, dateFrom, dateTo);
+
+        Trainee trainee = findTrainee(traineeUsername);
+
+        return trainee.getTrainings()
+                .stream()
+                .filter(training -> training.getTrainer().getUsername().equals(trainerUsername))
+                .filter(training -> training.getDate().isAfter(dateFrom) && training.getDate().isBefore(dateTo))
+                .map(trainingMapper::mapTrainingToTrainingDto)
+                .toList();
+    }
+
+    @Transactional
+    public List<TrainerDto> addTrainerToTraineeList(@Valid TraineeDto traineeDto, @Valid TrainerDto trainerDto) {
+        log.debug("Add Trainer with username {} to Trainee's trainer list with username {}",
+                trainerDto.getUsername(), traineeDto.getUsername());
+
+        Trainee trainee = traineeMapper.mapTraineeDtoToTrainee(traineeDto);
+        Trainer trainer = trainerMapper.mapTrainerDtoToTrainer(trainerDto);
+
+        trainee.addTrainer(trainer);
+        traineeRepository.save(trainee);
+
+        log.debug("Trainer with username {} added successfully to Trainee's trainer list with username {}",
+                trainerDto.getUsername(), traineeDto.getUsername());
+
+        return trainee.getTrainers()
+                .stream()
+                .map(trainerMapper::mapTrainerToTrainerDto)
+                .toList();
+    }
+
+    @Transactional
+    public List<TrainerDto> removeTrainerToTraineeList(@Valid TraineeDto traineeDto, @Valid TrainerDto trainerDto) {
+        log.debug("Remove Trainer with username {} from Trainee's trainer list with username {}",
+                trainerDto.getUsername(), traineeDto.getUsername());
+
+        Trainee trainee = traineeMapper.mapTraineeDtoToTrainee(traineeDto);
+        Trainer trainer = trainerMapper.mapTrainerDtoToTrainer(trainerDto);
+
+        trainee.removeTrainer(trainer);
+        traineeRepository.save(trainee);
+
+        log.debug("Trainer with username {} removed successfully from Trainee's trainer list with username {}",
+                trainerDto.getUsername(), traineeDto.getUsername());
+
+        return trainee.getTrainers()
+                .stream()
+                .map(trainerMapper::mapTrainerToTrainerDto)
+                .toList();
+    }
+
+    private Trainee findTrainee(String username) {
+        return traineeRepository.findByUsername(username).orElseThrow(
+                () -> {
+                    log.error("There is no Trainee with provided username {}", username);
+                    return new NoEntityPresentException("There is no Trainee with provided username: " + username);
+                });
     }
 }
