@@ -1,13 +1,12 @@
 package com.epam.gym.app.utils;
 
-import com.epam.gym.app.entity.Trainee;
-import com.epam.gym.app.entity.Trainer;
-import com.epam.gym.app.entity.User;
+import com.epam.gym.app.dto.TraineeDto;
+import com.epam.gym.app.dto.TrainerDto;
+import com.epam.gym.app.dto.UserDto;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -16,8 +15,6 @@ import java.util.Random;
 public class UserUtil {
 
     public static final String DATE_TEMPLATE = "yyyy-MM-dd";
-    public static final String DATE_TIME_TEMPLATE = "yyyy-MM-dd HH:mm:ss";
-    public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern(DATE_TIME_TEMPLATE);
     public static final String SYMBOLS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
     public static final Random RANDOM = new Random();
     public static final int PASSWORD_LENGTH = 10;
@@ -35,8 +32,8 @@ public class UserUtil {
 
     public static String generateUsername(String firstname,
                                           String lastname,
-                                          List<Trainer> trainers,
-                                          List<Trainee> trainees) {
+                                          List<TrainerDto> trainers,
+                                          List<TraineeDto> trainees) {
 
         UserNameGenerator userNameGenerator = new UserNameGenerator(firstname, lastname, trainers, trainees);
         long serNum = userNameGenerator.generateSerNum();
@@ -54,9 +51,9 @@ public class UserUtil {
 
         private final String firstname;
         private final String lastname;
-        private final List<Trainer> trainers;
-        private final List<Trainee> trainees;
-        private List<User> users;
+        private final List<TrainerDto> trainers;
+        private final List<TraineeDto> trainees;
+        private List<UserDto> users;
         private List<String> usernames;
 
         public int generateSerNum() {
@@ -75,15 +72,15 @@ public class UserUtil {
             users.addAll(convertToUserList(trainees));
         }
 
-        private List<User> convertToUserList(List<? extends User> entities) {
+        private List<UserDto> convertToUserList(List<? extends UserDto> entities) {
             return entities == null || entities.isEmpty() ? new ArrayList<>()
-                    : entities.stream().map(User.class::cast).toList();
+                    : entities.stream().map(UserDto.class::cast).toList();
         }
 
         private void initializeUsernameList() {
             usernames = users.stream()
                     .filter(u -> firstname.equals(u.getFirstname()) && lastname.equals(u.getLastname()))
-                    .map(User::getUsername)
+                    .map(UserDto::getUsername)
                     .filter(username -> username != null && !username.isEmpty())
                     .toList();
         }

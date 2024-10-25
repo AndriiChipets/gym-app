@@ -1,44 +1,55 @@
 package com.epam.gym.app.service;
 
-import com.epam.gym.app.dao.TrainingDao;
+import com.epam.gym.app.dto.TrainingDto;
 import com.epam.gym.app.entity.Training;
+import com.epam.gym.app.mapper.TrainingMapperStruct;
+import com.epam.gym.app.repository.TrainingRepository;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
 @Service
 @AllArgsConstructor
 @Log4j2
+@Validated
 public class TrainingService {
 
-    private final TrainingDao trainingDao;
+    private final TrainingRepository trainingRepository;
+    private final TrainingMapperStruct trainingMapper;
 
-    public Training save(Training training) {
-        log.debug("Save Training with name {}", training.getName());
-        Training savedTraining = trainingDao.save(training);
-        if (savedTraining != null) {
-            log.debug("Training saved successfully");
-            return savedTraining;
-        } else {
-            log.error("Training wasn't saved successfully");
-            throw new NoEntityPresentException("Training wasn't saved successfully");
-        }
+    @Transactional
+    public TrainingDto save(@Valid TrainingDto trainingDto) {
+        log.debug("Save Training with name {}", trainingDto.getName());
+        Training training = trainingMapper.mapTrainingDtoToTraining(trainingDto);
+        training = trainingRepository.save(training);
+        log.debug("Training saved successfully");
+        return trainingMapper.mapTrainingToTrainingDto(training);
     }
 
-    public Training find(long id) {
+    @Transactional(readOnly = true)
+    public TrainingDto find(long id) {
         log.debug("Find Training with id {}", id);
-        return trainingDao.findById(id).orElseThrow(
+
+        Training training = trainingRepository.findById(id).orElseThrow(
                 () -> {
                     log.error("There is no Training with provided id {}", id);
-                    throw new NoEntityPresentException("There is no Training with provided id: " + id);
+                    return new NoEntityPresentException("There is no Training with provided id: " + id);
                 });
+        return trainingMapper.mapTrainingToTrainingDto(training);
     }
 
-    public List<Training> findAll() {
+    @Transactional(readOnly = true)
+    public List<TrainingDto> findAll() {
         log.debug("Find all Trainings");
-        return trainingDao.findAll();
+        return trainingRepository.findAll()
+                .stream()
+                .map(trainingMapper::mapTrainingToTrainingDto)
+                .toList();
     }
 }
