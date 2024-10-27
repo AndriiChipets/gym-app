@@ -2,7 +2,7 @@ package com.epam.gym.app.service;
 
 import com.epam.gym.app.dto.TraineeDto;
 import com.epam.gym.app.dto.TrainerDto;
-import com.epam.gym.app.dto.TrainingDto;
+import com.epam.gym.app.dto.TrainingDTO;
 import com.epam.gym.app.entity.Trainee;
 import com.epam.gym.app.entity.Trainer;
 import com.epam.gym.app.mapper.TraineeMapperStruct;
@@ -81,7 +81,7 @@ public class TraineeService {
     }
 
     @Transactional(readOnly = true)
-    public List<TrainingDto> getTrainingsList(String traineeUsername,
+    public List<TrainingDTO> getTrainingsList(String traineeUsername,
                                               LocalDate dateFrom,
                                               LocalDate dateTo,
                                               String trainerUsername) {

@@ -15,7 +15,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class TrainingTypeDto {
+public class TrainingTypeDTO {
 
     private Long id;
 

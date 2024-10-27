@@ -18,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 public class TrainerDto extends UserDto {
 
     @NotNull(message = "Trainer must have specialization")
-    TrainingTypeDto specialization;
+    TrainingTypeDTO specialization;
 
     @Override
     public String toString() {

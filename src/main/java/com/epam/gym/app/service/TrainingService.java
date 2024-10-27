@@ -1,6 +1,6 @@
 package com.epam.gym.app.service;
 
-import com.epam.gym.app.dto.TrainingDto;
+import com.epam.gym.app.dto.TrainingDTO;
 import com.epam.gym.app.entity.Training;
 import com.epam.gym.app.mapper.TrainingMapperStruct;
 import com.epam.gym.app.repository.TrainingRepository;
@@ -24,7 +24,7 @@ public class TrainingService {
     private final TrainingMapperStruct trainingMapper;
 
     @Transactional
-    public TrainingDto save(@Valid TrainingDto trainingDto) {
+    public TrainingDTO save(@Valid TrainingDTO trainingDto) {
         log.debug("Save Training with name {}", trainingDto.getName());
         Training training = trainingMapper.mapTrainingDtoToTraining(trainingDto);
         training = trainingRepository.save(training);
@@ -33,7 +33,7 @@ public class TrainingService {
     }
 
     @Transactional(readOnly = true)
-    public TrainingDto find(long id) {
+    public TrainingDTO find(long id) {
         log.debug("Find Training with id {}", id);
 
         Training training = trainingRepository.findById(id).orElseThrow(
@@ -45,7 +45,7 @@ public class TrainingService {
     }
 
     @Transactional(readOnly = true)
-    public List<TrainingDto> findAll() {
+    public List<TrainingDTO> findAll() {
         log.debug("Find all Trainings");
         return trainingRepository.findAll()
                 .stream()

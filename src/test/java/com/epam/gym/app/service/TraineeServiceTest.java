@@ -2,7 +2,7 @@ package com.epam.gym.app.service;
 
 import com.epam.gym.app.dto.TraineeDto;
 import com.epam.gym.app.dto.TrainerDto;
-import com.epam.gym.app.dto.TrainingDto;
+import com.epam.gym.app.dto.TrainingDTO;
 import com.epam.gym.app.entity.Trainee;
 import com.epam.gym.app.entity.Trainer;
 import com.epam.gym.app.entity.Training;
@@ -169,9 +169,9 @@ class TraineeServiceTest {
         trainee.getTrainings().addAll(trainings);
 
         when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.of(trainee));
-        when(trainingMapper.mapTrainingToTrainingDto(any(Training.class))).thenReturn(new TrainingDto());
+        when(trainingMapper.mapTrainingToTrainingDto(any(Training.class))).thenReturn(new TrainingDTO());
 
-        List<TrainingDto> actual = traineeService.getTrainingsList(traineeUsername, dateFrom, dateTo, trainerUsername);
+        List<TrainingDTO> actual = traineeService.getTrainingsList(traineeUsername, dateFrom, dateTo, trainerUsername);
 
         assertNotNull(actual);
         verify(traineeRepository).findByUsername(traineeUsername);

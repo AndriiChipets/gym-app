@@ -1,6 +1,6 @@
 package com.epam.gym.app.service;
 
-import com.epam.gym.app.dto.TrainingTypeDto;
+import com.epam.gym.app.dto.TrainingTypeDTO;
 import com.epam.gym.app.entity.TrainingType;
 import com.epam.gym.app.mapper.TypeMapperStruct;
 import com.epam.gym.app.repository.TrainingTypeRepository;
@@ -23,7 +23,7 @@ public class TrainingTypeService {
     TypeMapperStruct typeMapper;
 
     @Transactional(readOnly = true)
-    public TrainingTypeDto find(String name) {
+    public TrainingTypeDTO find(String name) {
         log.debug("Find TrainingType with name {}", name);
 
         TrainingType trainingType = trainingTypeRepository.findByName(name).orElseThrow(
@@ -35,7 +35,7 @@ public class TrainingTypeService {
     }
 
     @Transactional(readOnly = true)
-    public List<TrainingTypeDto> findAll() {
+    public List<TrainingTypeDTO> findAll() {
         log.debug("Find all TrainingTypes");
         return trainingTypeRepository.findAll()
                 .stream()

@@ -72,7 +72,7 @@ INSERT INTO `training_types` (`training_type_name`)
 VALUES ('Fitness'),
 ('Yoga'),
 ('Zumba'),
-('Stretching,'),
+('Stretching'),
 ('Resistance');
 
 INSERT INTO `users` (`is_active`, `first_name`, `last_name`, `password`, `user_name`)

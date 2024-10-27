@@ -2,8 +2,8 @@ package com.epam.gym.app.controller;
 
 import com.epam.gym.app.dto.TraineeDto;
 import com.epam.gym.app.dto.TrainerDto;
-import com.epam.gym.app.dto.TrainingDto;
-import com.epam.gym.app.dto.TrainingTypeDto;
+import com.epam.gym.app.dto.TrainingDTO;
+import com.epam.gym.app.dto.TrainingTypeDTO;
 import com.epam.gym.app.service.TraineeService;
 import com.epam.gym.app.service.TrainerService;
 import com.epam.gym.app.service.TrainingService;
@@ -243,7 +243,7 @@ class FrontControllerTest {
         String traineeUsername = "trainee.username";
         String trainerUsername = "trainer.username";
         TraineeDto trainee = TraineeDto.builder().build();
-        List<TrainingDto> trainings = new ArrayList<>();
+        List<TrainingDTO> trainings = new ArrayList<>();
 
         when(viewProvider.readInt())
                 .thenReturn(userChoice)
@@ -369,7 +369,7 @@ class FrontControllerTest {
         String firstname = "firstname";
         String lastname = "lastname";
         String typename = "trainingType";
-        TrainingTypeDto specialization = TrainingTypeDto.builder().name(typename).build();
+        TrainingTypeDTO specialization = TrainingTypeDTO.builder().name(typename).build();
         String username = "firstname.lastname";
         String password = "123456789";
         TrainerDto trainer = TrainerDto.builder()
@@ -415,7 +415,7 @@ class FrontControllerTest {
         String firstname = "firstname";
         String lastname = "lastname";
         String typename = "trainingType";
-        TrainingTypeDto specialization = TrainingTypeDto.builder().name(typename).build();
+        TrainingTypeDTO specialization = TrainingTypeDTO.builder().name(typename).build();
         String username = "firstname.lastname";
         String password = "123456789";
         TrainerDto beforeUpd = TrainerDto.builder().id(trainerId).build();
@@ -534,7 +534,7 @@ class FrontControllerTest {
         String trainerUsername = "trainer.username";
         String traineeUsername = "trainee.username";
         TrainerDto trainer = TrainerDto.builder().build();
-        List<TrainingDto> trainings = new ArrayList<>();
+        List<TrainingDTO> trainings = new ArrayList<>();
 
         when(viewProvider.readInt())
                 .thenReturn(userChoice)
@@ -573,12 +573,12 @@ class FrontControllerTest {
         String traineeUsername = "trainee.username";
         String trainerUsername = "trainer.username";
         LocalDate date = LocalDate.now();
-        TrainingTypeDto trainingType = TrainingTypeDto.builder().name(typename).build();
+        TrainingTypeDTO trainingType = TrainingTypeDTO.builder().name(typename).build();
         TrainerDto trainer = TrainerDto.builder().username(trainerUsername).build();
         TraineeDto trainee = TraineeDto.builder().username(traineeUsername).build();
         int duration = 30;
 
-        TrainingDto training = TrainingDto.builder()
+        TrainingDTO training = TrainingDTO.builder()
                 .name(trainingName)
                 .type(trainingType)
                 .date(date)
@@ -618,10 +618,10 @@ class FrontControllerTest {
         int userChoice = 2;
         int actChoice = 18;
         long trainingId = 100;
-        TrainingDto training = TrainingDto.builder()
+        TrainingDTO training = TrainingDTO.builder()
                 .id(trainingId)
                 .date(LocalDate.now())
-                .type(TrainingTypeDto.builder().build())
+                .type(TrainingTypeDTO.builder().build())
                 .trainer(TrainerDto.builder().build())
                 .trainee(TraineeDto.builder().build())
                 .build();
@@ -685,7 +685,7 @@ class FrontControllerTest {
         int actChoice = 21;
         String username = "firstname.lastname";
         String password = "123456789";
-        List<TrainingDto> trainings = new ArrayList<>();
+        List<TrainingDTO> trainings = new ArrayList<>();
 
         when(viewProvider.read())
                 .thenReturn(username)
@@ -706,7 +706,7 @@ class FrontControllerTest {
         int actChoice = 22;
         String username = "firstname.lastname";
         String password = "123456789";
-        List<TrainingTypeDto> types = new ArrayList<>();
+        List<TrainingTypeDTO> types = new ArrayList<>();
 
         when(viewProvider.read())
                 .thenReturn(username)
