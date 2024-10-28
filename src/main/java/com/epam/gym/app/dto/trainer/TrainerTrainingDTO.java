@@ -1,4 +1,4 @@
-package com.epam.gym.app.dto;
+package com.epam.gym.app.dto.trainer;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -16,7 +16,7 @@ import lombok.Setter;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class TrainingDTO {
+public class TrainerTrainingDTO {
 
     @NotBlank(message = "Training name can't be blank")
     private String name;
@@ -32,19 +32,4 @@ public class TrainingDTO {
 
     @NotBlank(message = "Trainee username can't be blank")
     private String traineeUsername;
-
-    @NotBlank(message = "Trainer username can't be blank")
-    private String trainerUsername;
-
-    @Override
-    public String toString() {
-        return "TrainingDTO{" +
-                "date='" + date + '\'' +
-                ", name='" + name + '\'' +
-                ", typeName='" + typeName + '\'' +
-                ", duration=" + duration +
-                ", traineeUsername='" + traineeUsername + '\'' +
-                ", trainerUsername='" + trainerUsername + '\'' +
-                '}';
-    }
 }

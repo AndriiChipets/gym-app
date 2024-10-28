@@ -1,8 +1,8 @@
 package com.epam.gym.app.service;
 
-import com.epam.gym.app.dto.TrainingDTO;
+import com.epam.gym.app.dto.training.TrainingDTO;
 import com.epam.gym.app.entity.Training;
-import com.epam.gym.app.mapper.TrainingMapperStruct;
+import com.epam.gym.app.mapper.training.TrainingMapper;
 import com.epam.gym.app.repository.TrainingRepository;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
 import jakarta.validation.Valid;
@@ -21,7 +21,7 @@ import java.util.List;
 public class TrainingService {
 
     private final TrainingRepository trainingRepository;
-    private final TrainingMapperStruct trainingMapper;
+    private final TrainingMapper trainingMapper;
 
     @Transactional
     public TrainingDTO save(@Valid TrainingDTO trainingDto) {

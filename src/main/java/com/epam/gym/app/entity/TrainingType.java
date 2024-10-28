@@ -48,12 +48,4 @@ public class TrainingType {
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_type_id")
     private final Set<Trainer> trainers = new HashSet<>();
-
-    @Override
-    public String toString() {
-        return "TrainingType{" +
-                "id=" + id +
-                ", name=" + name +
-                "}";
-    }
 }

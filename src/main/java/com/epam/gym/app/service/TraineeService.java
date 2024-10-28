@@ -1,15 +1,26 @@
 package com.epam.gym.app.service;
 
-import com.epam.gym.app.dto.TraineeDto;
-import com.epam.gym.app.dto.TrainerDto;
-import com.epam.gym.app.dto.TrainingDTO;
+import com.epam.gym.app.dto.trainee.TraineeGetDTO;
+import com.epam.gym.app.dto.trainee.TraineeRegDTO;
+import com.epam.gym.app.dto.trainee.TraineeTrainerListDTO;
+import com.epam.gym.app.dto.trainee.TraineeTrainingDTO;
+import com.epam.gym.app.dto.trainee.TraineeTrainingFilterDTO;
+import com.epam.gym.app.dto.trainee.TraineeUpdDTO;
+import com.epam.gym.app.dto.trainer.TrainerListDTO;
+import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.entity.Trainee;
 import com.epam.gym.app.entity.Trainer;
-import com.epam.gym.app.mapper.TraineeMapperStruct;
-import com.epam.gym.app.mapper.TrainerMapperStruct;
-import com.epam.gym.app.mapper.TrainingMapperStruct;
+import com.epam.gym.app.mapper.trainee.TraineeGetMapper;
+import com.epam.gym.app.mapper.trainee.TraineeRegMapper;
+import com.epam.gym.app.mapper.trainee.TraineeTrainingMapper;
+import com.epam.gym.app.mapper.trainee.TraineeUpdMapper;
+import com.epam.gym.app.mapper.trainee.TraineeUserLoginMapper;
+import com.epam.gym.app.mapper.trainer.TrainerListMapper;
+import com.epam.gym.app.mapper.training.TrainingMapper;
 import com.epam.gym.app.repository.TraineeRepository;
+import com.epam.gym.app.repository.TrainerRepository;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
+import com.epam.gym.app.utils.UserUtil;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,20 +38,47 @@ import java.util.List;
 public class TraineeService {
 
     private final TraineeRepository traineeRepository;
-    private final TraineeMapperStruct traineeMapper;
-    private final TrainerMapperStruct trainerMapper;
-    private final TrainingMapperStruct trainingMapper;
+    private final TrainerRepository trainerRepository;
+    private final TraineeRegMapper traineeRegMapper;
+    private final TraineeGetMapper traineeGetMapper;
+    private final TraineeUpdMapper traineeUpdMapper;
+    private final TraineeTrainingMapper traineeTrainingMapper;
+    private final TrainerListMapper trainerListMapper;
+    private final TrainingMapper trainingMapper;
+    private final TraineeUserLoginMapper traineeUserLoginMapper;
 
     @Transactional
-    public TraineeDto save(@Valid TraineeDto traineeDto) {
+    public UserLoginDTO save(@Valid TraineeRegDTO traineeDto) {
         log.debug("Save Trainee with first name {} and last name {}",
                 traineeDto.getFirstname(), traineeDto.getLastname());
 
-        Trainee trainee = traineeMapper.mapTraineeDtoToTrainee(traineeDto);
+        Trainee trainee = traineeRegMapper.mapTraineeDtoToTrainee(traineeDto);
+        String password = UserUtil.generateRandomPassword();
+        String username = UserUtil.generateUsername(trainee.getFirstname(),
+                trainee.getLastname(),
+                trainerRepository.findAll(),
+                traineeRepository.findAll());
+        trainee.setIsActive(true);
+        trainee.setPassword(password);
+        trainee.setUsername(username);
+
         trainee = traineeRepository.save(trainee);
 
         log.debug("Trainee has been saved successfully");
-        return traineeMapper.mapTraineeToTraineeDto(trainee);
+        return traineeUserLoginMapper.mapTraineeToUserLoginDTO(trainee);
+    }
+
+    @Transactional
+    public TraineeUpdDTO update(@Valid TraineeUpdDTO traineeDto) {
+        log.debug("Update Trainee with first name {} and last name {}",
+                traineeDto.getFirstname(), traineeDto.getLastname());
+
+        Trainee trainee = findTrainee(traineeDto.getUsername());
+        traineeUpdMapper.updateTraineeFromDTO(traineeDto, trainee);
+        trainee = traineeRepository.save(trainee);
+
+        log.debug("Trainee has been saved successfully");
+        return traineeUpdMapper.mapTraineeToTraineeUpdDTO(trainee);
     }
 
     @Transactional
@@ -51,43 +89,29 @@ public class TraineeService {
     }
 
     @Transactional(readOnly = true)
-    public TraineeDto find(String username) {
+    public TraineeGetDTO find(String username) {
         log.debug("Find Trainee with username {}", username);
 
         Trainee trainee = findTrainee(username);
-        return traineeMapper.mapTraineeToTraineeDto(trainee);
+        return traineeGetMapper.mapTraineeToTraineeGetDTO(trainee);
     }
 
     @Transactional(readOnly = true)
-    public List<TraineeDto> findAll() {
-        log.debug("Find all Trainees");
-        return traineeRepository.findAll()
-                .stream()
-                .map(traineeMapper::mapTraineeToTraineeDto)
-                .toList();
-    }
+    public List<TraineeTrainingDTO> getTrainingsList(TraineeTrainingFilterDTO trainingFilterDTO) {
 
-    @Transactional(readOnly = true)
-    public boolean login(String username, String password) {
-        log.debug("Check if Trainee with username {} is exist in DataBase", username);
-
-        boolean isExists = traineeRepository.existsByUsernameAndPassword(username, password);
-        if (isExists) {
-            log.info("Trainee with username {} is exist in DataBase", username);
-            return true;
-        }
-        log.info("Trainee with username {} isn't exist in DataBase", username);
-        return false;
-    }
-
-    @Transactional(readOnly = true)
-    public List<TrainingDTO> getTrainingsList(String traineeUsername,
-                                              LocalDate dateFrom,
-                                              LocalDate dateTo,
-                                              String trainerUsername) {
+        String traineeUsername = trainingFilterDTO.getUsername();
+        String trainerUsername = trainingFilterDTO.getTrainerUsername();
+        LocalDate dateFrom = LocalDate.parse(trainingFilterDTO.getDateFrom());
+        LocalDate dateTo = LocalDate.parse(trainingFilterDTO.getDateTo());
+        String typeName = trainingFilterDTO.getTypeName();
 
         log.debug("Find Trainee's Training list with username {} and criteria: " +
-                "Trainer username {}, from date {}, to date {}", traineeUsername, trainerUsername, dateFrom, dateTo);
+                        "Trainer username {}, from date {}, to date {} and training type {}",
+                traineeUsername,
+                trainerUsername,
+                dateFrom,
+                dateTo,
+                typeName);
 
         Trainee trainee = findTrainee(traineeUsername);
 
@@ -95,48 +119,35 @@ public class TraineeService {
                 .stream()
                 .filter(training -> training.getTrainer().getUsername().equals(trainerUsername))
                 .filter(training -> training.getDate().isAfter(dateFrom) && training.getDate().isBefore(dateTo))
-                .map(trainingMapper::mapTrainingToTrainingDto)
+                .filter(training -> training.getType().getName().equals(typeName))
+                .map(traineeTrainingMapper::mapTrainingToTrainingDTO)
                 .toList();
     }
 
     @Transactional
-    public List<TrainerDto> addTrainerToTraineeList(@Valid TraineeDto traineeDto, @Valid TrainerDto trainerDto) {
-        log.debug("Add Trainer with username {} to Trainee's trainer list with username {}",
-                trainerDto.getUsername(), traineeDto.getUsername());
+    public List<TrainerListDTO> updateTraineeTrainerList(@Valid TraineeTrainerListDTO traineeDto) {
+        log.debug("Update Trainee's with username {} Trainer List", traineeDto.getUsername());
 
-        Trainee trainee = traineeMapper.mapTraineeDtoToTrainee(traineeDto);
-        Trainer trainer = trainerMapper.mapTrainerDtoToTrainer(trainerDto);
+        Trainee trainee = findTrainee(traineeDto.getUsername());
+        List<Trainer> trainers = trainerRepository.findAllByUsernameIn(traineeDto.getTrainersUsernames());
 
-        trainee.addTrainer(trainer);
+        trainee.addAllTrainers(trainers);
         traineeRepository.save(trainee);
 
-        log.debug("Trainer with username {} added successfully to Trainee's trainer list with username {}",
-                trainerDto.getUsername(), traineeDto.getUsername());
+        log.debug("Trainee's with username {} Trainer list updated successfully", traineeDto.getUsername());
 
         return trainee.getTrainers()
                 .stream()
-                .map(trainerMapper::mapTrainerToTrainerDto)
+                .map(trainerListMapper::mapTrainerToTrainerListDTO)
                 .toList();
     }
 
     @Transactional
-    public List<TrainerDto> removeTrainerToTraineeList(@Valid TraineeDto traineeDto, @Valid TrainerDto trainerDto) {
-        log.debug("Remove Trainer with username {} from Trainee's trainer list with username {}",
-                trainerDto.getUsername(), traineeDto.getUsername());
-
-        Trainee trainee = traineeMapper.mapTraineeDtoToTrainee(traineeDto);
-        Trainer trainer = trainerMapper.mapTrainerDtoToTrainer(trainerDto);
-
-        trainee.removeTrainer(trainer);
+    public void activateDeactivate(String username, boolean isActive) {
+        log.debug("Change isActive on {} for Trainee with username {}", isActive, username);
+        Trainee trainee = findTrainee(username);
+        trainee.setIsActive(isActive);
         traineeRepository.save(trainee);
-
-        log.debug("Trainer with username {} removed successfully from Trainee's trainer list with username {}",
-                trainerDto.getUsername(), traineeDto.getUsername());
-
-        return trainee.getTrainers()
-                .stream()
-                .map(trainerMapper::mapTrainerToTrainerDto)
-                .toList();
     }
 
     private Trainee findTrainee(String username) {

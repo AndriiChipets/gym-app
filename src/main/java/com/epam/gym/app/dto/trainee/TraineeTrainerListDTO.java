@@ -1,6 +1,7 @@
-package com.epam.gym.app.dto;
+package com.epam.gym.app.dto.trainee;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,24 +10,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Builder
 @Getter
-@Setter
 @EqualsAndHashCode
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class TrainingTypeDTO {
+public class TraineeTrainerListDTO {
 
-    private Long id;
+    @NotNull
+    @NotBlank(message = "username can't be blank")
+    private String username;
 
-    @NotBlank(message = "Training Type name can't be blank")
-    private String name;
-
-    @Override
-    public String toString() {
-        return "TrainingType{" +
-                "id=" + id +
-                ", name=" + name +
-                "}";
-    }
+    @NotNull
+    Set<String> trainersUsernames;
 }

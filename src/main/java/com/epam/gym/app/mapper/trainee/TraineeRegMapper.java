@@ -1,17 +1,16 @@
-package com.epam.gym.app.mapper;
+package com.epam.gym.app.mapper.trainee;
 
-import com.epam.gym.app.dto.TraineeDto;
+import com.epam.gym.app.dto.trainee.TraineeRegDTO;
 import com.epam.gym.app.entity.Trainee;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public interface TraineeMapperStruct {
-
-    TraineeDto mapTraineeToTraineeDto(Trainee trainee);
+public interface TraineeRegMapper {
 
     @Mapping(target = "trainers", ignore = true)
     @Mapping(target = "trainings", ignore = true)
-    Trainee mapTraineeDtoToTrainee(TraineeDto traineeDto);
+    @Mapping(target = "dateOfBirth", source = "traineeDto.dateOfBirth", dateFormat = "yyyy-MM-dd")
+    Trainee mapTraineeDtoToTrainee(TraineeRegDTO traineeDto);
 }

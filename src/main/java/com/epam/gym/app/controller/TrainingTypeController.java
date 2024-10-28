@@ -1,6 +1,6 @@
 package com.epam.gym.app.controller;
 
-import com.epam.gym.app.dto.TrainingTypeDTO;
+import com.epam.gym.app.dto.training_type.TrainingTypeDTO;
 import com.epam.gym.app.service.TrainingTypeService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

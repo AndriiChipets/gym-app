@@ -1,129 +1,69 @@
 package com.epam.gym.app.controller;
 
-import com.epam.gym.app.dto.TraineeDto;
-import com.epam.gym.app.dto.TrainerDto;
-import com.epam.gym.app.dto.TrainingDTO;
+import com.epam.gym.app.dto.trainee.TraineeGetDTO;
+import com.epam.gym.app.dto.trainee.TraineeRegDTO;
+import com.epam.gym.app.dto.trainee.TraineeTrainerListDTO;
+import com.epam.gym.app.dto.trainee.TraineeTrainingDTO;
+import com.epam.gym.app.dto.trainee.TraineeTrainingFilterDTO;
+import com.epam.gym.app.dto.trainee.TraineeUpdDTO;
+import com.epam.gym.app.dto.trainer.TrainerListDTO;
+import com.epam.gym.app.dto.user.UserLoginDTO;
+import com.epam.gym.app.service.TraineeService;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-//@RestController
+@RestController
+@AllArgsConstructor
 public class TraineeController {
 
-    //    Trainee Registration (POST method)
-//    a. Request
-//    I. First Name (required)
-//    II. Last Name (required)
-//    III. Date of Birth (optional)
-//    IV. Address (optional)
-//    b. Response
-//    I. Username
-//    II. Password
-    @PostMapping()
-    String register() {
-        return null;
+    private final TraineeService traineeService;
+
+    @PostMapping("/trainee")
+    @ResponseStatus(HttpStatus.OK)
+    public UserLoginDTO registerTrainee(@RequestBody TraineeRegDTO traineeDto) {
+        return traineeService.save(traineeDto);
     }
 
-    //    Get Trainee Profile (GET method)
-//    a. Request
-//    I. Username (required)
-//    b. Response
-//    I. First Name
-//    II. Last Name
-//    III. Date of Birth
-//    IV. Address
-//    V. Is Active
-//    VI. Trainers List
-//        1. Trainer Username
-//        2. Trainer First Name
-//        3. Trainer Last Name
-//        4. Trainer Specialization (Training type reference)
-    @GetMapping()
-    public TraineeDto getTrainee() {
-        return null;
+    @GetMapping("/trainee")
+    public TraineeGetDTO getTrainee(@RequestParam String username) {
+        return traineeService.find(username);
     }
 
-    //    Update Trainee Profile (PUT method)
-//    a. Request
-//   I. Username (required)
-//   II. First Name (required)
-//   III. Last Name (required)
-//   IV. Date of Birth (optional)
-//    V. Address (optional)
-//    VI. Is Active (required)
-//    b. Response
-//    I. Username
-//    II. First Name
-//    III. Last Name
-//    IV. Date of Birth
-//    V. Address
-//    VI. Is Active
-//    VII. Trainers List
-//       1. Trainer Username
-//       2. Trainer First Name
-//       3. Trainer Last Name
-//       4. Trainer Specialization (Training type reference)
-    @PutMapping()
-    public TraineeDto updateTrainee() {
-        return null;
+    @PutMapping("/trainee")
+    public TraineeUpdDTO updateTrainee(@RequestBody TraineeUpdDTO traineeUpdDTO) {
+        return traineeService.update(traineeUpdDTO);
     }
 
-    //    Delete Trainee Profile (DELETE method)
-//    a. Request
-//    I. Username (required)
-//    b. Response
-//    I. 200 OK
-    @DeleteMapping()
-    public void deleteTrainee() {
-
+    @DeleteMapping("/trainee")
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteTrainee(@RequestParam String username) {
+        traineeService.delete(username);
     }
 
-    //    Update Trainee's Trainer List (PUT method)
-//    a. Request
-//    I. Trainee Username
-//    II. Trainers List (required)
-//     1. Trainer Username (required)
-//    b. Response
-//    I. Trainers List
-//    1. Trainer Username
-//    2. Trainer First Name
-//    3. Trainer Last Name
-//    4. Trainer Specialization (Training type reference)
-    @PutMapping()
-    public List<TrainerDto> updateTraineeTrainerList() {
-        return null;
+    @PutMapping("/trainee/trainers")
+    public List<TrainerListDTO> updateTraineeTrainerList(@RequestBody TraineeTrainerListDTO traineeTrainerListDTO) {
+        return traineeService.updateTraineeTrainerList(traineeTrainerListDTO);
     }
 
-    //    Get Trainee Trainings List (GET method)
-//    a. Request
-//    I. Username (required)
-//    II. Period From (optional)
-//    III. Period To (optional)
-//    IV. Trainer Name (optional)
-//    V. Training Type (optional)
-//    b. Response
-//    I. Training Name
-//    II. Training Date
-//    III. Training Type
-//    IV. Training Duration
-//    V. Trainer Name
-    @GetMapping()
-    public List<TrainingDTO> getTraineeTrainingList() {
-        return null;
+    @GetMapping("/trainee/trainings")
+    public List<TraineeTrainingDTO> getTraineeTrainingList(@RequestBody TraineeTrainingFilterDTO trainingFilterDTO) {
+        return traineeService.getTrainingsList(trainingFilterDTO);
     }
 
-    //    Activate/De-Activate Trainee (PATCH method)
-//    a. Request
-//    I. Username (required)
-//    II. Is Active (required)
-//    b. Response
-//    I. 200 OK
-    @PatchMapping()
-    public void ActivateDeactivateTrainee() {
-
+    @PatchMapping("/trainee")
+    @ResponseStatus(HttpStatus.OK)
+    public void activateDeactivateTrainee(@RequestParam String username, @RequestParam boolean isActive) {
+        traineeService.activateDeactivate(username, isActive);
     }
 }

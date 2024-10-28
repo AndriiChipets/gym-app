@@ -1,6 +1,6 @@
-package com.epam.gym.app.mapper;
+package com.epam.gym.app.mapper.training;
 
-import com.epam.gym.app.dto.TrainingDTO;
+import com.epam.gym.app.dto.training.TrainingDTO;
 import com.epam.gym.app.entity.Training;
 import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.repository.TrainerRepository;
@@ -11,7 +11,7 @@ import org.mapstruct.MappingConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
-public abstract class TrainingMapperStruct {
+public abstract class TrainingMapper {
 
     @Autowired
     protected TrainerRepository trainerRepository;
@@ -25,7 +25,6 @@ public abstract class TrainingMapperStruct {
     @Mapping(target = "typeName", source = "training.type.name")
     public abstract TrainingDTO mapTrainingToTrainingDto(Training training);
 
-    @Mapping(target = "date", source = "trainingDto.date", dateFormat = "yyyy-MM-dd")
     @Mapping(target = "trainee",
             expression = "java(traineeRepository.findByUsername(trainingDto.getTraineeUsername()).get())")
     @Mapping(target = "trainer",

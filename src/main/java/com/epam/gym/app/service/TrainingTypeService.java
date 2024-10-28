@@ -1,8 +1,8 @@
 package com.epam.gym.app.service;
 
-import com.epam.gym.app.dto.TrainingTypeDTO;
+import com.epam.gym.app.dto.training_type.TrainingTypeDTO;
 import com.epam.gym.app.entity.TrainingType;
-import com.epam.gym.app.mapper.TypeMapperStruct;
+import com.epam.gym.app.mapper.training_type.TrainingTypeMapper;
 import com.epam.gym.app.repository.TrainingTypeRepository;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
 import lombok.AllArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.List;
 public class TrainingTypeService {
 
     TrainingTypeRepository trainingTypeRepository;
-    TypeMapperStruct typeMapper;
+    TrainingTypeMapper typeMapper;
 
     @Transactional(readOnly = true)
     public TrainingTypeDTO find(String name) {
