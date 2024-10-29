@@ -39,7 +39,6 @@ public class TrainerService {
     private final TrainerUpdMapper trainerUpdMapper;
     private final TrainerListMapper trainerListMapper;
     private final TrainerTrainingMapper trainerTrainingMapper;
-    private final TrainingMapper trainingMapper;
     private final TrainerUserLoginMapper trainerUserLoginMapper;
 
     @Transactional

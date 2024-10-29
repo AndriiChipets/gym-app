@@ -2,8 +2,9 @@ package com.epam.gym.app.controller;
 
 import com.epam.gym.app.dto.user.UserChangePasswordDTO;
 import com.epam.gym.app.dto.user.UserLoginDTO;
+import com.epam.gym.app.exception.UnsatisfiedActionException;
+import com.epam.gym.app.exception.UserNotLoginException;
 import com.epam.gym.app.service.AuthService;
-import com.epam.gym.app.exception.NoEntityPresentException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,14 +24,14 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     public void login(@Valid @RequestBody UserLoginDTO userLoginDTO) {
         if (!authService.login(userLoginDTO)) {
-            throw new NoEntityPresentException("User is not login");
+            throw new UserNotLoginException("Password or username is incorrect");
         }
     }
 
     @PutMapping("/login")
     public void changePassword(@Valid @RequestBody UserChangePasswordDTO changePasswordDTO) {
         if (!authService.changePassword(changePasswordDTO)) {
-            throw new IllegalArgumentException("password wasn't changed");
+            throw new UnsatisfiedActionException("password wasn't changed");
         }
     }
 }
