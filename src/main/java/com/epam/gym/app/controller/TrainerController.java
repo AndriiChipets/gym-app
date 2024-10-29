@@ -8,6 +8,10 @@ import com.epam.gym.app.dto.trainer.TrainerTrainingFilterDTO;
 import com.epam.gym.app.dto.trainer.TrainerUpdDTO;
 import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.service.TrainerService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -25,39 +29,70 @@ import java.util.List;
 
 @RestController
 @AllArgsConstructor
+@Tag(name = "Trainer Controller", description = "Operations related to the Trainer")
 public class TrainerController {
 
     private final TrainerService trainerService;
 
     @PostMapping("/trainer")
+    @Operation(summary = "Register new Trainer")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "New Trainer successfully registered"),
+            @ApiResponse(responseCode = "404", description = "New Trainer is not registered")
+    })
     @ResponseStatus(HttpStatus.OK)
     public UserLoginDTO registerTrainer(@Valid @RequestBody TrainerRegDTO trainerDto) {
         return trainerService.save(trainerDto);
     }
 
     @GetMapping("/trainer")
+    @Operation(summary = "Get Trainer")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Trainer successfully found"),
+            @ApiResponse(responseCode = "404", description = "Trainer with provided password and username is not found")
+    })
     public TrainerGetDTO getTrainer(@NotBlank @RequestParam String username) {
         return trainerService.find(username);
     }
 
     @PutMapping("/trainer")
+    @Operation(summary = "Update Trainer")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Trainer successfully updated"),
+            @ApiResponse(responseCode = "404", description = "Trainer is not updated")
+    })
     public TrainerUpdDTO updateTrainer(@Valid @RequestBody TrainerUpdDTO trainerUpdDTO) {
         return trainerService.update(trainerUpdDTO);
     }
 
     @GetMapping("/trainer/trainees")
+    @Operation(summary = "Get List of Trainer's Trainees")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "List of Trainer's Trainees successfully retrieved"),
+            @ApiResponse(responseCode = "404", description = "List of Trainer's Trainees is not retrieved")
+    })
     public List<TrainerListDTO> getNotAssignedOnTraineeActiveTrainers(@NotBlank @RequestParam String traineeUsername) {
         return trainerService.getTrainersListNotAssignedOnTrainee(traineeUsername);
     }
 
     @GetMapping("/trainer/trainings")
-    public List<TrainerTrainingDTO> getTrainerTraainingsList(
+    @Operation(summary = "Get List of Trainer's Trainings filtered by criteria")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "List of Trainer's Trainings successfully retrieved"),
+            @ApiResponse(responseCode = "404", description = "List of Trainer's Trainings is not retrieved")
+    })
+    public List<TrainerTrainingDTO> getTrainerTrainingsList(
             @Valid @RequestBody TrainerTrainingFilterDTO trainingFilterDTO) {
 
         return trainerService.getTrainingsList(trainingFilterDTO);
     }
 
     @PatchMapping("/trainer")
+    @Operation(summary = "Activate or deactivate Trainer's profile")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "The status of Trainer's profile successfully changed"),
+            @ApiResponse(responseCode = "404", description = "The status of Trainer's profile is not changed")
+    })
     @ResponseStatus(HttpStatus.OK)
     public void activateDeactivateTrainer(
             @NotBlank @RequestParam String username,
