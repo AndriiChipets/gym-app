@@ -19,7 +19,7 @@ import com.epam.gym.app.mapper.trainer.TrainerListMapper;
 import com.epam.gym.app.mapper.training.TrainingMapper;
 import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.repository.TrainerRepository;
-import com.epam.gym.app.service.exception.NoEntityPresentException;
+import com.epam.gym.app.exception.NoEntityPresentException;
 import com.epam.gym.app.utils.UserUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;

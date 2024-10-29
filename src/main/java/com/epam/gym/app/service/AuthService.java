@@ -4,7 +4,7 @@ import com.epam.gym.app.dto.user.UserChangePasswordDTO;
 import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.entity.User;
 import com.epam.gym.app.repository.AuthRepository;
-import com.epam.gym.app.service.exception.NoEntityPresentException;
+import com.epam.gym.app.exception.NoEntityPresentException;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;

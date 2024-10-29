@@ -1,4 +1,4 @@
-package com.epam.gym.app.service.exception;
+package com.epam.gym.app.exception;
 
 public class NoEntityPresentException extends RuntimeException {
 

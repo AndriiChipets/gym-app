@@ -3,7 +3,7 @@ package com.epam.gym.app.controller;
 import com.epam.gym.app.dto.user.UserChangePasswordDTO;
 import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.service.AuthService;
-import com.epam.gym.app.service.exception.NoEntityPresentException;
+import com.epam.gym.app.exception.NoEntityPresentException;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

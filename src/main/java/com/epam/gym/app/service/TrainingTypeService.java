@@ -4,7 +4,7 @@ import com.epam.gym.app.dto.training_type.TrainingTypeDTO;
 import com.epam.gym.app.entity.TrainingType;
 import com.epam.gym.app.mapper.training_type.TrainingTypeMapper;
 import com.epam.gym.app.repository.TrainingTypeRepository;
-import com.epam.gym.app.service.exception.NoEntityPresentException;
+import com.epam.gym.app.exception.NoEntityPresentException;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
