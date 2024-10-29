@@ -17,12 +17,16 @@ import lombok.Setter;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserLoginDTO {
+public class UserChangePasswordDTO {
 
     @NotBlank(message = "username can't be blank")
     private String username;
 
     @Size(min = UserUtil.PASSWORD_LENGTH, max = UserUtil.PASSWORD_LENGTH, message
             = "password must be exactly " + UserUtil.PASSWORD_LENGTH + " characters length")
-    private String password;
+    private String oldPassword;
+
+    @Size(min = UserUtil.PASSWORD_LENGTH, max = UserUtil.PASSWORD_LENGTH, message
+            = "password must be exactly " + UserUtil.PASSWORD_LENGTH + " characters length")
+    private String newPassword;
 }
