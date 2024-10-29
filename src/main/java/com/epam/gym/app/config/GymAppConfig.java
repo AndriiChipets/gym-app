@@ -4,20 +4,26 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import java.util.Scanner;
+import org.zalando.logbook.Logbook;
+import org.zalando.logbook.core.Conditions;
+import org.zalando.logbook.core.DefaultHttpLogFormatter;
+import org.zalando.logbook.core.DefaultHttpLogWriter;
+import org.zalando.logbook.core.DefaultSink;
 
 @Configuration
 @ComponentScan(basePackages = "com.epam.gym.app")
-@EnableJpaRepositories(basePackages = "com.epam.gym.app.repository")
 @EnableTransactionManagement
 @Log4j2
 public class GymAppConfig {
 
     @Bean
-    public Scanner getScanner() {
-        return new Scanner(System.in);
+    public Logbook logbook() {
+        return Logbook.builder()
+                .condition(Conditions.exclude(Conditions.requestTo("/api/welcome"),
+                        Conditions.contentType("application/octet-stream"),
+                        Conditions.header("X-Secret", "true")))
+                .sink(new DefaultSink(new DefaultHttpLogFormatter(), new DefaultHttpLogWriter()))
+                .build();
     }
 }
