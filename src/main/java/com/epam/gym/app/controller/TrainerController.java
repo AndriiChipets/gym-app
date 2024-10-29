@@ -8,6 +8,8 @@ import com.epam.gym.app.dto.trainer.TrainerTrainingFilterDTO;
 import com.epam.gym.app.dto.trainer.TrainerUpdDTO;
 import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.service.TrainerService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,33 +31,38 @@ public class TrainerController {
 
     @PostMapping("/trainer")
     @ResponseStatus(HttpStatus.OK)
-    public UserLoginDTO registerTrainer(@RequestBody TrainerRegDTO trainerDto) {
+    public UserLoginDTO registerTrainer(@Valid @RequestBody TrainerRegDTO trainerDto) {
         return trainerService.save(trainerDto);
     }
 
     @GetMapping("/trainer")
-    public TrainerGetDTO getTrainer(@RequestParam String username) {
+    public TrainerGetDTO getTrainer(@NotBlank @RequestParam String username) {
         return trainerService.find(username);
     }
 
     @PutMapping("/trainer")
-    public TrainerUpdDTO updateTrainer(@RequestBody TrainerUpdDTO trainerUpdDTO) {
+    public TrainerUpdDTO updateTrainer(@Valid @RequestBody TrainerUpdDTO trainerUpdDTO) {
         return trainerService.update(trainerUpdDTO);
     }
 
     @GetMapping("/trainer/trainees")
-    public List<TrainerListDTO> getNotAssignedOnTraineeActiveTrainers(@RequestParam String traineeUsername) {
+    public List<TrainerListDTO> getNotAssignedOnTraineeActiveTrainers(@NotBlank @RequestParam String traineeUsername) {
         return trainerService.getTrainersListNotAssignedOnTrainee(traineeUsername);
     }
 
     @GetMapping("/trainer/trainings")
-    public List<TrainerTrainingDTO> getTrainerTraainingsList(@RequestBody TrainerTrainingFilterDTO trainingFilterDTO) {
+    public List<TrainerTrainingDTO> getTrainerTraainingsList(
+            @Valid @RequestBody TrainerTrainingFilterDTO trainingFilterDTO) {
+
         return trainerService.getTrainingsList(trainingFilterDTO);
     }
 
     @PatchMapping("/trainer")
     @ResponseStatus(HttpStatus.OK)
-    public void activateDeactivateTrainer(@RequestParam String username, @RequestParam boolean isActive) {
+    public void activateDeactivateTrainer(
+            @NotBlank @RequestParam String username,
+            @NotBlank @RequestParam boolean isActive) {
+
         trainerService.activateDeactivate(username, isActive);
     }
 }

@@ -21,11 +21,9 @@ import java.util.Set;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TraineeGetDTO {
 
-    @NotNull
     @NotBlank(message = "firstname can't be blank")
     private String firstname;
 
-    @NotNull
     @NotBlank(message = "lastname can't be blank")
     private String lastname;
 

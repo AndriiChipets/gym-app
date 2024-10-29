@@ -21,12 +21,4 @@ public class TrainingTypeDTO {
 
     @NotBlank(message = "Training Type name can't be blank")
     private String name;
-
-    @Override
-    public String toString() {
-        return "TrainingType{" +
-                "id=" + id +
-                ", name=" + name +
-                "}";
-    }
 }

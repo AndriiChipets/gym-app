@@ -19,15 +19,12 @@ import lombok.Setter;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TrainerListDTO {
 
-    @NotNull
     @NotBlank(message = "firstname can't be blank")
     private String username;
 
-    @NotNull
     @NotBlank(message = "firstname can't be blank")
     private String firstname;
 
-    @NotNull
     @NotBlank(message = "lastname can't be blank")
     private String lastname;
 

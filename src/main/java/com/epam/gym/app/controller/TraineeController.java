@@ -9,6 +9,9 @@ import com.epam.gym.app.dto.trainee.TraineeUpdDTO;
 import com.epam.gym.app.dto.trainer.TrainerListDTO;
 import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.service.TraineeService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,39 +34,46 @@ public class TraineeController {
 
     @PostMapping("/trainee")
     @ResponseStatus(HttpStatus.OK)
-    public UserLoginDTO registerTrainee(@RequestBody TraineeRegDTO traineeDto) {
+    public UserLoginDTO registerTrainee(@Valid @RequestBody TraineeRegDTO traineeDto) {
         return traineeService.save(traineeDto);
     }
 
     @GetMapping("/trainee")
-    public TraineeGetDTO getTrainee(@RequestParam String username) {
+    public TraineeGetDTO getTrainee(@NotBlank @RequestParam String username) {
         return traineeService.find(username);
     }
 
     @PutMapping("/trainee")
-    public TraineeUpdDTO updateTrainee(@RequestBody TraineeUpdDTO traineeUpdDTO) {
+    public TraineeUpdDTO updateTrainee(@Valid @RequestBody TraineeUpdDTO traineeUpdDTO) {
         return traineeService.update(traineeUpdDTO);
     }
 
     @DeleteMapping("/trainee")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteTrainee(@RequestParam String username) {
+    public void deleteTrainee(@NotBlank @RequestParam String username) {
         traineeService.delete(username);
     }
 
     @PutMapping("/trainee/trainers")
-    public List<TrainerListDTO> updateTraineeTrainerList(@RequestBody TraineeTrainerListDTO traineeTrainerListDTO) {
+    public List<TrainerListDTO> updateTraineeTrainerList(
+            @Valid @RequestBody TraineeTrainerListDTO traineeTrainerListDTO) {
+
         return traineeService.updateTraineeTrainerList(traineeTrainerListDTO);
     }
 
     @GetMapping("/trainee/trainings")
-    public List<TraineeTrainingDTO> getTraineeTrainingList(@RequestBody TraineeTrainingFilterDTO trainingFilterDTO) {
+    public List<TraineeTrainingDTO> getTraineeTrainingList(
+            @Valid @RequestBody TraineeTrainingFilterDTO trainingFilterDTO) {
+
         return traineeService.getTrainingsList(trainingFilterDTO);
     }
 
     @PatchMapping("/trainee")
     @ResponseStatus(HttpStatus.OK)
-    public void activateDeactivateTrainee(@RequestParam String username, @RequestParam boolean isActive) {
+    public void activateDeactivateTrainee(
+            @NotBlank @RequestParam String username,
+            @NotNull @RequestParam boolean isActive) {
+
         traineeService.activateDeactivate(username, isActive);
     }
 }

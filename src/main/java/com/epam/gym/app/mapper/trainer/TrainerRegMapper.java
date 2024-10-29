@@ -14,9 +14,6 @@ public abstract class TrainerRegMapper {
     @Autowired
     protected TrainingTypeRepository trainingTypeRepository;
 
-    @Mapping(target = "specialization", source = "trainer.specialization.name")
-    public abstract TrainerRegDTO mapTrainerToTrainerDto(Trainer trainer);
-
     @Mapping(target = "trainees", ignore = true)
     @Mapping(target = "trainings", ignore = true)
     @Mapping(target = "specialization",

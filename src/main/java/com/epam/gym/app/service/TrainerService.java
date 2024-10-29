@@ -19,12 +19,10 @@ import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.repository.TrainerRepository;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
 import com.epam.gym.app.utils.UserUtil;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,7 +30,6 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 @Log4j2
-@Validated
 public class TrainerService {
 
     private final TrainerRepository trainerRepository;
@@ -46,7 +43,7 @@ public class TrainerService {
     private final TrainerUserLoginMapper trainerUserLoginMapper;
 
     @Transactional
-    public UserLoginDTO save(@Valid TrainerRegDTO trainerDto) {
+    public UserLoginDTO save(TrainerRegDTO trainerDto) {
         log.debug("Save Trainer with first name {} and last name {}",
                 trainerDto.getFirstname(), trainerDto.getLastname());
 
@@ -75,7 +72,7 @@ public class TrainerService {
     }
 
     @Transactional
-    public TrainerUpdDTO update(@Valid TrainerUpdDTO trainerDto) {
+    public TrainerUpdDTO update(TrainerUpdDTO trainerDto) {
         log.debug("Update Trainer with first name {} and last name {}",
                 trainerDto.getFirstname(), trainerDto.getLastname());
 
@@ -122,6 +119,7 @@ public class TrainerService {
                 .toList();
     }
 
+    @Transactional
     public void activateDeactivate(String username, boolean isActive) {
         log.debug("Change isActive on {} for Trainer with username {}", isActive, username);
         Trainer trainer = findTrainer(username);

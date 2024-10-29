@@ -22,15 +22,12 @@ import java.util.Set;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TrainerUpdDTO {
 
-    @NotNull
     @NotBlank(message = "username can't be blank")
     private String username;
 
-    @NotNull
     @NotBlank(message = "firstname can't be blank")
     private String firstname;
 
-    @NotNull
     @NotBlank(message = "lastname can't be blank")
     private String lastname;
 

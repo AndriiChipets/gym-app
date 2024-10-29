@@ -4,6 +4,7 @@ import com.epam.gym.app.dto.user.UserChangePasswordDTO;
 import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.service.AuthService;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,14 +21,14 @@ public class AuthController {
 
     @GetMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public void login(@RequestBody UserLoginDTO userLoginDTO) {
+    public void login(@Valid @RequestBody UserLoginDTO userLoginDTO) {
         if (!authService.login(userLoginDTO)) {
             throw new NoEntityPresentException("User is not login");
         }
     }
 
     @PutMapping("/login")
-    public void changePassword(@RequestBody UserChangePasswordDTO changePasswordDTO) {
+    public void changePassword(@Valid @RequestBody UserChangePasswordDTO changePasswordDTO) {
         if (!authService.changePassword(changePasswordDTO)) {
             throw new IllegalArgumentException("password wasn't changed");
         }

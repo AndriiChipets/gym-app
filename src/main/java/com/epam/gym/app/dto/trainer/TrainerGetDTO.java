@@ -22,15 +22,12 @@ import java.util.Set;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TrainerGetDTO {
 
-    @NotNull
     @NotBlank(message = "firstname can't be blank")
     private String firstname;
 
-    @NotNull
     @NotBlank(message = "lastname can't be blank")
     private String lastname;
 
-    @NotNull
     @NotBlank(message = "Trainer must have specialization")
     TrainingTypeDTO specialization;
 

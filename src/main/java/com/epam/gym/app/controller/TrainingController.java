@@ -2,6 +2,7 @@ package com.epam.gym.app.controller;
 
 import com.epam.gym.app.dto.training.TrainingDTO;
 import com.epam.gym.app.service.TrainingService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,7 @@ public class TrainingController {
 
     @PostMapping("/training")
     @ResponseStatus(HttpStatus.OK)
-    public void addTraining(@RequestBody TrainingDTO trainingDTO) {
+    public void addTraining(@Valid @RequestBody TrainingDTO trainingDTO) {
         trainingService.save(trainingDTO);
     }
 }

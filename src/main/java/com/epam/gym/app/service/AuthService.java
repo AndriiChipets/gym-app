@@ -17,7 +17,7 @@ public class AuthService {
 
     private final AuthRepository authRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
     public boolean login(UserLoginDTO userLoginDTO) {
         String username = userLoginDTO.getUsername();
         String password = userLoginDTO.getPassword();
@@ -36,7 +36,7 @@ public class AuthService {
         String newPassword = changePasswordDTO.getNewPassword();
 
         if (!authRepository.existsByUsernameAndPassword(username, oldPassword)) {
-            log.error("Old password or username is incorrect");
+            log.warn("Old password or username is incorrect");
             throw new NoEntityPresentException("Old password or username is incorrect");
         }
 

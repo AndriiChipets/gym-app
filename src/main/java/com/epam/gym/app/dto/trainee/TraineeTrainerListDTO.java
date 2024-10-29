@@ -20,7 +20,6 @@ import java.util.Set;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TraineeTrainerListDTO {
 
-    @NotNull
     @NotBlank(message = "username can't be blank")
     private String username;
 

@@ -21,12 +21,10 @@ import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.repository.TrainerRepository;
 import com.epam.gym.app.service.exception.NoEntityPresentException;
 import com.epam.gym.app.utils.UserUtil;
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -34,7 +32,6 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 @Log4j2
-@Validated
 public class TraineeService {
 
     private final TraineeRepository traineeRepository;
@@ -48,7 +45,7 @@ public class TraineeService {
     private final TraineeUserLoginMapper traineeUserLoginMapper;
 
     @Transactional
-    public UserLoginDTO save(@Valid TraineeRegDTO traineeDto) {
+    public UserLoginDTO save(TraineeRegDTO traineeDto) {
         log.debug("Save Trainee with first name {} and last name {}",
                 traineeDto.getFirstname(), traineeDto.getLastname());
 
@@ -69,7 +66,7 @@ public class TraineeService {
     }
 
     @Transactional
-    public TraineeUpdDTO update(@Valid TraineeUpdDTO traineeDto) {
+    public TraineeUpdDTO update(TraineeUpdDTO traineeDto) {
         log.debug("Update Trainee with first name {} and last name {}",
                 traineeDto.getFirstname(), traineeDto.getLastname());
 
@@ -125,7 +122,7 @@ public class TraineeService {
     }
 
     @Transactional
-    public List<TrainerListDTO> updateTraineeTrainerList(@Valid TraineeTrainerListDTO traineeDto) {
+    public List<TrainerListDTO> updateTraineeTrainerList(TraineeTrainerListDTO traineeDto) {
         log.debug("Update Trainee's with username {} Trainer List", traineeDto.getUsername());
 
         Trainee trainee = findTrainee(traineeDto.getUsername());
