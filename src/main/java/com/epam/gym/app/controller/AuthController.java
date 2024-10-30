@@ -1,5 +1,6 @@
 package com.epam.gym.app.controller;
 
+import com.epam.gym.app.annotation.Authenticated;
 import com.epam.gym.app.dto.user.UserChangePasswordDTO;
 import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.exception.UnsatisfiedActionException;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,17 +34,20 @@ public class AuthController {
             @ApiResponse(responseCode = "404", description = "User with provided password and username is not found"),
     })
     @ResponseStatus(HttpStatus.OK)
-    public void login(@Valid @RequestBody UserLoginDTO userLoginDTO) {
+    public void login(@Valid @RequestBody UserLoginDTO userLoginDTO, HttpSession session) {
         if (!authService.login(userLoginDTO)) {
             throw new UserNotLoginException("Password or username is incorrect");
         }
+        session.setAttribute("loggedInUser", userLoginDTO);
     }
 
+    @Authenticated
     @PutMapping("/login")
     @Operation(summary = "Change User password")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User password successfully changed"),
             @ApiResponse(responseCode = "400", description = "User old password or username is incorrect"),
+            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     public void changePassword(@Valid @RequestBody UserChangePasswordDTO changePasswordDTO) {
         if (!authService.changePassword(changePasswordDTO)) {

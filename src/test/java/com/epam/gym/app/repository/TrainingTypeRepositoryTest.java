@@ -1,10 +1,8 @@
-package repository;
+package com.epam.gym.app.repository;
 
 import com.epam.gym.app.config.GymAppConfig;
 import com.epam.gym.app.entity.TrainingType;
 import com.epam.gym.app.repository.TrainingTypeRepository;
-import com.epam.gym.app.testcontainer.MysqlTestContainer;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +12,11 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
-import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Testcontainers
 @DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
         TrainingTypeRepository.class}))
 @ContextConfiguration(classes = GymAppConfig.class)
@@ -35,9 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 )
 @DisplayName("TrainingTypeRepositoryTest")
 public class TrainingTypeRepositoryTest {
-
-    @ClassRule
-    public static MySQLContainer<?> mySQLContainer = MysqlTestContainer.getInstance();
 
     @Autowired
     TrainingTypeRepository typeRepository;

@@ -1,5 +1,6 @@
 package com.epam.gym.app.controller;
 
+import com.epam.gym.app.annotation.Authenticated;
 import com.epam.gym.app.dto.training_type.TrainingTypeDTO;
 import com.epam.gym.app.service.TrainingTypeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,11 +22,13 @@ public class TrainingTypeController {
 
     private final TrainingTypeService trainingTypeService;
 
+    @Authenticated
     @GetMapping("/training-types")
     @Operation(summary = "Get list of Training types")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of training types successfully retrieved"),
             @ApiResponse(responseCode = "404", description = "List is not retrieved"),
+            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     @ResponseStatus(HttpStatus.OK)
     public List<TrainingTypeDTO> getTrainingTypes() {

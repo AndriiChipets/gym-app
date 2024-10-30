@@ -1,5 +1,6 @@
 package com.epam.gym.app.controller;
 
+import com.epam.gym.app.annotation.Authenticated;
 import com.epam.gym.app.dto.trainer.TrainerGetDTO;
 import com.epam.gym.app.dto.trainer.TrainerListDTO;
 import com.epam.gym.app.dto.trainer.TrainerRegDTO;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,41 +47,49 @@ public class TrainerController {
         return trainerService.save(trainerDto);
     }
 
+    @Authenticated
     @GetMapping("/trainer")
     @Operation(summary = "Get Trainer")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainer successfully found"),
-            @ApiResponse(responseCode = "404", description = "Trainer with provided password and username is not found")
+            @ApiResponse(responseCode = "404", description = "Trainer with provided password and username is not found"),
+            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     public TrainerGetDTO getTrainer(@NotBlank @RequestParam String username) {
         return trainerService.find(username);
     }
 
+    @Authenticated
     @PutMapping("/trainer")
     @Operation(summary = "Update Trainer")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainer successfully updated"),
-            @ApiResponse(responseCode = "404", description = "Trainer is not updated")
+            @ApiResponse(responseCode = "404", description = "Trainer is not updated"),
+            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     public TrainerUpdDTO updateTrainer(@Valid @RequestBody TrainerUpdDTO trainerUpdDTO) {
         return trainerService.update(trainerUpdDTO);
     }
 
+    @Authenticated
     @GetMapping("/trainer/trainees")
     @Operation(summary = "Get List of Trainer's Trainees")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of Trainer's Trainees successfully retrieved"),
-            @ApiResponse(responseCode = "404", description = "List of Trainer's Trainees is not retrieved")
+            @ApiResponse(responseCode = "404", description = "List of Trainer's Trainees is not retrieved"),
+            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     public List<TrainerListDTO> getNotAssignedOnTraineeActiveTrainers(@NotBlank @RequestParam String traineeUsername) {
         return trainerService.getTrainersListNotAssignedOnTrainee(traineeUsername);
     }
 
+    @Authenticated
     @GetMapping("/trainer/trainings")
     @Operation(summary = "Get List of Trainer's Trainings filtered by criteria")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of Trainer's Trainings successfully retrieved"),
-            @ApiResponse(responseCode = "404", description = "List of Trainer's Trainings is not retrieved")
+            @ApiResponse(responseCode = "404", description = "List of Trainer's Trainings is not retrieved"),
+            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     public List<TrainerTrainingDTO> getTrainerTrainingsList(
             @Valid @RequestBody TrainerTrainingFilterDTO trainingFilterDTO) {
@@ -87,16 +97,18 @@ public class TrainerController {
         return trainerService.getTrainingsList(trainingFilterDTO);
     }
 
+    @Authenticated
     @PatchMapping("/trainer")
     @Operation(summary = "Activate or deactivate Trainer's profile")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "The status of Trainer's profile successfully changed"),
-            @ApiResponse(responseCode = "404", description = "The status of Trainer's profile is not changed")
+            @ApiResponse(responseCode = "404", description = "The status of Trainer's profile is not changed"),
+            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     @ResponseStatus(HttpStatus.OK)
     public void activateDeactivateTrainer(
             @NotBlank @RequestParam String username,
-            @NotBlank @RequestParam boolean isActive) {
+            @NotNull @RequestParam boolean isActive) {
 
         trainerService.activateDeactivate(username, isActive);
     }

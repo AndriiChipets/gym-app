@@ -1,5 +1,6 @@
 package com.epam.gym.app.controller;
 
+import com.epam.gym.app.annotation.Authenticated;
 import com.epam.gym.app.dto.trainee.TraineeGetDTO;
 import com.epam.gym.app.dto.trainee.TraineeRegDTO;
 import com.epam.gym.app.dto.trainee.TraineeTrainerListDTO;
@@ -48,42 +49,50 @@ public class TraineeController {
         return traineeService.save(traineeDto);
     }
 
+    @Authenticated
     @GetMapping("/trainee")
     @Operation(summary = "Get Trainee")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainee successfully found"),
-            @ApiResponse(responseCode = "404", description = "Trainee with provided password and username is not found")
+            @ApiResponse(responseCode = "404", description = "Trainee with provided password and username is not found"),
+            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     public TraineeGetDTO getTrainee(@NotBlank @RequestParam String username) {
         return traineeService.find(username);
     }
 
+    @Authenticated
     @PutMapping("/trainee")
     @Operation(summary = "Update Trainee")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainee successfully updated"),
-            @ApiResponse(responseCode = "404", description = "Trainee is not updated")
+            @ApiResponse(responseCode = "404", description = "Trainee is not updated"),
+            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     public TraineeUpdDTO updateTrainee(@Valid @RequestBody TraineeUpdDTO traineeUpdDTO) {
         return traineeService.update(traineeUpdDTO);
     }
 
+    @Authenticated
     @DeleteMapping("/trainee")
     @Operation(summary = "Delete Trainee")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainee successfully deleted"),
-            @ApiResponse(responseCode = "404", description = "Trainee is not deleted")
+            @ApiResponse(responseCode = "404", description = "Trainee is not deleted"),
+            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     @ResponseStatus(HttpStatus.OK)
     public void deleteTrainee(@NotBlank @RequestParam String username) {
         traineeService.delete(username);
     }
 
+    @Authenticated
     @PutMapping("/trainee/trainers")
     @Operation(summary = "Update the list of Trainee Trainers")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of Trainee's Trainers successfully updated"),
-            @ApiResponse(responseCode = "404", description = "List of Trainee's Trainers is not updated")
+            @ApiResponse(responseCode = "404", description = "List of Trainee's Trainers is not updated"),
+            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     public List<TrainerListDTO> updateTraineeTrainerList(
             @Valid @RequestBody TraineeTrainerListDTO traineeTrainerListDTO) {
@@ -91,11 +100,13 @@ public class TraineeController {
         return traineeService.updateTraineeTrainerList(traineeTrainerListDTO);
     }
 
+    @Authenticated
     @GetMapping("/trainee/trainings")
     @Operation(summary = "Get List of Trainee's Trainings filtered by criteria")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of Trainee's Trainings successfully retrieved"),
-            @ApiResponse(responseCode = "404", description = "List of Trainee's Trainings is not retrieved")
+            @ApiResponse(responseCode = "404", description = "List of Trainee's Trainings is not retrieved"),
+            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     public List<TraineeTrainingDTO> getTraineeTrainingList(
             @Valid @RequestBody TraineeTrainingFilterDTO trainingFilterDTO) {
@@ -103,11 +114,13 @@ public class TraineeController {
         return traineeService.getTrainingsList(trainingFilterDTO);
     }
 
+    @Authenticated
     @PatchMapping("/trainee")
     @Operation(summary = "Activate or deactivate Trainee's profile")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "The status of Trainee's profile successfully changed"),
-            @ApiResponse(responseCode = "404", description = "The status of Trainee's profile is not changed")
+            @ApiResponse(responseCode = "404", description = "The status of Trainee's profile is not changed"),
+            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     @ResponseStatus(HttpStatus.OK)
     public void activateDeactivateTrainee(

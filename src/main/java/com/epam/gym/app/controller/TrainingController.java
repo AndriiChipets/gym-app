@@ -1,5 +1,6 @@
 package com.epam.gym.app.controller;
 
+import com.epam.gym.app.annotation.Authenticated;
 import com.epam.gym.app.dto.training.TrainingDTO;
 import com.epam.gym.app.service.TrainingService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,11 +22,13 @@ public class TrainingController {
 
     TrainingService trainingService;
 
+    @Authenticated
     @PostMapping("/training")
     @Operation(summary = "Add new Training")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "New Training successfully added"),
             @ApiResponse(responseCode = "404", description = "New Training is not added"),
+            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     @ResponseStatus(HttpStatus.OK)
     public void addTraining(@Valid @RequestBody TrainingDTO trainingDTO) {
