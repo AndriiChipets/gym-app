@@ -50,7 +50,11 @@ VALUES (1, 9),
 
 INSERT INTO trainings (training_date, training_duration, trainee_id, trainer_id, training_type_id, training_name)
 VALUES ('2024-10-20', 30, 1, 9, 1, 'TestTraining1'),
-('2024-10-21', 40, 2, 9, 2, 'TestTraining2'),
+('2024-10-20', 120, 1, 9, 2, 'TestTraining12'),
+('2024-10-20', 60, 1, 12, 3, 'TestTraining13'),
+('2024-10-20', 90, 1, 9, 4, 'TestTraining14'),
+('2024-10-20', 30, 1, 11, 5, 'TestTraining15'),
+('2024-10-21', 40, 2, 10, 2, 'TestTraining2'),
 ('2024-10-22', 50, 3, 10, 3, 'TestTraining3'),
 ('2024-10-23', 60, 4, 11, 4, 'TestTraining4'),
 ('2024-10-24', 70, 5, 11, 5, 'TestTraining5'),
