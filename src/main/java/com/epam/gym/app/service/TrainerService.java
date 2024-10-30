@@ -8,6 +8,7 @@ import com.epam.gym.app.dto.trainer.TrainerTrainingFilterDTO;
 import com.epam.gym.app.dto.trainer.TrainerUpdDTO;
 import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.entity.Trainer;
+import com.epam.gym.app.entity.Training;
 import com.epam.gym.app.mapper.trainer.TrainerGetMapper;
 import com.epam.gym.app.mapper.trainer.TrainerListMapper;
 import com.epam.gym.app.mapper.trainer.TrainerRegMapper;
@@ -87,8 +88,10 @@ public class TrainerService {
 
         String trainerUsername = trainingFilterDTO.getUsername();
         String traineeUsername = trainingFilterDTO.getTraineeUsername();
-        LocalDate dateFrom = LocalDate.parse(trainingFilterDTO.getDateFrom());
-        LocalDate dateTo = LocalDate.parse(trainingFilterDTO.getDateTo());
+        LocalDate dateFrom = trainingFilterDTO.getDateFrom() == null ? null :
+                LocalDate.parse(trainingFilterDTO.getDateFrom());
+        LocalDate dateTo = trainingFilterDTO.getDateTo() == null ? null :
+                LocalDate.parse(trainingFilterDTO.getDateTo());
 
         log.debug("Find Trainer's Training list with username {} and criteria: " +
                         "Trainer username {}, from date {}, to date {}",
@@ -97,13 +100,11 @@ public class TrainerService {
                 dateFrom,
                 dateTo);
 
-        Trainer trainer = findTrainer(trainerUsername);
+        List<Training> trainings = trainerRepository.getFilteredTrainings(
+                trainerUsername, traineeUsername, dateFrom, dateTo);
 
-        return trainer.getTrainings()
-                .stream()
-                .filter(training -> training.getTrainee().getUsername().equals(traineeUsername))
-                .filter(training -> training.getDate().isAfter(dateFrom) && training.getDate().isBefore(dateTo))
-                .map(trainerTrainingMapper::mapTrainingToTrainingDTO)
+        return trainings.stream().
+                map(trainerTrainingMapper::mapTrainingToTrainingDTO)
                 .toList();
     }
 

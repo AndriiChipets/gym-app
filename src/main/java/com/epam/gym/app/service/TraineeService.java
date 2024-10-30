@@ -10,6 +10,7 @@ import com.epam.gym.app.dto.trainer.TrainerListDTO;
 import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.entity.Trainee;
 import com.epam.gym.app.entity.Trainer;
+import com.epam.gym.app.entity.Training;
 import com.epam.gym.app.mapper.trainee.TraineeGetMapper;
 import com.epam.gym.app.mapper.trainee.TraineeRegMapper;
 import com.epam.gym.app.mapper.trainee.TraineeTrainingMapper;
@@ -98,8 +99,10 @@ public class TraineeService {
 
         String traineeUsername = trainingFilterDTO.getUsername();
         String trainerUsername = trainingFilterDTO.getTrainerUsername();
-        LocalDate dateFrom = LocalDate.parse(trainingFilterDTO.getDateFrom());
-        LocalDate dateTo = LocalDate.parse(trainingFilterDTO.getDateTo());
+        LocalDate dateFrom = trainingFilterDTO.getDateFrom() == null ? null :
+                LocalDate.parse(trainingFilterDTO.getDateFrom());
+        LocalDate dateTo = trainingFilterDTO.getDateTo() == null ? null :
+                LocalDate.parse(trainingFilterDTO.getDateTo());
         String typeName = trainingFilterDTO.getTypeName();
 
         log.debug("Find Trainee's Training list with username {} and criteria: " +
@@ -110,14 +113,11 @@ public class TraineeService {
                 dateTo,
                 typeName);
 
-        Trainee trainee = findTrainee(traineeUsername);
+        List<Training> trainings = traineeRepository.getFilteredTrainings(
+                traineeUsername, trainerUsername, dateFrom, dateTo, typeName);
 
-        return trainee.getTrainings()
-                .stream()
-                .filter(training -> training.getTrainer().getUsername().equals(trainerUsername))
-                .filter(training -> training.getDate().isAfter(dateFrom) && training.getDate().isBefore(dateTo))
-                .filter(training -> training.getType().getName().equals(typeName))
-                .map(traineeTrainingMapper::mapTrainingToTrainingDTO)
+        return trainings.stream().
+                map(traineeTrainingMapper::mapTrainingToTrainingDTO)
                 .toList();
     }
 
