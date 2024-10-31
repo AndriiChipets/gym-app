@@ -72,7 +72,7 @@ public class TrainerController {
     }
 
     @Authenticated
-    @GetMapping("/trainer/trainees")
+    @GetMapping("/trainer/trainee-trainers")
     @Operation(summary = "Get List of Trainer's Trainees")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of Trainer's Trainees successfully retrieved"),

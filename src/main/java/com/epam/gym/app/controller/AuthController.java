@@ -36,7 +36,7 @@ public class AuthController {
     @ResponseStatus(HttpStatus.OK)
     public void login(@Valid @RequestBody UserLoginDTO userLoginDTO, HttpSession session) {
         if (!authService.login(userLoginDTO)) {
-            throw new UserNotLoginException("Password or username is incorrect");
+            throw new UserNotLoginException("User is not login");
         }
         session.setAttribute("loggedInUser", userLoginDTO);
     }
@@ -51,7 +51,7 @@ public class AuthController {
     })
     public void changePassword(@Valid @RequestBody UserChangePasswordDTO changePasswordDTO) {
         if (!authService.changePassword(changePasswordDTO)) {
-            throw new UnsatisfiedActionException("password wasn't changed");
+            throw new UnsatisfiedActionException("password is not changed");
         }
     }
 }

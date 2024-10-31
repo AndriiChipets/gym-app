@@ -3,7 +3,6 @@ package com.epam.gym.app.service;
 import com.epam.gym.app.dto.user.UserChangePasswordDTO;
 import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.entity.User;
-import com.epam.gym.app.exception.NoEntityPresentException;
 import com.epam.gym.app.exception.UserNotLoginException;
 import com.epam.gym.app.repository.AuthRepository;
 import lombok.AllArgsConstructor;
@@ -41,18 +40,10 @@ public class AuthService {
             throw new UserNotLoginException("Old password or username is incorrect");
         }
 
-        User user = findUser(username);
+        User user = authRepository.findByUsername(username).get();
         user.setPassword(newPassword);
         authRepository.save(user);
 
         return user.getPassword().equals(newPassword);
-    }
-
-    private User findUser(String username) {
-        return authRepository.findByUsername(username).orElseThrow(
-                () -> {
-                    log.error("There is no User with provided username {}", username);
-                    return new NoEntityPresentException("There is no User with provided username: " + username);
-                });
     }
 }

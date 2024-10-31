@@ -88,7 +88,7 @@ public class TraineeController {
 
     @Authenticated
     @PutMapping("/trainee/trainers")
-    @Operation(summary = "Update the list of Trainee Trainers")
+    @Operation(summary = "Update the list of Trainee's Trainers")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of Trainee's Trainers successfully updated"),
             @ApiResponse(responseCode = "404", description = "List of Trainee's Trainers is not updated"),
