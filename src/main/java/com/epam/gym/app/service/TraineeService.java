@@ -17,7 +17,6 @@ import com.epam.gym.app.mapper.trainee.TraineeTrainingMapper;
 import com.epam.gym.app.mapper.trainee.TraineeUpdMapper;
 import com.epam.gym.app.mapper.trainee.TraineeUserLoginMapper;
 import com.epam.gym.app.mapper.trainer.TrainerListMapper;
-import com.epam.gym.app.mapper.training.TrainingMapper;
 import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.repository.TrainerRepository;
 import com.epam.gym.app.exception.NoEntityPresentException;
@@ -42,7 +41,6 @@ public class TraineeService {
     private final TraineeUpdMapper traineeUpdMapper;
     private final TraineeTrainingMapper traineeTrainingMapper;
     private final TrainerListMapper trainerListMapper;
-    private final TrainingMapper trainingMapper;
     private final TraineeUserLoginMapper traineeUserLoginMapper;
 
     @Transactional
@@ -116,8 +114,8 @@ public class TraineeService {
         List<Training> trainings = traineeRepository.getFilteredTrainings(
                 traineeUsername, trainerUsername, dateFrom, dateTo, typeName);
 
-        return trainings.stream().
-                map(traineeTrainingMapper::mapTrainingToTrainingDTO)
+        return trainings.stream()
+                .map(traineeTrainingMapper::mapTrainingToTrainingDTO)
                 .toList();
     }
 

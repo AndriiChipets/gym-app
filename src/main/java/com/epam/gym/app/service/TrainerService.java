@@ -35,7 +35,7 @@ public class TrainerService {
     private final TrainerRepository trainerRepository;
     private final TraineeRepository traineeRepository;
     private final TrainerGetMapper trainerGetMapper;
-    private final TrainerRegMapper trainerRetMapper;
+    private final TrainerRegMapper trainerRegMapper;
     private final TrainerUpdMapper trainerUpdMapper;
     private final TrainerListMapper trainerListMapper;
     private final TrainerTrainingMapper trainerTrainingMapper;
@@ -46,7 +46,7 @@ public class TrainerService {
         log.debug("Save Trainer with first name {} and last name {}",
                 trainerDto.getFirstname(), trainerDto.getLastname());
 
-        Trainer trainer = trainerRetMapper.mapTrainerDtoToTrainer(trainerDto);
+        Trainer trainer = trainerRegMapper.mapTrainerDtoToTrainer(trainerDto);
         String password = UserUtil.generateRandomPassword();
         String username = UserUtil.generateUsername(trainer.getFirstname(),
                 trainer.getLastname(),
@@ -62,14 +62,6 @@ public class TrainerService {
         return trainerUserLoginMapper.mapTrainerToUserLoginDTO(trainer);
     }
 
-    @Transactional(readOnly = true)
-    public TrainerGetDTO find(String username) {
-        log.debug("Find Trainer with username {}", username);
-
-        Trainer trainer = findTrainer(username);
-        return trainerGetMapper.mapTrainerToTrainerGetDTO(trainer);
-    }
-
     @Transactional
     public TrainerUpdDTO update(TrainerUpdDTO trainerDto) {
         log.debug("Update Trainer with first name {} and last name {}",
@@ -81,6 +73,14 @@ public class TrainerService {
 
         log.debug("Trainee has been saved successfully");
         return trainerUpdMapper.mapTrainerToTrainerUpdDTO(trainer);
+    }
+
+    @Transactional(readOnly = true)
+    public TrainerGetDTO find(String username) {
+        log.debug("Find Trainer with username {}", username);
+
+        Trainer trainer = findTrainer(username);
+        return trainerGetMapper.mapTrainerToTrainerGetDTO(trainer);
     }
 
     @Transactional(readOnly = true)
