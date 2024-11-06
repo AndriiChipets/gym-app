@@ -1,10 +1,10 @@
 package com.epam.gym.app.service;
 
-import com.epam.gym.app.dto.TrainingDto;
+import com.epam.gym.app.dto.training.TrainingDTO;
 import com.epam.gym.app.entity.Training;
-import com.epam.gym.app.mapper.TrainingMapperStruct;
+import com.epam.gym.app.exception.NoEntityPresentException;
+import com.epam.gym.app.mapper.training.TrainingMapper;
 import com.epam.gym.app.repository.TrainingRepository;
-import com.epam.gym.app.service.exception.NoEntityPresentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ class TrainingServiceTest {
     TrainingRepository trainingRepository;
 
     @MockBean
-    TrainingMapperStruct trainingMapper;
+    TrainingMapper trainingMapper;
 
     @Autowired
     TrainingService trainingService;
@@ -41,12 +41,12 @@ class TrainingServiceTest {
     void save_shouldReturnTrainingWhenSavingIsSuccessful() {
 
         Training training = Training.builder().build();
-        TrainingDto trainingDto = TrainingDto.builder().build();
+        TrainingDTO trainingDto = TrainingDTO.builder().build();
 
-        when(trainingMapper.mapTrainingDtoToTraining(any(TrainingDto.class))).thenReturn(training);
+        when(trainingMapper.mapTrainingDtoToTraining(any(TrainingDTO.class))).thenReturn(training);
         when(trainingRepository.save(any(Training.class))).thenReturn(training);
         when(trainingMapper.mapTrainingToTrainingDto(any(Training.class))).thenReturn(trainingDto);
-        TrainingDto actual = trainingService.save(trainingDto);
+        TrainingDTO actual = trainingService.save(trainingDto);
 
         assertNotNull(actual);
         verify(trainingRepository).save(training);
@@ -57,15 +57,16 @@ class TrainingServiceTest {
     void find_shouldReturnTraining_whenTrainingPresent() {
 
         long trainingId = 1L;
-        Training training = Training.builder().build();
-        TrainingDto expected = TrainingDto.builder().id(trainingId).build();
+        String name = "Training name";
+        Training expectedTraining = Training.builder().name(name).build();
+        TrainingDTO expectedTrainingDto = TrainingDTO.builder().name(name).build();
 
-        when(trainingRepository.findById(anyLong())).thenReturn(Optional.of(training));
-        when(trainingMapper.mapTrainingToTrainingDto(any(Training.class))).thenReturn(expected);
-        TrainingDto actual = trainingService.find(trainingId);
+        when(trainingRepository.findById(anyLong())).thenReturn(Optional.of(expectedTraining));
+        when(trainingMapper.mapTrainingToTrainingDto(any(Training.class))).thenReturn(expectedTrainingDto);
+        TrainingDTO actual = trainingService.find(trainingId);
 
         assertNotNull(actual);
-        assertEquals(expected, actual);
+        assertEquals(expectedTrainingDto, actual);
         verify(trainingRepository).findById(trainingId);
     }
 
@@ -89,12 +90,12 @@ class TrainingServiceTest {
 
         Training training = Training.builder().build();
         List<Training> trainings = List.of(training, training, training);
-        TrainingDto trainingDto = TrainingDto.builder().build();
-        List<TrainingDto> expected = List.of(trainingDto, trainingDto, trainingDto);
+        TrainingDTO trainingDto = TrainingDTO.builder().build();
+        List<TrainingDTO> expected = List.of(trainingDto, trainingDto, trainingDto);
 
         when(trainingRepository.findAll()).thenReturn(trainings);
         when(trainingMapper.mapTrainingToTrainingDto(any(Training.class))).thenReturn(trainingDto);
-        List<TrainingDto> actual = trainingService.findAll();
+        List<TrainingDTO> actual = trainingService.findAll();
 
         assertNotNull(actual);
         assertEquals(expected, actual);

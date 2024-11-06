@@ -20,6 +20,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -62,6 +63,11 @@ public class Trainee extends User {
     public void addTrainer(Trainer trainer) {
         this.trainers.add(trainer);
         trainer.getTrainees().add(this);
+    }
+
+    public void addAllTrainers(List<Trainer> trainers) {
+        this.trainers.addAll(trainers);
+        trainers.forEach(t -> t.getTrainees().add(this));
     }
 
     @Override

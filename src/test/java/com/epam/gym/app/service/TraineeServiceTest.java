@@ -1,37 +1,51 @@
 package com.epam.gym.app.service;
 
-import com.epam.gym.app.dto.TraineeDto;
-import com.epam.gym.app.dto.TrainerDto;
-import com.epam.gym.app.dto.TrainingDto;
+import com.epam.gym.app.dto.trainee.TraineeGetDTO;
+import com.epam.gym.app.dto.trainee.TraineeRegDTO;
+import com.epam.gym.app.dto.trainee.TraineeTrainerListDTO;
+import com.epam.gym.app.dto.trainee.TraineeTrainingDTO;
+import com.epam.gym.app.dto.trainee.TraineeTrainingFilterDTO;
+import com.epam.gym.app.dto.trainee.TraineeUpdDTO;
+import com.epam.gym.app.dto.trainer.TrainerListDTO;
+import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.entity.Trainee;
 import com.epam.gym.app.entity.Trainer;
 import com.epam.gym.app.entity.Training;
-import com.epam.gym.app.mapper.TraineeMapperStruct;
-import com.epam.gym.app.mapper.TrainerMapperStruct;
-import com.epam.gym.app.mapper.TrainingMapperStruct;
+import com.epam.gym.app.exception.NoEntityPresentException;
+import com.epam.gym.app.mapper.trainee.TraineeGetMapper;
+import com.epam.gym.app.mapper.trainee.TraineeRegMapper;
+import com.epam.gym.app.mapper.trainee.TraineeTrainingMapper;
+import com.epam.gym.app.mapper.trainee.TraineeUpdMapper;
+import com.epam.gym.app.mapper.trainee.TraineeUserLoginMapper;
+import com.epam.gym.app.mapper.trainer.TrainerListMapper;
 import com.epam.gym.app.repository.TraineeRepository;
-import com.epam.gym.app.service.exception.NoEntityPresentException;
+import com.epam.gym.app.repository.TrainerRepository;
+import com.epam.gym.app.utils.UserUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
 
 @SpringBootTest(classes = {TraineeService.class})
 @DisplayName("TraineeServiceTest")
@@ -41,13 +55,25 @@ class TraineeServiceTest {
     TraineeRepository traineeRepository;
 
     @MockBean
-    TraineeMapperStruct traineeMapper;
+    TrainerRepository trainerRepository;
 
     @MockBean
-    TrainerMapperStruct trainerMapper;
+    TraineeRegMapper traineeRegMapper;
 
     @MockBean
-    TrainingMapperStruct trainingMapper;
+    TraineeGetMapper traineeGetMapper;
+
+    @MockBean
+    TraineeUpdMapper traineeUpdMapper;
+
+    @MockBean
+    TraineeTrainingMapper traineeTrainingMapper;
+
+    @MockBean
+    TrainerListMapper trainerListMapper;
+
+    @MockBean
+    TraineeUserLoginMapper traineeUserLoginMapper;
 
     @Autowired
     TraineeService traineeService;
@@ -56,15 +82,43 @@ class TraineeServiceTest {
     @DisplayName("save() method should return saved Trainee when saving is successful")
     void save_shouldReturnTraineeWhenSavingIsSuccessful() {
 
+        String username = "firstname.lastname";
+        String password = "123456789";
         Trainee trainee = Trainee.builder().build();
-        TraineeDto traineeDto = TraineeDto.builder().build();
+        TraineeRegDTO traineeDto = TraineeRegDTO.builder().build();
+        UserLoginDTO expUserLoginDTO = UserLoginDTO.builder().build();
 
-        when(traineeMapper.mapTraineeDtoToTrainee(any(TraineeDto.class))).thenReturn(trainee);
-        when(traineeRepository.save(any(Trainee.class))).thenReturn(trainee);
-        when(traineeMapper.mapTraineeToTraineeDto(trainee)).thenReturn(traineeDto);
-        TraineeDto actual = traineeService.save(traineeDto);
+        try (MockedStatic<UserUtil> utilClassMockedStatic = mockStatic(UserUtil.class)) {
+            when(traineeRegMapper.mapTraineeDtoToTrainee(any(TraineeRegDTO.class))).thenReturn(trainee);
+            utilClassMockedStatic.when(UserUtil::generateRandomPassword).thenReturn(password);
+            utilClassMockedStatic.when(() -> UserUtil.generateUsername(
+                    anyString(), anyString(), anyList(), anyList())).thenReturn(username);
+            when(traineeRepository.save(any(Trainee.class))).thenReturn(trainee);
+            when(traineeUserLoginMapper.mapTraineeToUserLoginDTO(trainee)).thenReturn(expUserLoginDTO);
+        }
+        UserLoginDTO actual = traineeService.save(traineeDto);
 
         assertNotNull(actual);
+        assertEquals(expUserLoginDTO, actual);
+        verify(traineeRepository).save(trainee);
+    }
+
+    @Test
+    @DisplayName("update() method should return updated Trainee when update is successful")
+    void update_shouldReturnUpdatedTraineeWhenUpdatingIsSuccessful() {
+
+        String username = "firstname.lastname";
+        Trainee trainee = Trainee.builder().username(username).build();
+        TraineeUpdDTO traineeDto = TraineeUpdDTO.builder().username(username).build();
+
+        when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.of(trainee));
+        when(traineeRepository.save(any(Trainee.class))).thenReturn(trainee);
+        when(traineeUpdMapper.mapTraineeToTraineeUpdDTO(any(Trainee.class))).thenReturn(traineeDto);
+
+        TraineeUpdDTO actual = traineeService.update(traineeDto);
+
+        assertNotNull(actual);
+        assertEquals(traineeDto, actual);
         verify(traineeRepository).save(trainee);
     }
 
@@ -82,11 +136,11 @@ class TraineeServiceTest {
 
         String username = "firstname.lastname";
         Trainee trainee = Trainee.builder().build();
-        TraineeDto expected = TraineeDto.builder().username(username).build();
+        TraineeGetDTO expected = TraineeGetDTO.builder().build();
 
         when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.of(trainee));
-        when(traineeMapper.mapTraineeToTraineeDto(any(Trainee.class))).thenReturn(expected);
-        TraineeDto actual = traineeService.find(username);
+        when(traineeGetMapper.mapTraineeToTraineeGetDTO(any(Trainee.class))).thenReturn(expected);
+        TraineeGetDTO actual = traineeService.find(username);
 
         assertNotNull(actual);
         assertEquals(expected, actual);
@@ -99,7 +153,7 @@ class TraineeServiceTest {
 
         String username = "fake.username";
 
-        when(traineeRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.empty());
         Exception exception = assertThrows(NoEntityPresentException.class,
                 () -> traineeService.find(username));
 
@@ -108,118 +162,106 @@ class TraineeServiceTest {
     }
 
     @Test
-    @DisplayName("findAll() method should return List of Trainees when Trainees present")
-    void findAll_shouldReturnListTrainees_whenTraineesPresent() {
-
-        Trainee trainee = Trainee.builder().build();
-        TraineeDto traineeDto = TraineeDto.builder().build();
-        List<Trainee> trainees = List.of(trainee, trainee, trainee);
-        List<TraineeDto> expected = List.of(traineeDto, traineeDto, traineeDto);
-
-        when(traineeRepository.findAll()).thenReturn(trainees);
-        when(traineeMapper.mapTraineeToTraineeDto(any(Trainee.class))).thenReturn(traineeDto);
-        List<TraineeDto> actual = traineeService.findAll();
-
-        assertNotNull(actual);
-        assertEquals(expected, actual);
-        verify(traineeRepository).findAll();
-    }
-
-    @Test
-    @DisplayName("login() method should return true when username or password exists is present")
-    void login_shouldReturnTrue_whenUsernameOrPasswordPresent() {
-
-        String username = "firstname.lastname";
-        String password = "valid password";
-
-        when(traineeRepository.existsByUsernameAndPassword(anyString(), anyString())).thenReturn(true);
-        boolean isExists = traineeService.login(username, password);
-
-        assertTrue(isExists);
-        verify(traineeRepository).existsByUsernameAndPassword(username, password);
-    }
-
-    @Test
-    @DisplayName("login() method should return false when username or password exists is absent")
-    void login_shouldReturnTrue_whenUsernameOrPasswordAbsent() {
-
-        String username = "firstname.lastname";
-        String password = "invalid password";
-
-        when(traineeRepository.existsByUsernameAndPassword(anyString(), anyString())).thenReturn(false);
-        boolean isExists = traineeService.login(username, password);
-
-        assertFalse(isExists);
-        verify(traineeRepository).existsByUsernameAndPassword(username, password);
-    }
-
-    @Test
-    @DisplayName("getTrainingsList() method should return List of Trainee's trainings")
-    void getTrainingsList_shouldReturnListOfTraineeTrainings() {
+    @DisplayName("getTrainingsList() method should return List of Trainee's trainings by criteria when criteria is present")
+    void getTrainingsList_shouldReturnListOfTraineeTrainingsByCriteria_WhenCriteriaIsPresent() {
 
         String traineeUsername = "trainee.username";
         String trainerUsername = "trainer.username";
         LocalDate dateFrom = LocalDate.now();
         LocalDate dateTo = LocalDate.now().plusDays(10);
-        Trainer trainer = Trainer.builder().username(trainerUsername).build();
-        Training training = Training.builder().trainer(trainer).date(dateFrom.minusDays(10)).build();
+        String typeName = "Training type";
+
+        Training training = Training.builder().build();
         List<Training> trainings = List.of(training, training, training);
 
-        Trainee trainee = Trainee.builder().build();
-        trainee.getTrainings().addAll(trainings);
+        TraineeTrainingDTO traineeTrainingDTO = TraineeTrainingDTO.builder().build();
+        TraineeTrainingFilterDTO filterDTO = TraineeTrainingFilterDTO
+                .builder()
+                .username(traineeUsername)
+                .trainerUsername(trainerUsername)
+                .dateFrom(dateFrom.toString())
+                .dateTo(dateTo.toString())
+                .typeName(typeName)
+                .build();
+
+        when(traineeRepository.getFilteredTrainings(
+                anyString(), anyString(), any(LocalDate.class), any(LocalDate.class), anyString()))
+                .thenReturn(trainings);
+        when(traineeTrainingMapper.mapTrainingToTrainingDTO(any(Training.class))).thenReturn(traineeTrainingDTO);
+
+        List<TraineeTrainingDTO> actual = traineeService.getTrainingsList(filterDTO);
+
+        assertNotNull(actual);
+        verify(traineeRepository).getFilteredTrainings(
+                traineeUsername, trainerUsername, dateFrom, dateTo, typeName);
+    }
+
+    @Test
+    @DisplayName("getTrainingsList() method should return List of all Trainee's trainings when criteria is not present")
+    void getTrainingsList_shouldReturnListOfAllTraineeTrainings_WhenCriteriaIsNotPresent() {
+
+        String traineeUsername = "trainee.username";
+
+        Training training = Training.builder().build();
+        List<Training> trainings = List.of(training, training, training);
+
+        TraineeTrainingDTO traineeTrainingDTO = TraineeTrainingDTO.builder().build();
+        TraineeTrainingFilterDTO filterDTO = TraineeTrainingFilterDTO
+                .builder()
+                .username(traineeUsername)
+                .build();
+
+        when(traineeRepository.getFilteredTrainings(
+                anyString(), anyString(), any(LocalDate.class), any(LocalDate.class), anyString()))
+                .thenReturn(trainings);
+        when(traineeTrainingMapper.mapTrainingToTrainingDTO(any(Training.class))).thenReturn(traineeTrainingDTO);
+
+        List<TraineeTrainingDTO> actual = traineeService.getTrainingsList(filterDTO);
+
+        assertNotNull(actual);
+        verify(traineeRepository).getFilteredTrainings(
+                traineeUsername, null, null, null, null);
+    }
+
+    @Test
+    @DisplayName("updateTraineeTrainerList() method should update Trainee's trainers list")
+    void updateTraineeTrainerList_shouldUpdateTraineeTrainerList() {
+
+        String traineeUsername = "firstname.lastname";
+        TraineeTrainerListDTO traineeTrainerListDto = TraineeTrainerListDTO
+                .builder().username(traineeUsername).build();
+        Trainee trainee = Trainee.builder().username(traineeUsername).build();
+        TrainerListDTO trainerListDTO = TrainerListDTO.builder().build();
+
+        List<Trainer> trainers = new ArrayList<>();
+        Set<String> trainersUsernames = new HashSet<>();
+        traineeTrainerListDto.setTrainersUsernames(trainersUsernames);
 
         when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.of(trainee));
-        when(trainingMapper.mapTrainingToTrainingDto(any(Training.class))).thenReturn(new TrainingDto());
-
-        List<TrainingDto> actual = traineeService.getTrainingsList(traineeUsername, dateFrom, dateTo, trainerUsername);
-
-        assertNotNull(actual);
-        verify(traineeRepository).findByUsername(traineeUsername);
-    }
-
-    @Test
-    @DisplayName("addTrainerToTraineeList() method should add Trainer to Trainee's trainers list")
-    void addTrainerToTraineeList_shouldAddTrainerToTraineeTrainerList() {
-
-        TrainerDto trainerDto = TrainerDto.builder().build();
-        TraineeDto traineeDto = TraineeDto.builder().build();
-        Trainer trainer = Trainer.builder().build();
-        Trainee trainee = Trainee.builder().build();
-
-        List<Trainer> trainers = List.of(trainer, trainer, trainer);
-        trainee.getTrainers().addAll(trainers);
-
-        when(trainerMapper.mapTrainerDtoToTrainer(any(TrainerDto.class))).thenReturn(trainer);
-        when(trainerMapper.mapTrainerToTrainerDto(any(Trainer.class))).thenReturn(trainerDto);
-        when(traineeMapper.mapTraineeDtoToTrainee(any(TraineeDto.class))).thenReturn(trainee);
+        when(trainerRepository.findAllByUsernameIn(any(Set.class))).thenReturn(trainers);
         when(traineeRepository.save(any(Trainee.class))).thenReturn(trainee);
+        when(trainerListMapper.mapTrainerToTrainerListDTO(any(Trainer.class))).thenReturn(trainerListDTO);
 
-        List<TrainerDto> actual = traineeService.addTrainerToTraineeList(traineeDto, trainerDto);
+        List<TrainerListDTO> actual = traineeService.updateTraineeTrainerList(traineeTrainerListDto);
 
         assertNotNull(actual);
         verify(traineeRepository).save(trainee);
     }
 
     @Test
-    @DisplayName("removeTrainerToTraineeList() method should remove Trainer from Trainee's trainers list")
-    void removeTrainerToTraineeList_shouldRemoveTrainerFromTraineeTrainerList() {
+    @DisplayName("activateDeactivate() method should activate Trainee's profile when isActive true")
+    void activateDeactivate_shouldActivateTraineeProfile_whenIsActiveTrue() {
 
-        TrainerDto trainerDto = TrainerDto.builder().build();
-        TraineeDto traineeDto = TraineeDto.builder().build();
-        Trainer trainer = Trainer.builder().build();
-        Trainee trainee = Trainee.builder().build();
+        String username = "firstname.lastname";
+        boolean isActive = true;
+        Trainee trainee = Trainee.builder().username(username).isActive(isActive).build();
 
-        List<Trainer> trainers = List.of(trainer, trainer, trainer);
-        trainee.getTrainers().addAll(trainers);
-
-        when(trainerMapper.mapTrainerDtoToTrainer(any(TrainerDto.class))).thenReturn(trainer);
-        when(trainerMapper.mapTrainerToTrainerDto(any(Trainer.class))).thenReturn(trainerDto);
-        when(traineeMapper.mapTraineeDtoToTrainee(any(TraineeDto.class))).thenReturn(trainee);
+        when(traineeRepository.findByUsername(anyString())).thenReturn(Optional.of(trainee));
         when(traineeRepository.save(any(Trainee.class))).thenReturn(trainee);
 
-        List<TrainerDto> actual = traineeService.removeTrainerToTraineeList(traineeDto, trainerDto);
+        traineeService.activateDeactivate(username, isActive);
 
-        assertNotNull(actual);
-        verify(traineeRepository).save(trainee);
+        assertTrue(trainee.getIsActive());
+        verify(traineeRepository, times(1)).save(trainee);
     }
 }
