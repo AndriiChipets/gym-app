@@ -68,8 +68,8 @@ to make annotation @Authenticated active.
 So, for now to make methods requiring user authentication before access them
 you just need to add @Authenticated above the method signature e.g.  
 ```ruby
- @Authenticated
-    @DeleteMapping("/trainee")
+    @DeleteMapping
+    @Authenticated
     @Operation(summary = "Delete Trainee")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainee successfully deleted"),
@@ -77,7 +77,7 @@ you just need to add @Authenticated above the method signature e.g.
             @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     @ResponseStatus(HttpStatus.OK)
-    public void deleteTrainee(@NotBlank @RequestParam String username) {
+    public void deleteTrainee(@RequestParam @NotBlank String username) {
         traineeService.delete(username);
     }
 ```
