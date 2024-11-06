@@ -1,7 +1,6 @@
 package com.epam.gym.app.service;
 
 import com.epam.gym.app.dto.user.UserChangePasswordDTO;
-import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.entity.User;
 import com.epam.gym.app.exception.UserNotLoginException;
 
@@ -41,10 +40,9 @@ class AuthServiceTest {
 
         String username = "firstname.lastname";
         String password = "valid password";
-        UserLoginDTO userLoginDTO = UserLoginDTO.builder().username(username).password(password).build();
 
         when(authRepository.existsByUsernameAndPassword(anyString(), anyString())).thenReturn(true);
-        boolean isExists = authService.login(userLoginDTO);
+        boolean isExists = authService.login(username, password);
 
         assertTrue(isExists);
         verify(authRepository).existsByUsernameAndPassword(username, password);
@@ -56,10 +54,9 @@ class AuthServiceTest {
 
         String username = "firstname.lastname";
         String password = "invalid password";
-        UserLoginDTO userLoginDTO = UserLoginDTO.builder().username(username).password(password).build();
 
         when(authRepository.existsByUsernameAndPassword(anyString(), anyString())).thenReturn(false);
-        boolean isExists = authService.login(userLoginDTO);
+        boolean isExists = authService.login(username, password);
 
         assertFalse(isExists);
         verify(authRepository).existsByUsernameAndPassword(username, password);

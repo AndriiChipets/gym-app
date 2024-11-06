@@ -25,6 +25,7 @@ public abstract class TrainingMapper {
     @Mapping(target = "typeName", source = "training.type.name")
     public abstract TrainingDTO mapTrainingToTrainingDto(Training training);
 
+    @Mapping(target = "id", ignore = true)
     @Mapping(target = "trainee",
             expression = "java(traineeRepository.findByUsername(trainingDto.getTraineeUsername()).get())")
     @Mapping(target = "trainer",

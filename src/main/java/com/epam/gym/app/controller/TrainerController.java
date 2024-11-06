@@ -20,23 +20,30 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static com.epam.gym.app.utils.Constants.TRAINEE_TRAINERS_REST_URL;
+import static com.epam.gym.app.utils.Constants.TRAINER_REST_URL;
+import static com.epam.gym.app.utils.Constants.TRAININGS_REST_URL;
+
 @RestController
+@RequestMapping(value = TRAINER_REST_URL)
 @AllArgsConstructor
 @Tag(name = "Trainer Controller", description = "Operations related to the Trainer")
 public class TrainerController {
 
     private final TrainerService trainerService;
 
-    @PostMapping("/trainer")
+    @PostMapping
     @Operation(summary = "Register new Trainer")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "New Trainer successfully registered"),
@@ -47,20 +54,20 @@ public class TrainerController {
         return trainerService.save(trainerDto);
     }
 
+    @GetMapping("/{name}")
     @Authenticated
-    @GetMapping("/trainer")
     @Operation(summary = "Get Trainer")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainer successfully found"),
             @ApiResponse(responseCode = "404", description = "Trainer with provided password and username is not found"),
             @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
-    public TrainerGetDTO getTrainer(@NotBlank @RequestParam String username) {
+    public TrainerGetDTO getTrainer(@PathVariable("name") @NotBlank String username) {
         return trainerService.find(username);
     }
 
+    @PutMapping
     @Authenticated
-    @PutMapping("/trainer")
     @Operation(summary = "Update Trainer")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainer successfully updated"),
@@ -71,8 +78,8 @@ public class TrainerController {
         return trainerService.update(trainerUpdDTO);
     }
 
+    @GetMapping(TRAINEE_TRAINERS_REST_URL)
     @Authenticated
-    @GetMapping("/trainer/trainee-trainers")
     @Operation(summary = "Get List of Trainer's Trainees")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of Trainer's Trainees successfully retrieved"),
@@ -83,8 +90,8 @@ public class TrainerController {
         return trainerService.getTrainersListNotAssignedOnTrainee(traineeUsername);
     }
 
+    @GetMapping(TRAININGS_REST_URL)
     @Authenticated
-    @GetMapping("/trainer/trainings")
     @Operation(summary = "Get List of Trainer's Trainings filtered by criteria")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of Trainer's Trainings successfully retrieved"),
@@ -92,13 +99,23 @@ public class TrainerController {
             @ApiResponse(responseCode = "501", description = "Network Authentication Required")
     })
     public List<TrainerTrainingDTO> getTrainerTrainingsList(
-            @Valid @RequestBody TrainerTrainingFilterDTO trainingFilterDTO) {
+            @RequestParam @NotBlank String username,
+            @RequestParam(required = false) String dateFrom,
+            @RequestParam(required = false) String dateTo,
+            @RequestParam(required = false) String traineeUsername) {
+
+        TrainerTrainingFilterDTO trainingFilterDTO = TrainerTrainingFilterDTO.builder()
+                .username(username)
+                .dateFrom(dateFrom)
+                .dateTo(dateTo)
+                .traineeUsername(traineeUsername)
+                .build();
 
         return trainerService.getTrainingsList(trainingFilterDTO);
     }
 
+    @PatchMapping
     @Authenticated
-    @PatchMapping("/trainer")
     @Operation(summary = "Activate or deactivate Trainer's profile")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "The status of Trainer's profile successfully changed"),
@@ -107,8 +124,8 @@ public class TrainerController {
     })
     @ResponseStatus(HttpStatus.OK)
     public void activateDeactivateTrainer(
-            @NotBlank @RequestParam String username,
-            @NotNull @RequestParam boolean isActive) {
+            @RequestParam @NotBlank String username,
+            @RequestParam @NotNull boolean isActive) {
 
         trainerService.activateDeactivate(username, isActive);
     }

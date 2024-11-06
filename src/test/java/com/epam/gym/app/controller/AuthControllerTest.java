@@ -1,7 +1,6 @@
 package com.epam.gym.app.controller;
 
 import com.epam.gym.app.dto.user.UserChangePasswordDTO;
-import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,9 +13,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static com.epam.gym.app.utils.Constants.AUTH_REST_URL;
 import static org.hamcrest.Matchers.is;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -38,18 +39,10 @@ class AuthControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    UserLoginDTO userLoginDTO;
-
     UserChangePasswordDTO userChangePasswordDTO;
 
     @BeforeEach
     public void setup() {
-
-        userLoginDTO = UserLoginDTO
-                .builder()
-                .username("firstname.lastname")
-                .password("1234567890")
-                .build();
 
         userChangePasswordDTO = UserChangePasswordDTO
                 .builder()
@@ -63,10 +56,13 @@ class AuthControllerTest {
     @DisplayName("login() method should return OK status when User login successfully")
     void login_shouldReturnOKStatus_whenUserLoginSuccessfully() throws Exception {
 
-        given(authService.login(any(UserLoginDTO.class))).willReturn(true);
-        ResultActions response = mockMvc.perform(get("/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userLoginDTO)));
+        String username = "firstname.lastname";
+        String password = "1234567890";
+
+        given(authService.login(anyString(), anyString())).willReturn(true);
+        ResultActions response = mockMvc.perform(get(AUTH_REST_URL)
+                .param("username", username)
+                .param("password", password));
 
         response.andDo(print()).andExpect(status().isOk());
     }
@@ -75,10 +71,13 @@ class AuthControllerTest {
     @DisplayName("login() method should throw UserNotLoginException when User is not login")
     void login_shouldThrowUserNotLoginException_whenUserIsNotLogin() throws Exception {
 
-        given(authService.login(any(UserLoginDTO.class))).willReturn(false);
-        ResultActions response = mockMvc.perform(get("/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userLoginDTO)));
+        String username = "wrong.username";
+        String password = "1234567890";
+
+        given(authService.login(anyString(), anyString())).willReturn(false);
+        ResultActions response = mockMvc.perform(get(AUTH_REST_URL)
+                .param("username", username)
+                .param("password", password));
 
         response.andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -91,9 +90,9 @@ class AuthControllerTest {
     void changePassword_shouldReturnOKStatus_whenUserPasswordChangedSuccessfully() throws Exception {
 
         given(authService.changePassword(any(UserChangePasswordDTO.class))).willReturn(true);
-        ResultActions response = mockMvc.perform(put("/login")
+        ResultActions response = mockMvc.perform(put(AUTH_REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userLoginDTO)));
+                .content(objectMapper.writeValueAsString(userChangePasswordDTO)));
 
         response.andDo(print()).andExpect(status().isOk());
     }
@@ -103,9 +102,9 @@ class AuthControllerTest {
     void changePassword_shouldThrowUnsatisfiedActionException_whenPasswordIsNotChanged() throws Exception {
 
         given(authService.changePassword(any(UserChangePasswordDTO.class))).willReturn(false);
-        ResultActions response = mockMvc.perform(put("/login")
+        ResultActions response = mockMvc.perform(put(AUTH_REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userLoginDTO)));
+                .content(objectMapper.writeValueAsString(userChangePasswordDTO)));
 
         response.andDo(print())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

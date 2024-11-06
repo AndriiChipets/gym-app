@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static com.epam.gym.app.utils.Constants.TRAINING_TYPE_REST_URL;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.hamcrest.Matchers.is;
 
@@ -51,7 +52,7 @@ class TrainingTypeControllerTest {
         List<TrainingTypeDTO> employeesList = List.of(trainingTypeDTO);
 
         given(trainingTypeService.findAll()).willReturn(employeesList);
-        ResultActions response = mockMvc.perform(get("/training-types"));
+        ResultActions response = mockMvc.perform(get(TRAINING_TYPE_REST_URL));
 
         response.andDo(print())
                 .andExpect(status().isOk())

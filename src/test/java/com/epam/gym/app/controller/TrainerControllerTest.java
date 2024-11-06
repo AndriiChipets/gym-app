@@ -24,6 +24,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.epam.gym.app.utils.Constants.TRAINEE_TRAINERS_REST_URL;
+import static com.epam.gym.app.utils.Constants.TRAINER_REST_URL;
+import static com.epam.gym.app.utils.Constants.TRAININGS_REST_URL;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -73,7 +76,7 @@ class TrainerControllerTest {
                 .build();
 
         given(trainerService.save(any(TrainerRegDTO.class))).willReturn(userLoginDTO);
-        ResultActions response = mockMvc.perform(post("/trainer")
+        ResultActions response = mockMvc.perform(post(TRAINER_REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(trainerRegDTO)));
 
@@ -101,8 +104,7 @@ class TrainerControllerTest {
                 .build();
 
         given(trainerService.find(anyString())).willReturn(trainerGetDTO);
-        ResultActions response = mockMvc.perform(get("/trainer")
-                .param("username", username));
+        ResultActions response = mockMvc.perform(get(TRAINER_REST_URL + "/{name}", username));
 
         response.andDo(print())
                 .andExpect(status().isOk())
@@ -130,7 +132,7 @@ class TrainerControllerTest {
                 .build();
 
         given(trainerService.update(any(TrainerUpdDTO.class))).willReturn(trainerUpdDTO);
-        ResultActions response = mockMvc.perform(put("/trainer")
+        ResultActions response = mockMvc.perform(put(TRAINER_REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(trainerUpdDTO)));
 
@@ -149,7 +151,7 @@ class TrainerControllerTest {
         List<TrainerListDTO> trainers = new ArrayList<>();
 
         given(trainerService.getTrainersListNotAssignedOnTrainee(anyString())).willReturn(trainers);
-        ResultActions response = mockMvc.perform(get("/trainer/trainee-trainers")
+        ResultActions response = mockMvc.perform(get(TRAINER_REST_URL + TRAINEE_TRAINERS_REST_URL)
                 .param("traineeUsername", traineeUsername));
 
         response.andDo(print())
@@ -161,13 +163,11 @@ class TrainerControllerTest {
     void getTrainerTrainingList_shouldReturnListOfTrainerTrainings() throws Exception {
 
         String username = "firstname.lastname";
-        TrainerTrainingFilterDTO trainingFilterDTO = TrainerTrainingFilterDTO.builder().username(username).build();
         List<TrainerTrainingDTO> trainings = new ArrayList<>();
 
         given(trainerService.getTrainingsList(any(TrainerTrainingFilterDTO.class))).willReturn(trainings);
-        ResultActions response = mockMvc.perform(get("/trainer/trainings")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(trainingFilterDTO)));
+        ResultActions response = mockMvc.perform(get(TRAINER_REST_URL + TRAININGS_REST_URL)
+                .param("username", username));
 
         response.andDo(print())
                 .andExpect(jsonPath("$.size()", is(trainings.size())));
@@ -181,7 +181,7 @@ class TrainerControllerTest {
         boolean isActive = true;
 
         willDoNothing().given(trainerService).activateDeactivate(username, isActive);
-        ResultActions response = mockMvc.perform(patch("/trainer")
+        ResultActions response = mockMvc.perform(patch(TRAINER_REST_URL)
                 .param("username", username)
                 .param("isActive", String.valueOf(isActive)));
 

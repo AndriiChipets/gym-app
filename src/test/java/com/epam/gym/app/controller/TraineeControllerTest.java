@@ -24,6 +24,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.epam.gym.app.utils.Constants.TRAINEE_REST_URL;
+import static com.epam.gym.app.utils.Constants.TRAINERS_REST_URL;
+import static com.epam.gym.app.utils.Constants.TRAININGS_REST_URL;
 import static org.hamcrest.Matchers.is;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -77,7 +80,7 @@ class TraineeControllerTest {
                 .build();
 
         given(traineeService.save(any(TraineeRegDTO.class))).willReturn(userLoginDTO);
-        ResultActions response = mockMvc.perform(post("/trainee")
+        ResultActions response = mockMvc.perform(post(TRAINEE_REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(traineeRegDTO)));
 
@@ -105,8 +108,7 @@ class TraineeControllerTest {
                 .build();
 
         given(traineeService.find(anyString())).willReturn(traineeGetDTO);
-        ResultActions response = mockMvc.perform(get("/trainee")
-                .param("username", username));
+        ResultActions response = mockMvc.perform(get(TRAINEE_REST_URL + "/{name}", username));
 
         response.andDo(print())
                 .andExpect(status().isOk())
@@ -134,7 +136,7 @@ class TraineeControllerTest {
                 .build();
 
         given(traineeService.update(any(TraineeUpdDTO.class))).willReturn(traineeUpdDTO);
-        ResultActions response = mockMvc.perform(put("/trainee")
+        ResultActions response = mockMvc.perform(put(TRAINEE_REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(traineeUpdDTO)));
 
@@ -152,7 +154,7 @@ class TraineeControllerTest {
         String username = "firstname.lastname";
 
         willDoNothing().given(traineeService).delete(username);
-        ResultActions response = mockMvc.perform(delete("/trainee")
+        ResultActions response = mockMvc.perform(delete(TRAINEE_REST_URL)
                 .param("username", username));
 
         response.andDo(print())
@@ -172,7 +174,7 @@ class TraineeControllerTest {
         List<TrainerListDTO> trainers = new ArrayList<>();
 
         given(traineeService.updateTraineeTrainerList(any(TraineeTrainerListDTO.class))).willReturn(trainers);
-        ResultActions response = mockMvc.perform(put("/trainee/trainers")
+        ResultActions response = mockMvc.perform(put(TRAINEE_REST_URL + TRAINERS_REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(traineeTrainerListDTO)));
 
@@ -185,13 +187,11 @@ class TraineeControllerTest {
     void getTraineeTrainingList_shouldReturnListOfTraineeTrainings() throws Exception {
 
         String username = "firstname.lastname";
-        TraineeTrainingFilterDTO trainingFilterDTO = TraineeTrainingFilterDTO.builder().username(username).build();
         List<TraineeTrainingDTO> trainings = new ArrayList<>();
 
         given(traineeService.getTrainingsList(any(TraineeTrainingFilterDTO.class))).willReturn(trainings);
-        ResultActions response = mockMvc.perform(get("/trainee/trainings")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(trainingFilterDTO)));
+        ResultActions response = mockMvc.perform(get(TRAINEE_REST_URL + TRAININGS_REST_URL)
+                .param("username", username));
 
         response.andDo(print())
                 .andExpect(jsonPath("$.size()", is(trainings.size())));
@@ -205,7 +205,7 @@ class TraineeControllerTest {
         boolean isActive = true;
 
         willDoNothing().given(traineeService).activateDeactivate(username, isActive);
-        ResultActions response = mockMvc.perform(patch("/trainee")
+        ResultActions response = mockMvc.perform(patch(TRAINEE_REST_URL)
                 .param("username", username)
                 .param("isActive", String.valueOf(isActive)));
 

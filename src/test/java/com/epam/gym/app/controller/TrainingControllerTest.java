@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static com.epam.gym.app.utils.Constants.TRAINING_REST_URL;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -52,7 +53,7 @@ class TrainingControllerTest {
     void addTraining_shouldAddTrainingAndReturnOkStatus_whenTrainingDTOIsCorrect() throws Exception {
 
         given(trainingService.save(any(TrainingDTO.class))).willReturn(trainingDTO);
-        ResultActions response = mockMvc.perform(post("/training")
+        ResultActions response = mockMvc.perform(post(TRAINING_REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(trainingDTO)));
 
