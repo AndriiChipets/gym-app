@@ -1,10 +1,8 @@
 package com.epam.gym.app.repository;
 
-import com.epam.gym.app.config.GymAppConfig;
 import com.epam.gym.app.entity.Trainer;
+import com.epam.gym.app.entity.Training;
 import com.epam.gym.app.entity.TrainingType;
-import com.epam.gym.app.testcontainer.MysqlTestContainer;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,20 +10,20 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
-import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Testcontainers
 @DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
         TrainerRepository.class}))
-@ContextConfiguration(classes = GymAppConfig.class)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql(
         scripts = {
@@ -35,10 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
 @DisplayName("TrainerRepositoryTest")
-public class TrainerRepositoryTest {
-
-    @ClassRule
-    public static MySQLContainer<?> mySQLContainer = MysqlTestContainer.getInstance();
+class TrainerRepositoryTest {
 
     @Autowired
     TrainerRepository trainerRepository;
@@ -71,6 +66,7 @@ public class TrainerRepositoryTest {
 
         Optional<Trainer> actTrainerOpt = trainerRepository.findByUsername(username);
 
+        assertTrue(actTrainerOpt.isPresent());
         assertEquals(expTrainerOpt, actTrainerOpt);
     }
 
@@ -83,33 +79,8 @@ public class TrainerRepositoryTest {
 
         Optional<Trainer> actTrainerOpt = trainerRepository.findByUsername(username);
 
+        assertFalse(actTrainerOpt.isPresent());
         assertEquals(expTraineeOpt, actTrainerOpt);
-    }
-
-    @Test
-    @DisplayName("existsByUsernameAndPassword method should return true when Trainer is present")
-    void existsByUsernameAndPassword_shouldReturnTrue_whenThereAreAnyTrainerRelatedToEnteredUsernameAndPassword() {
-
-        String username = "David.Martinez";
-        String password = "7777777777";
-        boolean expected = true;
-
-        boolean actual = trainerRepository.existsByUsernameAndPassword(username, password);
-
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    @DisplayName("existsByUsernameAndPassword method should return false when Trainer isn't present")
-    void existsByUsernameAndPassword_shouldReturnFalse_whenThereIsNotAnyTrainerRelatedToEnteredUsernameAndPassword() {
-
-        String username = "wrong.username";
-        String password = "1234567890";
-        boolean expected = false;
-
-        boolean actual = trainerRepository.existsByUsernameAndPassword(username, password);
-
-        assertEquals(expected, actual);
     }
 
     @Test
@@ -118,8 +89,63 @@ public class TrainerRepositoryTest {
 
         String traineeUsername = "Fn.Ln";
 
-        List<Trainer> actualTrainers = trainerRepository.findAllNotAssignedOnTrainee(traineeUsername);
+        List<Trainer> actTrainers = trainerRepository.findAllNotAssignedOnTrainee(traineeUsername);
 
-        assertEquals(2, actualTrainers.size());
+        assertFalse(actTrainers.isEmpty());
+        assertEquals(2, actTrainers.size());
+    }
+
+    @Test
+    @DisplayName("findAllByUsernameIn method should return List of Trainers when Trainers' usernames match")
+    void findAllByUsernameIn_shouldReturnListOfTrainers_whenTrainersUsernamesMatch() {
+
+        Set<String> trainersUsernames = Set.of(
+                "Olivia.Anderson", "Daniel.Wilson",
+                "Sophia.Rodriguez", "David.Martinez",
+                "wrong.username"
+        );
+
+        List<Trainer> actTrainers = trainerRepository.findAllByUsernameIn(trainersUsernames);
+        Set<String> actTrainersUsernames = actTrainers.
+                stream().
+                map(Trainer::getUsername).
+                collect(Collectors.toSet());
+
+        assertFalse(actTrainers.isEmpty());
+        assertEquals(trainersUsernames.size() - 1, actTrainers.size());
+        assertTrue(trainersUsernames.containsAll(actTrainersUsernames));
+    }
+
+    @Test
+    @DisplayName("getFilteredTrainings method should return List of Trainings filtered by criteria")
+    void getFilteredTrainings_shouldReturnListOfTrainingsFilteredByCriteria() {
+
+        String trainerUsername = "Sophia.Rodriguez";
+        String traineeUsername = "Sara.Johnson";
+        LocalDate dateFrom = LocalDate.parse("2024-10-19");
+        LocalDate dateTo = LocalDate.parse("2024-10-26");
+
+        List<Training> actTrainings = trainerRepository.getFilteredTrainings(
+                trainerUsername, traineeUsername, dateFrom, dateTo);
+
+        assertFalse(actTrainings.isEmpty());
+        assertEquals(1, actTrainings.size());
+        assertEquals(traineeUsername, actTrainings.getFirst().getTrainee().getUsername());
+        assertEquals(trainerUsername, actTrainings.getFirst().getTrainer().getUsername());
+        assertTrue(actTrainings.getFirst().getDate().isAfter(dateFrom));
+        assertTrue(actTrainings.getFirst().getDate().isBefore(dateTo));
+    }
+
+    @Test
+    @DisplayName("getFilteredTrainings method should return List of all Trainer Trainings when criteria are nulls")
+    void getFilteredTrainings_shouldReturnListOfAllTrainerTrainings_whenCriteriaAreNulls() {
+
+        String trainerUsername = "Sophia.Rodriguez";
+
+        List<Training> actTrainings = trainerRepository.getFilteredTrainings(
+                trainerUsername, null, null, null);
+
+        assertFalse(actTrainings.isEmpty());
+        assertEquals(3, actTrainings.size());
     }
 }

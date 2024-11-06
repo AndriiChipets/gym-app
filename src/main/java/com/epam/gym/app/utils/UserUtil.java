@@ -1,8 +1,8 @@
 package com.epam.gym.app.utils;
 
-import com.epam.gym.app.dto.TraineeDto;
-import com.epam.gym.app.dto.TrainerDto;
-import com.epam.gym.app.dto.UserDto;
+import com.epam.gym.app.entity.Trainee;
+import com.epam.gym.app.entity.Trainer;
+import com.epam.gym.app.entity.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
@@ -14,7 +14,6 @@ import java.util.Random;
 @UtilityClass
 public class UserUtil {
 
-    public static final String DATE_TEMPLATE = "yyyy-MM-dd";
     public static final String SYMBOLS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
     public static final Random RANDOM = new Random();
     public static final int PASSWORD_LENGTH = 10;
@@ -32,8 +31,8 @@ public class UserUtil {
 
     public static String generateUsername(String firstname,
                                           String lastname,
-                                          List<TrainerDto> trainers,
-                                          List<TraineeDto> trainees) {
+                                          List<Trainer> trainers,
+                                          List<Trainee> trainees) {
 
         UserNameGenerator userNameGenerator = new UserNameGenerator(firstname, lastname, trainers, trainees);
         long serNum = userNameGenerator.generateSerNum();
@@ -51,9 +50,9 @@ public class UserUtil {
 
         private final String firstname;
         private final String lastname;
-        private final List<TrainerDto> trainers;
-        private final List<TraineeDto> trainees;
-        private List<UserDto> users;
+        private final List<Trainer> trainers;
+        private final List<Trainee> trainees;
+        private List<User> users;
         private List<String> usernames;
 
         public int generateSerNum() {
@@ -72,15 +71,15 @@ public class UserUtil {
             users.addAll(convertToUserList(trainees));
         }
 
-        private List<UserDto> convertToUserList(List<? extends UserDto> entities) {
+        private List<User> convertToUserList(List<? extends User> entities) {
             return entities == null || entities.isEmpty() ? new ArrayList<>()
-                    : entities.stream().map(UserDto.class::cast).toList();
+                    : entities.stream().map(User.class::cast).toList();
         }
 
         private void initializeUsernameList() {
             usernames = users.stream()
                     .filter(u -> firstname.equals(u.getFirstname()) && lastname.equals(u.getLastname()))
-                    .map(UserDto::getUsername)
+                    .map(User::getUsername)
                     .filter(username -> username != null && !username.isEmpty())
                     .toList();
         }

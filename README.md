@@ -1,13 +1,14 @@
 # Gym Application
 
 ## Table of Contents
+
 1. [Introduction](#introduction)
 2. [Technologies Used](#technologies-used)
 3. [Getting Started](#getting-started)
 4. [Additional Features](#additional-features)
 5. [Contributing](#contributing)
 6. [Pay attention](#pay-attention)
-7. [Challenges](...)
+7. [Challenges](#pay-attention)
 
 ## Introduction
 
@@ -18,70 +19,36 @@ The application handles gym CRM system.
 
 - Java 21
 - Spring Boot
+- Spring MVC
+- Spring AOP
 - Log4j2
-- JUnit
+- JUnit, Mockito
 - Jacoco
-- MySql
+- H2
 - Liquibase
-- Test containers
 
 ## Getting Started
-- to build application the installed on your computer Docker application is required
-- there are two database urls in localhost.env file, to run with Docker please uncomment:  
-  DB_URL=jdbc:mysql://mysql-db:3306/gym_app_db  
-  and comment:  
-  #DB_URL=jdbc:mysql://localhost:3306/gym_app_db
+
 - please, download to your PC the gym-app folder from the GitHub repository and extract files from the archive:  
   https://github.com/AndriiChipets/gym-app
 - run the command line interface inside the folder "gym-app"
-- before building, please make sure that you have stooped mysql server on your local machine, and the port 3306 is free
-- to build an application Docker images and run containers, please run in cmd following command:  
-  docker-compose --env-file ./localhost.env up --build
-- you should be able to see program interface:  
-  ============ Please, choose who are you ============  
-  1 -> Trainee  
-  2 -> Trainer  
-- to run terminal inside container to interact with application open new terminal in the same folder and run cmd following command:  
-  docker attach gym-app
-- there is test data already added in the mysql DB, so to pass registration please use:  
-  "1" (select Trainee from the previous menu)  
-  "Fn.Ln" (Trainee username)  
-  "1234567890" (Trainee password)  
-- after registration, you should be able to see program interface:  
-  ============ Please, choose the operation ============  
-  1 -> Create Trainee  
-  2 -> Update Trainee  
-  3 -> Delete Trainee  
-  4 -> Select Trainee  
-  5 -> Change Trainee password  
-  6 -> Activate/deactivate Trainee  
-  7 -> Get Trainee Trainings list  
-  8 -> Get Trainers List not assigned on Trainee  
-  9 -> Add Trainer To Trainee's Trainers List  
-  10 -> Remove Trainer From Trainee's Trainers List  
-  11 -> Create Trainer  
-  12 -> Update Trainer  
-  13 -> Select Trainer  
-  14 -> Change Trainer password  
-  15 -> Activate/Deactivate Trainer  
-  16 -> Get Trainer Trainings list  
-  17 -> Create Training  
-  18 -> Select Training  
-  19 -> Select All Trainee  
-  20 -> Select All Trainers  
-  21 -> Select All Trainings  
-  22 -> Select All TrainingTypes  
-  0 -> To exit from the program  
-- take your time and explore all gym-app functionality if you wish
-- to stop the program CTRL+C is expected
-- to delete containers, please run in cmd following command:  
-  docker-compose --env-file ./localhost.env down
-- to run create and run containers again (from existing images), please run in cmd following command:  
-  docker-compose --env-file ./localhost.env up
-- you should be able to see program interface:
+- to run the app, please execute the command: mvn spring-boot:run
+- to stop app, press CTRL+C
+- that's all you have excess to the "gym-app" endpoints
+- to see all endpoints, after "gym-app" is running, please follow the link:  
+  http://localhost:8080/swagger-ui/index.html#/
+![img_5.png](readme-images/img_5.png)
+- to access the H2 DB, after "gym-app" is running, please follow the link:  
+  http://localhost:8080/h2-console
+  all credentials for access in the localhost.env file (password: gym_app_1234)  
+  ![img_4.png](readme-images/img_4.png)
 
 ## Additional Features
 
+- According to the task, all methods except login and register user require the authentication,
+  so first of all make sure you are login, e.g. with credentials:  
+  username = "Fn.Ln"  
+  password = "1234567890"  
 - Readme file to guide developers and contributors
 
 ## Contributing
@@ -89,15 +56,28 @@ The application handles gym CRM system.
 Contributions are welcome! If you have ideas or improvements, feel free to submit a pull request.
 
 ## Pay attention
-### To run all test you should have running Docker engine on your local machine
+
 ### The application is still under development, so bugs and drawbacks are possible.
 
 ## Challenges
-![img_1.png](readme-images/img_1.png)
-There is a challenge with test coverage in module_3 (should be more than 80% line coverage but was 68%).
-After investigation, I discovered that the reason is the MapperStruct library. 170 lines from 641 related to this library.
-![img_2.png](readme-images/img_2.png)
-The MapperStruct Interface I used only in the service layer where I mocked its beans that's why it did not invoke explicitly and did not cover with tests.   
-As I know it's not a good idea to test libraries that's why I didn't.  
-Also, the repository layer is represented only with interfaces and all its tests not included to test coverage.
-![img_3.png](readme-images/img_3.png)
+
+To implement custom authentication logic I used the Spring AOP functionality. 
+That was challenging for me and I spent a lot of time to implement it.
+The problem was related to the annotation full qualified name which I had to use 
+to make annotation @Authenticated active.
+So, for now to make methods requiring user authentication before access them
+you just need to add @Authenticated above the method signature e.g.  
+```ruby
+    @DeleteMapping
+    @Authenticated
+    @Operation(summary = "Delete Trainee")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Trainee successfully deleted"),
+            @ApiResponse(responseCode = "404", description = "Trainee is not deleted"),
+            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
+    })
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteTrainee(@RequestParam @NotBlank String username) {
+        traineeService.delete(username);
+    }
+```

@@ -1,10 +1,10 @@
 package com.epam.gym.app.service;
 
-import com.epam.gym.app.dto.TrainingTypeDto;
+import com.epam.gym.app.dto.training_type.TrainingTypeDTO;
 import com.epam.gym.app.entity.TrainingType;
-import com.epam.gym.app.mapper.TypeMapperStruct;
+import com.epam.gym.app.exception.NoEntityPresentException;
+import com.epam.gym.app.mapper.training_type.TrainingTypeMapper;
 import com.epam.gym.app.repository.TrainingTypeRepository;
-import com.epam.gym.app.service.exception.NoEntityPresentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ class TrainingTypeServiceTest {
     TrainingTypeRepository typeRepository;
 
     @MockBean
-    TypeMapperStruct typeMapper;
+    TrainingTypeMapper typeMapper;
 
     @Autowired
     TrainingTypeService typeService;
@@ -42,11 +42,11 @@ class TrainingTypeServiceTest {
 
         String name = "TrainingType name";
         TrainingType trainingType = TrainingType.builder().build();
-        TrainingTypeDto expected = TrainingTypeDto.builder().name(name).build();
+        TrainingTypeDTO expected = TrainingTypeDTO.builder().name(name).build();
 
         when(typeRepository.findByName(anyString())).thenReturn(Optional.of(trainingType));
         when(typeMapper.mapTypeToTypeDto(any(TrainingType.class))).thenReturn(expected);
-        TrainingTypeDto actual = typeService.find(name);
+        TrainingTypeDTO actual = typeService.find(name);
 
         assertNotNull(actual);
         assertEquals(expected, actual);
@@ -76,14 +76,14 @@ class TrainingTypeServiceTest {
                 TrainingType.builder().build(),
                 TrainingType.builder().build());
 
-        List<TrainingTypeDto> expected = List.of(
-                TrainingTypeDto.builder().build(),
-                TrainingTypeDto.builder().build(),
-                TrainingTypeDto.builder().build());
+        List<TrainingTypeDTO> expected = List.of(
+                TrainingTypeDTO.builder().build(),
+                TrainingTypeDTO.builder().build(),
+                TrainingTypeDTO.builder().build());
 
         when(typeRepository.findAll()).thenReturn(types);
-        when(typeMapper.mapTypeToTypeDto(any(TrainingType.class))).thenReturn(new TrainingTypeDto());
-        List<TrainingTypeDto> actual = typeService.findAll();
+        when(typeMapper.mapTypeToTypeDto(any(TrainingType.class))).thenReturn(new TrainingTypeDTO());
+        List<TrainingTypeDTO> actual = typeService.findAll();
 
         assertNotNull(actual);
         assertEquals(expected, actual);
