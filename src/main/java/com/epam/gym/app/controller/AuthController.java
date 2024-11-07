@@ -1,6 +1,7 @@
 package com.epam.gym.app.controller;
 
 import com.epam.gym.app.annotation.Authenticated;
+import com.epam.gym.app.annotation.LoginCounter;
 import com.epam.gym.app.dto.user.UserChangePasswordDTO;
 import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.exception.UnsatisfiedActionException;
@@ -36,6 +37,7 @@ public class AuthController {
     private final AuthService authService;
 
     @GetMapping
+    @LoginCounter
     @Operation(summary = "Login User")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User successfully login"),
@@ -49,9 +51,11 @@ public class AuthController {
                     = "password must be exactly " + UserUtil.PASSWORD_LENGTH + " characters length")
             String password,
             HttpSession session) {
+
         if (!authService.login(username, password)) {
             throw new UserNotLoginException("User is not login");
         }
+
         session.setAttribute("loggedInUser", UserLoginDTO.builder().username(username).password(password).build());
     }
 

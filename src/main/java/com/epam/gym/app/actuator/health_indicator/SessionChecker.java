@@ -1,4 +1,4 @@
-package com.epam.gym.app.health_indicator;
+package com.epam.gym.app.actuator.health_indicator;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
