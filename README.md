@@ -21,6 +21,8 @@ The application handles gym CRM system.
 - Spring Boot
 - Spring MVC
 - Spring AOP
+- Spring Actuator
+- Prometheus
 - Log4j2
 - JUnit, Mockito
 - Jacoco
@@ -36,10 +38,10 @@ The application handles gym CRM system.
 - to stop app, press CTRL+C
 - that's all you have excess to the "gym-app" endpoints
 - to see all endpoints, after "gym-app" is running, please follow the link:  
-  http://localhost:8080/swagger-ui/index.html#/
-![img_5.png](readme-images/img_5.png)
+  http://localhost:9000/swagger-ui/index.html#/
+  ![img_5.png](readme-images/img_5.png)
 - to access the H2 DB, after "gym-app" is running, please follow the link:  
-  http://localhost:8080/h2-console
+  http://localhost:9000/h2-console
   all credentials for access in the localhost.env file (password: gym_app_1234)  
   ![img_4.png](readme-images/img_4.png)
 
@@ -48,7 +50,16 @@ The application handles gym CRM system.
 - According to the task, all methods except login and register user require the authentication,
   so first of all make sure you are login, e.g. with credentials:  
   username = "Fn.Ln"  
-  password = "1234567890"  
+  password = "1234567890"
+- Implemented spring profiles functionality "dev" and "prod" profiles all with different property files:  
+  "dev" - profile by default, server.port = 9000, H2 DB  
+  "prod" - server.port = 8000, MySql DB (Doesn't work without additional preparations)
+- Implemented two custom health indicators:  
+  for DB - http://localhost:9000/actuator/health/database  
+  for http session - http://localhost:9000/actuator/health/session
+- Implemented two custom prometheus metrics  
+  for login counting  
+  for free JVM memory gauge in percent
 - Readme file to guide developers and contributors
 
 ## Contributing
@@ -61,12 +72,13 @@ Contributions are welcome! If you have ideas or improvements, feel free to submi
 
 ## Challenges
 
-To implement custom authentication logic I used the Spring AOP functionality. 
+To implement custom authentication logic I used the Spring AOP functionality.
 That was challenging for me and I spent a lot of time to implement it.
-The problem was related to the annotation full qualified name which I had to use 
+The problem was related to the annotation full qualified name which I had to use
 to make annotation @Authenticated active.
 So, for now to make methods requiring user authentication before access them
-you just need to add @Authenticated above the method signature e.g.  
+you just need to add @Authenticated above the method signature e.g.
+
 ```ruby
     @DeleteMapping
     @Authenticated
