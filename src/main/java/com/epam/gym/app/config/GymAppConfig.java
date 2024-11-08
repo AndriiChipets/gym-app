@@ -1,5 +1,7 @@
 package com.epam.gym.app.config;
 
+import com.epam.gym.app.filter.TransactionFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -23,5 +25,14 @@ public class GymAppConfig {
                         Conditions.header("X-Secret", "true")))
                 .sink(new DefaultSink(new DefaultHttpLogFormatter(), new DefaultHttpLogWriter()))
                 .build();
+    }
+
+    @Bean
+    public FilterRegistrationBean<TransactionFilter> transactionFilter() {
+        FilterRegistrationBean<TransactionFilter> registrationBean
+                = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new TransactionFilter());
+        registrationBean.addUrlPatterns("/*");
+        return registrationBean;
     }
 }
