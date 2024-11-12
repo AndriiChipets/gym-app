@@ -17,7 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
@@ -33,34 +32,6 @@ class AuthServiceTest {
 
     @Autowired
     AuthService authService;
-
-    @Test
-    @DisplayName("login() method should return true when User with username and password is present")
-    void login_shouldReturnTrue_whenUserWithUsernameAndPasswordIsPresent() {
-
-        String username = "firstname.lastname";
-        String password = "valid password";
-
-        when(authRepository.existsByUsernameAndPassword(anyString(), anyString())).thenReturn(true);
-        boolean isExists = authService.login(username, password);
-
-        assertTrue(isExists);
-        verify(authRepository).existsByUsernameAndPassword(username, password);
-    }
-
-    @Test
-    @DisplayName("login() method should return false when User with username and password is absent")
-    void login_shouldReturnFalse_whenUserWithUsernameAndPasswordIsAbsent() {
-
-        String username = "firstname.lastname";
-        String password = "invalid password";
-
-        when(authRepository.existsByUsernameAndPassword(anyString(), anyString())).thenReturn(false);
-        boolean isExists = authService.login(username, password);
-
-        assertFalse(isExists);
-        verify(authRepository).existsByUsernameAndPassword(username, password);
-    }
 
     @Test
     @DisplayName("changePassword() method should return true when User's password is changed successfully")

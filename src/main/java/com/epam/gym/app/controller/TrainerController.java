@@ -1,6 +1,5 @@
 package com.epam.gym.app.controller;
 
-import com.epam.gym.app.annotation.Authenticated;
 import com.epam.gym.app.dto.trainer.TrainerGetDTO;
 import com.epam.gym.app.dto.trainer.TrainerListDTO;
 import com.epam.gym.app.dto.trainer.TrainerRegDTO;
@@ -55,7 +54,6 @@ public class TrainerController {
     }
 
     @GetMapping("/{name}")
-    @Authenticated
     @Operation(summary = "Get Trainer")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainer successfully found"),
@@ -67,7 +65,6 @@ public class TrainerController {
     }
 
     @PutMapping
-    @Authenticated
     @Operation(summary = "Update Trainer")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainer successfully updated"),
@@ -79,7 +76,6 @@ public class TrainerController {
     }
 
     @GetMapping(TRAINEE_TRAINERS_REST_URL)
-    @Authenticated
     @Operation(summary = "Get List of Trainer's Trainees")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of Trainer's Trainees successfully retrieved"),
@@ -91,7 +87,6 @@ public class TrainerController {
     }
 
     @GetMapping(TRAININGS_REST_URL)
-    @Authenticated
     @Operation(summary = "Get List of Trainer's Trainings filtered by criteria")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of Trainer's Trainings successfully retrieved"),
@@ -115,7 +110,6 @@ public class TrainerController {
     }
 
     @PatchMapping
-    @Authenticated
     @Operation(summary = "Activate or deactivate Trainer's profile")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "The status of Trainer's profile successfully changed"),

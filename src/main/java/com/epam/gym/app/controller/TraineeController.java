@@ -1,6 +1,5 @@
 package com.epam.gym.app.controller;
 
-import com.epam.gym.app.annotation.Authenticated;
 import com.epam.gym.app.dto.trainee.TraineeGetDTO;
 import com.epam.gym.app.dto.trainee.TraineeRegDTO;
 import com.epam.gym.app.dto.trainee.TraineeTrainerListDTO;
@@ -57,7 +56,6 @@ public class TraineeController {
     }
 
     @GetMapping("/{name}")
-    @Authenticated
     @Operation(summary = "Get Trainee")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainee successfully found"),
@@ -69,7 +67,6 @@ public class TraineeController {
     }
 
     @PutMapping
-    @Authenticated
     @Operation(summary = "Update Trainee")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainee successfully updated"),
@@ -81,7 +78,6 @@ public class TraineeController {
     }
 
     @DeleteMapping
-    @Authenticated
     @Operation(summary = "Delete Trainee")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainee successfully deleted"),
@@ -94,7 +90,6 @@ public class TraineeController {
     }
 
     @PutMapping(TRAINERS_REST_URL)
-    @Authenticated
     @Operation(summary = "Update the list of Trainee's Trainers")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of Trainee's Trainers successfully updated"),
@@ -108,7 +103,6 @@ public class TraineeController {
     }
 
     @GetMapping(TRAININGS_REST_URL)
-    @Authenticated
     @Operation(summary = "Get List of Trainee's Trainings filtered by criteria")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of Trainee's Trainings successfully retrieved"),
@@ -134,7 +128,6 @@ public class TraineeController {
     }
 
     @PatchMapping
-    @Authenticated
     @Operation(summary = "Activate or deactivate Trainee's profile")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "The status of Trainee's profile successfully changed"),

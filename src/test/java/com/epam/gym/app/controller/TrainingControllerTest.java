@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -50,10 +52,12 @@ class TrainingControllerTest {
 
     @Test
     @DisplayName("addTraining() method should add Training and return OK status when TrainingDTO is correct")
+    @WithMockUser
     void addTraining_shouldAddTrainingAndReturnOkStatus_whenTrainingDTOIsCorrect() throws Exception {
 
         given(trainingService.save(any(TrainingDTO.class))).willReturn(trainingDTO);
         ResultActions response = mockMvc.perform(post(TRAINING_REST_URL)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(trainingDTO)));
 

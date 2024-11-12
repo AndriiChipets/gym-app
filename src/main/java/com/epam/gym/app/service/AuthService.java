@@ -17,16 +17,6 @@ public class AuthService {
 
     private final AuthRepository authRepository;
 
-    @Transactional(readOnly = true)
-    public boolean login(String username, String password) {
-
-        log.debug("Login User with username {}", username);
-        boolean isLogin = authRepository.existsByUsernameAndPassword(username, password);
-        log.debug("User with username {} is login {}", username, isLogin);
-
-        return isLogin;
-    }
-
     @Transactional
     public boolean changePassword(UserChangePasswordDTO changePasswordDTO) {
         String username = changePasswordDTO.getUsername();
