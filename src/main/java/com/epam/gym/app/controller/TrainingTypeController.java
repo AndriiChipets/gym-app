@@ -32,7 +32,7 @@ public class TrainingTypeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of training types successfully retrieved"),
             @ApiResponse(responseCode = "404", description = "List is not retrieved"),
-            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
+            @ApiResponse(responseCode = "401", description = "User Authentication Required")
     })
     @ResponseStatus(HttpStatus.OK)
     public List<TrainingTypeDTO> getTrainingTypes() {

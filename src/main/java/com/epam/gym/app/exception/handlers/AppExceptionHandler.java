@@ -63,7 +63,7 @@ public class AppExceptionHandler {
     }
 
     @ExceptionHandler(UserNotAuthenticatedException.class)
-    @ResponseStatus(HttpStatus.NETWORK_AUTHENTICATION_REQUIRED)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public final ErrorResponse handleUserNotAuthenticatedException(UserNotAuthenticatedException ex) {
         return getErrorResponse(AUTH_REQUIRED, ex);
     }

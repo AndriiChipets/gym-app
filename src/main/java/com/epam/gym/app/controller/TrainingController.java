@@ -32,7 +32,7 @@ public class TrainingController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "New Training successfully added"),
             @ApiResponse(responseCode = "404", description = "New Training is not added"),
-            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
+            @ApiResponse(responseCode = "401", description = "User Authentication Required")
     })
     @ResponseStatus(HttpStatus.OK)
     public void addTraining(@Valid @RequestBody TrainingDTO trainingDTO) {
