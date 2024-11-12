@@ -2,7 +2,8 @@
 <Configuration status="WARN" monitorInterval="30">
 
     <Properties>
-        <Property name="LOG_PATTERN">%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %c{1}: %m%n</Property>
+        <Property name="LOG_PATTERN">"%d{yyyy-MM-dd HH:mm:ss} [%t] %-5level %logger{36} [%X{transactionId}] - %msg%n"
+        </Property>
         <Property name="LOGS" value="./logs"/>
     </Properties>
 
@@ -12,7 +13,7 @@
         </Console>
 
         <RollingFile name="rollingFile" fileName="${LOGS}/gym-app.log"
-                     filePattern="${LOGS}/archived/hippodrome.%d{yyyy-MM-dd}.log"
+                     filePattern="${LOGS}/archived/gym-app.%d{yyyy-MM-dd}.log"
                      ignoreExceptions="false">
 
             <PatternLayout pattern="${LOG_PATTERN}"/>
