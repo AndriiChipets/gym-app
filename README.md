@@ -86,7 +86,7 @@ you just need to add @Authenticated above the method signature e.g.
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainee successfully deleted"),
             @ApiResponse(responseCode = "404", description = "Trainee is not deleted"),
-            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
+            @ApiResponse(responseCode = "401", description = "User Authentication Required")
     })
     @ResponseStatus(HttpStatus.OK)
     public void deleteTrainee(@RequestParam @NotBlank String username) {

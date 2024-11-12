@@ -65,7 +65,7 @@ public class AuthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "User password successfully changed"),
             @ApiResponse(responseCode = "400", description = "User old password or username is incorrect"),
-            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
+            @ApiResponse(responseCode = "401", description = "User Authentication Required")
     })
     public void changePassword(@Valid @RequestBody UserChangePasswordDTO changePasswordDTO) {
         if (!authService.changePassword(changePasswordDTO)) {

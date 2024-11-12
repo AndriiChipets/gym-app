@@ -62,7 +62,7 @@ public class TraineeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainee successfully found"),
             @ApiResponse(responseCode = "404", description = "Trainee with provided password and username is not found"),
-            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
+            @ApiResponse(responseCode = "401", description = "User Authentication Required")
     })
     public TraineeGetDTO getTrainee(@PathVariable("name") @NotBlank String username) {
         return traineeService.find(username);
@@ -74,7 +74,7 @@ public class TraineeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainee successfully updated"),
             @ApiResponse(responseCode = "404", description = "Trainee is not updated"),
-            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
+            @ApiResponse(responseCode = "401", description = "User Authentication Required")
     })
     public TraineeUpdDTO updateTrainee(@Valid @RequestBody TraineeUpdDTO traineeUpdDTO) {
         return traineeService.update(traineeUpdDTO);
@@ -86,7 +86,7 @@ public class TraineeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Trainee successfully deleted"),
             @ApiResponse(responseCode = "404", description = "Trainee is not deleted"),
-            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
+            @ApiResponse(responseCode = "401", description = "User Authentication Required")
     })
     @ResponseStatus(HttpStatus.OK)
     public void deleteTrainee(@RequestParam @NotBlank String username) {
@@ -99,7 +99,7 @@ public class TraineeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of Trainee's Trainers successfully updated"),
             @ApiResponse(responseCode = "404", description = "List of Trainee's Trainers is not updated"),
-            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
+            @ApiResponse(responseCode = "401", description = "User Authentication Required")
     })
     public List<TrainerListDTO> updateTraineeTrainerList(
             @Valid @RequestBody TraineeTrainerListDTO traineeTrainerListDTO) {
@@ -113,7 +113,7 @@ public class TraineeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of Trainee's Trainings successfully retrieved"),
             @ApiResponse(responseCode = "404", description = "List of Trainee's Trainings is not retrieved"),
-            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
+            @ApiResponse(responseCode = "401", description = "User Authentication Required")
     })
     public List<TraineeTrainingDTO> getTraineeTrainingList(
             @RequestParam @NotBlank String username,
@@ -139,7 +139,7 @@ public class TraineeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "The status of Trainee's profile successfully changed"),
             @ApiResponse(responseCode = "404", description = "The status of Trainee's profile is not changed"),
-            @ApiResponse(responseCode = "501", description = "Network Authentication Required")
+            @ApiResponse(responseCode = "401", description = "User Authentication Required")
     })
     @ResponseStatus(HttpStatus.OK)
     public void activateDeactivateTrainee(
