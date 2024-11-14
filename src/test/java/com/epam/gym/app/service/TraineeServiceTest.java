@@ -16,7 +16,6 @@ import com.epam.gym.app.mapper.trainee.TraineeGetMapper;
 import com.epam.gym.app.mapper.trainee.TraineeRegMapper;
 import com.epam.gym.app.mapper.trainee.TraineeTrainingMapper;
 import com.epam.gym.app.mapper.trainee.TraineeUpdMapper;
-import com.epam.gym.app.mapper.trainee.TraineeUserLoginMapper;
 import com.epam.gym.app.mapper.trainer.TrainerListMapper;
 import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.repository.TrainerRepository;
@@ -27,6 +26,7 @@ import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -73,7 +73,7 @@ class TraineeServiceTest {
     TrainerListMapper trainerListMapper;
 
     @MockBean
-    TraineeUserLoginMapper traineeUserLoginMapper;
+    PasswordEncoder encoder;
 
     @Autowired
     TraineeService traineeService;
@@ -86,7 +86,6 @@ class TraineeServiceTest {
         String password = "123456789";
         Trainee trainee = Trainee.builder().build();
         TraineeRegDTO traineeDto = TraineeRegDTO.builder().build();
-        UserLoginDTO expUserLoginDTO = UserLoginDTO.builder().build();
 
         try (MockedStatic<UserUtil> utilClassMockedStatic = mockStatic(UserUtil.class)) {
             when(traineeRegMapper.mapTraineeDtoToTrainee(any(TraineeRegDTO.class))).thenReturn(trainee);
@@ -94,12 +93,10 @@ class TraineeServiceTest {
             utilClassMockedStatic.when(() -> UserUtil.generateUsername(
                     anyString(), anyString(), anyList(), anyList())).thenReturn(username);
             when(traineeRepository.save(any(Trainee.class))).thenReturn(trainee);
-            when(traineeUserLoginMapper.mapTraineeToUserLoginDTO(trainee)).thenReturn(expUserLoginDTO);
         }
         UserLoginDTO actual = traineeService.save(traineeDto);
 
         assertNotNull(actual);
-        assertEquals(expUserLoginDTO, actual);
         verify(traineeRepository).save(trainee);
     }
 

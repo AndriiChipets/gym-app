@@ -76,7 +76,7 @@ VALUES ('Fitness'),
 ('Resistance');
 
 INSERT INTO `users` (`is_active`, `first_name`, `last_name`, `password`, `user_name`)
-VALUES  (1, 'Fn', 'Ln', '1234567890', 'Fn.Ln'),
+VALUES  (1, 'Fn', 'Ln', '$2a$12$8gMyOnozLf0R7p5iuV.BuezHcm9vUpxRDIUtlEMA1kJzz7INV0jx2', 'Fn.Ln'),
         (0, 'FirstName1', 'LastName1', '0987654321', 'FirstName1.LastName1'),
         (1, 'John', 'Doe', '1111111111', 'John.Doe'),
         (0, 'Jane', 'Smith', '2222222222', 'Jane.Smith'),

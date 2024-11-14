@@ -14,13 +14,13 @@ import com.epam.gym.app.mapper.trainer.TrainerListMapper;
 import com.epam.gym.app.mapper.trainer.TrainerRegMapper;
 import com.epam.gym.app.mapper.trainer.TrainerTrainingMapper;
 import com.epam.gym.app.mapper.trainer.TrainerUpdMapper;
-import com.epam.gym.app.mapper.trainer.TrainerUserLoginMapper;
 import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.repository.TrainerRepository;
 import com.epam.gym.app.exception.NoEntityPresentException;
 import com.epam.gym.app.utils.UserUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +39,7 @@ public class TrainerService {
     private final TrainerUpdMapper trainerUpdMapper;
     private final TrainerListMapper trainerListMapper;
     private final TrainerTrainingMapper trainerTrainingMapper;
-    private final TrainerUserLoginMapper trainerUserLoginMapper;
+    private final PasswordEncoder encoder;
 
     @Transactional
     public UserLoginDTO save(TrainerRegDTO trainerDto) {
@@ -48,18 +48,22 @@ public class TrainerService {
 
         Trainer trainer = trainerRegMapper.mapTrainerDtoToTrainer(trainerDto);
         String password = UserUtil.generateRandomPassword();
+        String encryptedPassword = encoder.encode(password);
         String username = UserUtil.generateUsername(trainer.getFirstname(),
                 trainer.getLastname(),
                 trainerRepository.findAll(),
                 traineeRepository.findAll());
         trainer.setIsActive(true);
-        trainer.setPassword(password);
+        trainer.setPassword(encryptedPassword);
         trainer.setUsername(username);
 
         trainer = trainerRepository.save(trainer);
 
         log.debug("Trainer has been saved successfully");
-        return trainerUserLoginMapper.mapTrainerToUserLoginDTO(trainer);
+        return UserLoginDTO.builder()
+                .username(trainer.getUsername())
+                .password(password)
+                .build();
     }
 
     @Transactional
