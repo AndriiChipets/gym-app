@@ -13,5 +13,6 @@ public class Constants {
     public static final String TRAINING_REST_URL = REST_URL + "/training";
     public static final String TRAININGS_REST_URL = "/trainings";
     public static final String TRAINING_TYPE_REST_URL = REST_URL + "/training-type";
-
+    public static final int BRUTE_FORCE_MAX_ATTEMPT = 3;
+    public static final int BRUTE_FORCE_BLOCKING_TIME = 5;
 }
