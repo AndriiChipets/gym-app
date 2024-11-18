@@ -2,15 +2,23 @@
 
 --changeset gym_app:init_schema
 DROP TABLE IF EXISTS `trainee_trainer` CASCADE;
+DROP TABLE IF EXISTS `user_roles` CASCADE;
 DROP TABLE IF EXISTS `trainings` CASCADE;
 DROP TABLE IF EXISTS `trainers` CASCADE;
 DROP TABLE IF EXISTS `trainees` CASCADE;
 DROP TABLE IF EXISTS `training_types` CASCADE;
 DROP TABLE IF EXISTS `users` CASCADE;
+DROP TABLE IF EXISTS `roles` CASCADE;
 
 CREATE TABLE `training_types` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `training_type_name` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+CREATE TABLE `roles` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
@@ -22,6 +30,15 @@ CREATE TABLE `users` (
   `password` varchar(255) NOT NULL,
   `user_name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+CREATE TABLE `user_roles` (
+  `user_id` bigint NOT NULL,
+  `role_id` bigint NOT NULL,
+  PRIMARY KEY (`user_id`,`role_id`),
+  KEY (`user_id`),
+  CONSTRAINT FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 CREATE TABLE `trainees` (
@@ -75,10 +92,14 @@ VALUES ('Fitness'),
 ('Stretching,'),
 ('Resistance');
 
+--password for Fn.Ln is 1234567890
+--password for FirstName.LastName is 0987654321
+--password for John.Doe is 1111111111
 INSERT INTO `users` (`is_active`, `first_name`, `last_name`, `password`, `user_name`)
-VALUES  (1, 'Fn', 'Ln', '$2a$12$8gMyOnozLf0R7p5iuV.BuezHcm9vUpxRDIUtlEMA1kJzz7INV0jx2', 'Fn.Ln'),
-        (0, 'FirstName1', 'LastName1', '0987654321', 'FirstName1.LastName1'),
-        (1, 'John', 'Doe', '1111111111', 'John.Doe'),
+VALUES
+        (1, 'Fn', 'Ln', '$2a$12$8gMyOnozLf0R7p5iuV.BuezHcm9vUpxRDIUtlEMA1kJzz7INV0jx2', 'Fn.Ln'),
+        (1, 'FirstName', 'LastName', '$2a$12$kYGIfPtVfZJMcoYzzOz15.5UAkgdIwC7Rqee.bRQhYyjZjzi/M38q', 'FirstName.LastName'),
+        (1, 'John', 'Doe', '$2a$12$L8lv1loQ3LZwl/SygmltO.Hzh.xZ3fP65LhHaX9Xmvwcf1.HfWW0a', 'John.Doe'),
         (0, 'Jane', 'Smith', '2222222222', 'Jane.Smith'),
         (1, 'Mike', 'Brown', '3333333333', 'Mike.Brown'),
         (0, 'Sara', 'Johnson', '4444444444', 'Sara.Johnson'),
@@ -88,6 +109,26 @@ VALUES  (1, 'Fn', 'Ln', '$2a$12$8gMyOnozLf0R7p5iuV.BuezHcm9vUpxRDIUtlEMA1kJzz7IN
         (0, 'Sophia', 'Rodriguez', '8888888888', 'Sophia.Rodriguez'),
         (1, 'Daniel', 'Wilson', '9999999999', 'Daniel.Wilson'),
         (0, 'Olivia', 'Anderson', '0000000000', 'Olivia.Anderson');
+
+INSERT INTO `roles` (`role_name`)
+VALUES ('ROLE_USER'),
+       ('ROLE_ADMIN');
+
+INSERT INTO `user_roles` (`user_id`, `role_id`)
+VALUES
+(1, 1),
+(1, 2),
+(2, 1),
+(3, 2),
+(4, 1),
+(5, 1),
+(6, 1),
+(7, 1),
+(8, 1),
+(9, 2),
+(10, 2),
+(11, 2),
+(12, 2);
 
 INSERT INTO `trainees` (`data_of_birth`, `id`, `address`)
 VALUES ('2001-12-12', 1, 'Address1'),

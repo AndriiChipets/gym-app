@@ -2,7 +2,7 @@ package com.epam.gym.app.controller;
 
 import com.epam.gym.app.dto.user.UserChangePasswordDTO;
 import com.epam.gym.app.exception.UnsatisfiedActionException;
-import com.epam.gym.app.service.AuthService;
+import com.epam.gym.app.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,9 +20,9 @@ import static com.epam.gym.app.utils.Constants.AUTH_REST_URL;
 @RequestMapping(value = AUTH_REST_URL)
 @AllArgsConstructor
 @Tag(name = "Authentication Controller", description = "Methods for User logging and change User password")
-public class AuthController {
+public class UserController {
 
-    private final AuthService authService;
+    private final UserService userService;
 
     @PutMapping
     @Operation(summary = "Change User password")
@@ -32,7 +32,7 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "User Authentication Required")
     })
     public void changePassword(@Valid @RequestBody UserChangePasswordDTO changePasswordDTO) {
-        if (!authService.changePassword(changePasswordDTO)) {
+        if (!userService.changePassword(changePasswordDTO)) {
             throw new UnsatisfiedActionException("password is not changed");
         }
     }

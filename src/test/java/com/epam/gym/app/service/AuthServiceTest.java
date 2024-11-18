@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
-import com.epam.gym.app.repository.AuthRepository;
+import com.epam.gym.app.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +23,15 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {AuthService.class})
+@SpringBootTest(classes = {UserService.class})
 @DisplayName("AuthServiceTest")
 class AuthServiceTest {
 
     @MockBean
-    AuthRepository authRepository;
+    UserRepository authRepository;
 
     @Autowired
-    AuthService authService;
+    UserService authService;
 
     @Test
     @DisplayName("changePassword() method should return true when User's password is changed successfully")

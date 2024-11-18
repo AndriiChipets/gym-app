@@ -1,10 +1,9 @@
 package com.epam.gym.app.service;
 
 import com.epam.gym.app.dto.user.UserChangePasswordDTO;
-import com.epam.gym.app.dto.user.UserLoginDTO;
 import com.epam.gym.app.entity.User;
 import com.epam.gym.app.exception.UserNotLoginException;
-import com.epam.gym.app.repository.AuthRepository;
+import com.epam.gym.app.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -13,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @AllArgsConstructor
 @Log4j2
-public class AuthService {
+public class UserService {
 
-    private final AuthRepository authRepository;
+    private final UserRepository authRepository;
 
     @Transactional
     public boolean changePassword(UserChangePasswordDTO changePasswordDTO) {

@@ -1,7 +1,7 @@
 package com.epam.gym.app.controller;
 
 import com.epam.gym.app.dto.user.UserChangePasswordDTO;
-import com.epam.gym.app.service.AuthService;
+import com.epam.gym.app.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,12 +26,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(AuthController.class)
-@DisplayName("AuthControllerTest")
-class AuthControllerTest {
+@WebMvcTest(UserController.class)
+@DisplayName("UserControllerTest")
+class UserControllerTest {
 
     @MockBean
-    private AuthService authService;
+    private UserService userService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -57,7 +57,7 @@ class AuthControllerTest {
     @WithMockUser
     void changePassword_shouldReturnOKStatus_whenUserPasswordChangedSuccessfully() throws Exception {
 
-        given(authService.changePassword(any(UserChangePasswordDTO.class))).willReturn(true);
+        given(userService.changePassword(any(UserChangePasswordDTO.class))).willReturn(true);
         ResultActions response = mockMvc.perform(put(AUTH_REST_URL)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
@@ -71,7 +71,7 @@ class AuthControllerTest {
     @WithMockUser
     void changePassword_shouldThrowUnsatisfiedActionException_whenPasswordIsNotChanged() throws Exception {
 
-        given(authService.changePassword(any(UserChangePasswordDTO.class))).willReturn(false);
+        given(userService.changePassword(any(UserChangePasswordDTO.class))).willReturn(false);
         ResultActions response = mockMvc.perform(put(AUTH_REST_URL)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
