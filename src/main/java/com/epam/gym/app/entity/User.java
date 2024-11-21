@@ -1,5 +1,6 @@
 package com.epam.gym.app.entity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,6 +12,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -69,6 +71,15 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
     private final Set<Role> roles = new HashSet<>();
+
+    @Builder.Default
+    @EqualsAndHashCode.Exclude
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.REMOVE,
+            fetch = FetchType.EAGER
+    )
+    private final Set<Token> tokens = new HashSet<>();
 
     public void addRole(Role role) {
         this.roles.add(role);

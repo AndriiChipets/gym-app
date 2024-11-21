@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class Constants {
     public static final String REST_URL = "/api";
+    public static final String LOGOUT_REST_URL = REST_URL + "/logout";
     public static final String AUTH_REST_URL = REST_URL + "/login";
     public static final String TRAINEE_REST_URL = REST_URL + "/trainee";
     public static final String TRAINEE_TRAINERS_REST_URL = "/trainee-trainers";

@@ -8,15 +8,18 @@ import com.epam.gym.app.dto.trainee.TraineeTrainingFilterDTO;
 import com.epam.gym.app.dto.trainee.TraineeUpdDTO;
 import com.epam.gym.app.dto.trainer.TrainerListDTO;
 import com.epam.gym.app.dto.user.AuthResponse;
+import com.epam.gym.app.entity.Token;
 import com.epam.gym.app.entity.Trainee;
 import com.epam.gym.app.entity.Trainer;
 import com.epam.gym.app.entity.Training;
+import com.epam.gym.app.entity.User;
 import com.epam.gym.app.mapper.trainee.TraineeGetMapper;
 import com.epam.gym.app.mapper.trainee.TraineeRegMapper;
 import com.epam.gym.app.mapper.trainee.TraineeTrainingMapper;
 import com.epam.gym.app.mapper.trainee.TraineeUpdMapper;
 import com.epam.gym.app.mapper.trainer.TrainerListMapper;
 import com.epam.gym.app.repository.RolesRepository;
+import com.epam.gym.app.repository.TokenRepository;
 import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.repository.TrainerRepository;
 import com.epam.gym.app.exception.NoEntityPresentException;
@@ -46,6 +49,7 @@ public class TraineeService {
     private final TrainerListMapper trainerListMapper;
     private final PasswordEncoder encoder;
     private final JwtService jwtService;
+    private final TokenRepository tokenRepository;
 
     @Transactional
     public AuthResponse save(TraineeRegDTO traineeDto) {
@@ -68,11 +72,13 @@ public class TraineeService {
 
         log.debug("Trainee has been saved successfully");
 
-        String token = jwtService.generateToken(trainee);
+        String tokenName = jwtService.generateToken(trainee);
+        saveToken(tokenName, trainee);
+
         return AuthResponse.builder()
                 .username(trainee.getUsername())
                 .password(password)
-                .token(token)
+                .token(tokenName)
                 .build();
     }
 
@@ -163,5 +169,14 @@ public class TraineeService {
                     log.error("There is no Trainee with provided username {}", username);
                     return new NoEntityPresentException("There is no Trainee with provided username: " + username);
                 });
+    }
+
+    private void saveToken(String tokenName, User user) {
+        Token token = Token.builder()
+                .name(tokenName)
+                .isLoggedOut(false)
+                .user(user)
+                .build();
+        tokenRepository.save(token);
     }
 }

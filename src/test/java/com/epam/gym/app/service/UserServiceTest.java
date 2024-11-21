@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
+import com.epam.gym.app.repository.TokenRepository;
 import com.epam.gym.app.security.JwtService;
 import com.epam.gym.app.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -37,6 +38,9 @@ class UserServiceTest {
 
     @MockBean
     JwtService jwtService;
+
+    @MockBean
+    TokenRepository tokenRepository;
 
     @Autowired
     UserService authService;

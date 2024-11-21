@@ -7,14 +7,17 @@ import com.epam.gym.app.dto.trainer.TrainerTrainingDTO;
 import com.epam.gym.app.dto.trainer.TrainerTrainingFilterDTO;
 import com.epam.gym.app.dto.trainer.TrainerUpdDTO;
 import com.epam.gym.app.dto.user.AuthResponse;
+import com.epam.gym.app.entity.Token;
 import com.epam.gym.app.entity.Trainer;
 import com.epam.gym.app.entity.Training;
+import com.epam.gym.app.entity.User;
 import com.epam.gym.app.mapper.trainer.TrainerGetMapper;
 import com.epam.gym.app.mapper.trainer.TrainerListMapper;
 import com.epam.gym.app.mapper.trainer.TrainerRegMapper;
 import com.epam.gym.app.mapper.trainer.TrainerTrainingMapper;
 import com.epam.gym.app.mapper.trainer.TrainerUpdMapper;
 import com.epam.gym.app.repository.RolesRepository;
+import com.epam.gym.app.repository.TokenRepository;
 import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.repository.TrainerRepository;
 import com.epam.gym.app.exception.NoEntityPresentException;
@@ -44,6 +47,7 @@ public class TrainerService {
     private final TrainerTrainingMapper trainerTrainingMapper;
     private final PasswordEncoder encoder;
     private final JwtService jwtService;
+    private final TokenRepository tokenRepository;
 
     @Transactional
     public AuthResponse save(TrainerRegDTO trainerDto) {
@@ -66,12 +70,13 @@ public class TrainerService {
 
         log.debug("Trainer has been saved successfully");
 
-        String token = jwtService.generateToken(trainer);
+        String tokenName = jwtService.generateToken(trainer);
+        saveToken(tokenName, trainer);
 
         return AuthResponse.builder()
                 .username(trainer.getUsername())
                 .password(password)
-                .token(token)
+                .token(tokenName)
                 .build();
     }
 
@@ -145,5 +150,14 @@ public class TrainerService {
                     log.error("There is no Trainer with provided username {}", username);
                     return new NoEntityPresentException("There is no Trainer with provided username: " + username);
                 });
+    }
+
+    private void saveToken(String tokenName, User user) {
+        Token token = Token.builder()
+                .name(tokenName)
+                .isLoggedOut(false)
+                .user(user)
+                .build();
+        tokenRepository.save(token);
     }
 }

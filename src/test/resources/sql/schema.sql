@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS tokens CASCADE;
 DROP TABLE IF EXISTS trainee_trainer CASCADE;
 DROP TABLE IF EXISTS user_roles CASCADE;
 DROP TABLE IF EXISTS trainings CASCADE;
@@ -27,6 +28,15 @@ CREATE TABLE users (
   password varchar(255) NOT NULL,
   user_name varchar(255) NOT NULL,
   PRIMARY KEY (id)
+);
+
+CREATE TABLE tokens (
+  id bigint NOT NULL AUTO_INCREMENT,
+  token_name varchar(255) NOT NULL,
+  is_logged_out boolean NOT NULL,
+  user_id bigint NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE TABLE user_roles (

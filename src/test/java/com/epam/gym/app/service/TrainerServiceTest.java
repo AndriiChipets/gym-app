@@ -16,6 +16,7 @@ import com.epam.gym.app.mapper.trainer.TrainerRegMapper;
 import com.epam.gym.app.mapper.trainer.TrainerTrainingMapper;
 import com.epam.gym.app.mapper.trainer.TrainerUpdMapper;
 import com.epam.gym.app.repository.RolesRepository;
+import com.epam.gym.app.repository.TokenRepository;
 import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.repository.TrainerRepository;
 import com.epam.gym.app.security.JwtService;
@@ -77,6 +78,9 @@ class TrainerServiceTest {
 
     @MockBean
     JwtService jwtService;
+
+    @MockBean
+    TokenRepository tokenRepository;
 
     @Autowired
     TrainerService trainerService;

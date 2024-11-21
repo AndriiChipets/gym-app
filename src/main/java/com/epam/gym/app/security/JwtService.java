@@ -1,10 +1,13 @@
 package com.epam.gym.app.security;
 
+import com.epam.gym.app.entity.Token;
 import com.epam.gym.app.entity.User;
+import com.epam.gym.app.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -13,10 +16,13 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Service
+@AllArgsConstructor
 public class JwtService {
 
     private static final String SECRET_KEY = "01d18531e10c1a1bd85130b93dcb449e72c71cdfe45e85b8d653585e8ccf90b3";
     private static final long TOKEN_EXP_TIME_SEC = 24 * 60 * 60 * 1000L;
+
+    private final TokenRepository tokenRepository;
 
     public String generateToken(User user) {
         return Jwts
@@ -28,9 +34,16 @@ public class JwtService {
                 .compact();
     }
 
-    public boolean isValid(String token, UserDetails user) {
-        String username = extractUsername(token);
-        return (username.equals((user.getUsername())) && !isTokenExpired(token));
+    public boolean isValid(String tokenName, UserDetails user) {
+        String username = extractUsername(tokenName);
+
+        boolean isLoggedOut = tokenRepository.findByName(tokenName)
+                .map(Token::isLoggedOut)
+                .orElse(false);
+
+        return (username.equals((user.getUsername()))
+                && !isTokenExpired(tokenName)
+                && !isLoggedOut);
     }
 
     private boolean isTokenExpired(String token) {

@@ -3,9 +3,11 @@ package com.epam.gym.app.service;
 import com.epam.gym.app.dto.user.AuthRequest;
 import com.epam.gym.app.dto.user.AuthResponse;
 import com.epam.gym.app.dto.user.UserChangePasswordDTO;
+import com.epam.gym.app.entity.Token;
 import com.epam.gym.app.entity.User;
 import com.epam.gym.app.exception.NoEntityPresentException;
 import com.epam.gym.app.exception.UserNotLoginException;
+import com.epam.gym.app.repository.TokenRepository;
 import com.epam.gym.app.security.JwtService;
 import com.epam.gym.app.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -15,6 +17,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 @Log4j2
@@ -23,6 +27,7 @@ public class UserService {
     private final UserRepository authRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final TokenRepository tokenRepository;
 
     @Transactional
     public boolean changePassword(UserChangePasswordDTO changePasswordDTO) {
@@ -42,7 +47,7 @@ public class UserService {
         return user.getPassword().equals(newPassword);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public AuthResponse authenticate(AuthRequest request) {
 
         final String username = request.getUsername();
@@ -57,7 +62,30 @@ public class UserService {
                     return new NoEntityPresentException("There is no User with provided username: " + username);
                 }
         );
-        String token = jwtService.generateToken(user);
-        return AuthResponse.builder().token(token).build();
+
+        String tokenName = jwtService.generateToken(user);
+
+        revokeAllUserTokens(user);
+        saveToken(tokenName, user);
+
+        return AuthResponse.builder().token(tokenName).build();
+    }
+
+    private void revokeAllUserTokens(User user) {
+        List<Token> userValidTokens = tokenRepository.findAllTokenByUserId(user.getId());
+
+        if (!userValidTokens.isEmpty()) {
+            userValidTokens.forEach(t -> t.setLoggedOut(true));
+            tokenRepository.saveAll(userValidTokens);
+        }
+    }
+
+    private void saveToken(String tokenName, User user) {
+        Token token = Token.builder()
+                .name(tokenName)
+                .isLoggedOut(false)
+                .user(user)
+                .build();
+        tokenRepository.save(token);
     }
 }
