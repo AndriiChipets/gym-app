@@ -17,6 +17,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,7 +30,10 @@ import java.util.Set;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class TrainingType {
+public class TrainingType implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 2405172041950251827L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
