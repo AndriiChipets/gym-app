@@ -13,6 +13,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -60,16 +62,22 @@ public class User implements UserDetails {
     private Boolean isActive;
 
     @EqualsAndHashCode.Exclude
+    @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
     )
-    private Set<Role> roles;
+    private final Set<Role> roles = new HashSet<>();
 
     public void addRole(Role role) {
         this.roles.add(role);
         role.getUsers().add(this);
+    }
+
+    public void addAllRoles(List<Role> roles) {
+        this.roles.addAll(roles);
+        roles.forEach(role -> role.getUsers().add(this));
     }
 
     public void removeRole(Role role) {

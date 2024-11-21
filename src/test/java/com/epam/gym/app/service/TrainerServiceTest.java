@@ -6,7 +6,7 @@ import com.epam.gym.app.dto.trainer.TrainerRegDTO;
 import com.epam.gym.app.dto.trainer.TrainerTrainingDTO;
 import com.epam.gym.app.dto.trainer.TrainerTrainingFilterDTO;
 import com.epam.gym.app.dto.trainer.TrainerUpdDTO;
-import com.epam.gym.app.dto.user.UserLoginDTO;
+import com.epam.gym.app.dto.user.AuthResponse;
 import com.epam.gym.app.entity.Trainer;
 import com.epam.gym.app.entity.Training;
 import com.epam.gym.app.exception.NoEntityPresentException;
@@ -15,8 +15,10 @@ import com.epam.gym.app.mapper.trainer.TrainerListMapper;
 import com.epam.gym.app.mapper.trainer.TrainerRegMapper;
 import com.epam.gym.app.mapper.trainer.TrainerTrainingMapper;
 import com.epam.gym.app.mapper.trainer.TrainerUpdMapper;
+import com.epam.gym.app.repository.RolesRepository;
 import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.repository.TrainerRepository;
+import com.epam.gym.app.security.JwtService;
 import com.epam.gym.app.utils.UserUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,6 +55,9 @@ class TrainerServiceTest {
     TraineeRepository traineeRepository;
 
     @MockBean
+    RolesRepository rolesRepository;
+
+    @MockBean
     TrainerGetMapper trainerGetMapper;
 
     @MockBean
@@ -69,6 +74,9 @@ class TrainerServiceTest {
 
     @MockBean
     PasswordEncoder encoder;
+
+    @MockBean
+    JwtService jwtService;
 
     @Autowired
     TrainerService trainerService;
@@ -89,7 +97,7 @@ class TrainerServiceTest {
                     anyString(), anyString(), anyList(), anyList())).thenReturn(username);
             when(trainerRepository.save(any(Trainer.class))).thenReturn(trainer);
         }
-        UserLoginDTO actual = trainerService.save(trainerDto);
+        AuthResponse actual = trainerService.save(trainerDto);
 
         assertNotNull(actual);
         verify(trainerRepository).save(trainer);

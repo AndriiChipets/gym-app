@@ -6,7 +6,7 @@ import com.epam.gym.app.dto.trainer.TrainerRegDTO;
 import com.epam.gym.app.dto.trainer.TrainerTrainingDTO;
 import com.epam.gym.app.dto.trainer.TrainerTrainingFilterDTO;
 import com.epam.gym.app.dto.trainer.TrainerUpdDTO;
-import com.epam.gym.app.dto.user.UserLoginDTO;
+import com.epam.gym.app.dto.user.AuthResponse;
 import com.epam.gym.app.service.TrainerService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -49,7 +49,7 @@ public class TrainerController {
             @ApiResponse(responseCode = "404", description = "New Trainer is not registered")
     })
     @ResponseStatus(HttpStatus.OK)
-    public UserLoginDTO registerTrainer(@Valid @RequestBody TrainerRegDTO trainerDto) {
+    public AuthResponse registerTrainer(@Valid @RequestBody TrainerRegDTO trainerDto) {
         return trainerService.save(trainerDto);
     }
 

@@ -10,7 +10,7 @@ import com.epam.gym.app.dto.trainer.TrainerListDTO;
 import com.epam.gym.app.service.TraineeService;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import com.epam.gym.app.dto.user.UserLoginDTO;
+import com.epam.gym.app.dto.user.AuthResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +79,7 @@ class TraineeControllerTest {
 
         String username = "firstname.lastname";
         String password = "1234567890";
-        UserLoginDTO userLoginDTO = UserLoginDTO.builder()
+        AuthResponse userLoginDTO = AuthResponse.builder()
                 .username(username)
                 .password(password)
                 .build();

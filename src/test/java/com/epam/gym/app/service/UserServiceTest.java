@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {UserService.class})
 @DisplayName("AuthServiceTest")
-class AuthServiceTest {
+class UserServiceTest {
 
     @MockBean
     UserRepository authRepository;

@@ -7,7 +7,7 @@ import com.epam.gym.app.dto.trainee.TraineeTrainingDTO;
 import com.epam.gym.app.dto.trainee.TraineeTrainingFilterDTO;
 import com.epam.gym.app.dto.trainee.TraineeUpdDTO;
 import com.epam.gym.app.dto.trainer.TrainerListDTO;
-import com.epam.gym.app.dto.user.UserLoginDTO;
+import com.epam.gym.app.dto.user.AuthResponse;
 import com.epam.gym.app.service.TraineeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -51,7 +51,7 @@ public class TraineeController {
             @ApiResponse(responseCode = "404", description = "New Trainee is not registered")
     })
     @ResponseStatus(HttpStatus.OK)
-    public UserLoginDTO registerTrainee(@Valid @RequestBody TraineeRegDTO traineeDto) {
+    public AuthResponse registerTrainee(@Valid @RequestBody TraineeRegDTO traineeDto) {
         return traineeService.save(traineeDto);
     }
 

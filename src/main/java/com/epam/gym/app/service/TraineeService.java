@@ -7,7 +7,7 @@ import com.epam.gym.app.dto.trainee.TraineeTrainingDTO;
 import com.epam.gym.app.dto.trainee.TraineeTrainingFilterDTO;
 import com.epam.gym.app.dto.trainee.TraineeUpdDTO;
 import com.epam.gym.app.dto.trainer.TrainerListDTO;
-import com.epam.gym.app.dto.user.UserLoginDTO;
+import com.epam.gym.app.dto.user.AuthResponse;
 import com.epam.gym.app.entity.Trainee;
 import com.epam.gym.app.entity.Trainer;
 import com.epam.gym.app.entity.Training;
@@ -16,9 +16,11 @@ import com.epam.gym.app.mapper.trainee.TraineeRegMapper;
 import com.epam.gym.app.mapper.trainee.TraineeTrainingMapper;
 import com.epam.gym.app.mapper.trainee.TraineeUpdMapper;
 import com.epam.gym.app.mapper.trainer.TrainerListMapper;
+import com.epam.gym.app.repository.RolesRepository;
 import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.repository.TrainerRepository;
 import com.epam.gym.app.exception.NoEntityPresentException;
+import com.epam.gym.app.security.JwtService;
 import com.epam.gym.app.utils.UserUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -36,15 +38,17 @@ public class TraineeService {
 
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
+    private final RolesRepository rolesRepository;
     private final TraineeRegMapper traineeRegMapper;
     private final TraineeGetMapper traineeGetMapper;
     private final TraineeUpdMapper traineeUpdMapper;
     private final TraineeTrainingMapper traineeTrainingMapper;
     private final TrainerListMapper trainerListMapper;
     private final PasswordEncoder encoder;
+    private final JwtService jwtService;
 
     @Transactional
-    public UserLoginDTO save(TraineeRegDTO traineeDto) {
+    public AuthResponse save(TraineeRegDTO traineeDto) {
         log.debug("Save Trainee with first name {} and last name {}",
                 traineeDto.getFirstname(), traineeDto.getLastname());
 
@@ -58,13 +62,17 @@ public class TraineeService {
         trainee.setIsActive(true);
         trainee.setPassword(encryptedPassword);
         trainee.setUsername(username);
+        trainee.addAllRoles(rolesRepository.findAll());
 
         trainee = traineeRepository.save(trainee);
 
         log.debug("Trainee has been saved successfully");
-        return UserLoginDTO.builder()
+
+        String token = jwtService.generateToken(trainee);
+        return AuthResponse.builder()
                 .username(trainee.getUsername())
                 .password(password)
+                .token(token)
                 .build();
     }
 
