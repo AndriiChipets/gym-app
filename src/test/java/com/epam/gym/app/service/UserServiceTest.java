@@ -8,12 +8,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
+import com.epam.gym.app.security.JwtService;
 import com.epam.gym.app.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.authentication.AuthenticationManager;
 
 import java.util.Optional;
 
@@ -29,6 +31,12 @@ class UserServiceTest {
 
     @MockBean
     UserRepository authRepository;
+
+    @MockBean
+    AuthenticationManager authenticationManager;
+
+    @MockBean
+    JwtService jwtService;
 
     @Autowired
     UserService authService;

@@ -25,6 +25,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+import static com.epam.gym.app.utils.Constants.AUTH_REST_URL;
 import static com.epam.gym.app.utils.Constants.TRAINEE_REST_URL;
 import static com.epam.gym.app.utils.Constants.TRAINER_REST_URL;
 
@@ -49,7 +50,12 @@ public class WebSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers(HttpMethod.POST, TRAINER_REST_URL, TRAINEE_REST_URL).permitAll()
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                TRAINER_REST_URL,
+                                TRAINEE_REST_URL,
+                                AUTH_REST_URL).permitAll()
+                        .requestMatchers("/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .userDetailsService(userDetailsService)
