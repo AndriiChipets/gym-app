@@ -5,7 +5,6 @@ import com.epam.gym.app.dto.user.AuthResponse;
 import com.epam.gym.app.dto.user.UserChangePasswordDTO;
 import com.epam.gym.app.entity.Token;
 import com.epam.gym.app.entity.User;
-import com.epam.gym.app.exception.NoEntityPresentException;
 import com.epam.gym.app.exception.UserNotLoginException;
 import com.epam.gym.app.repository.TokenRepository;
 import com.epam.gym.app.security.JwtService;
@@ -24,7 +23,7 @@ import java.util.List;
 @Log4j2
 public class UserService {
 
-    private final UserRepository authRepository;
+    private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final TokenRepository tokenRepository;
@@ -35,14 +34,14 @@ public class UserService {
         String oldPassword = changePasswordDTO.getOldPassword();
         String newPassword = changePasswordDTO.getNewPassword();
 
-        if (!authRepository.existsByUsernameAndPassword(username, oldPassword)) {
+        if (!userRepository.existsByUsernameAndPassword(username, oldPassword)) {
             log.warn("Old password or username is incorrect");
             throw new UserNotLoginException("Old password or username is incorrect");
         }
 
-        User user = authRepository.findByUsername(username).get();
+        User user = userRepository.findByUsername(username).get();
         user.setPassword(newPassword);
-        authRepository.save(user);
+        userRepository.save(user);
 
         return user.getPassword().equals(newPassword);
     }
@@ -56,10 +55,10 @@ public class UserService {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password)
         );
-        User user = authRepository.findByUsername(username).orElseThrow(
+        User user = userRepository.findByUsername(username).orElseThrow(
                 () -> {
-                    log.error("There is no User with provided username {}", username);
-                    return new NoEntityPresentException("There is no User with provided username: " + username);
+                    log.error("User with username {} not login", username);
+                    return new UserNotLoginException("User with username: " + username + " not login");
                 }
         );
 
@@ -68,7 +67,7 @@ public class UserService {
         revokeAllUserTokens(user);
         saveToken(tokenName, user);
 
-        return AuthResponse.builder().token(tokenName).build();
+        return AuthResponse.builder().tokenName(tokenName).build();
     }
 
     private void revokeAllUserTokens(User user) {

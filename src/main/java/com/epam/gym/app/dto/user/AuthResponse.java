@@ -28,5 +28,5 @@ public class AuthResponse implements Serializable {
             = "password must be exactly " + UserUtil.PASSWORD_LENGTH + " characters length")
     private String password;
 
-    private String token;
+    private String tokenName;
 }

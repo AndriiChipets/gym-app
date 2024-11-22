@@ -1,5 +1,7 @@
 package com.epam.gym.app.controller;
 
+import com.epam.gym.app.dto.user.AuthRequest;
+import com.epam.gym.app.dto.user.AuthResponse;
 import com.epam.gym.app.dto.user.UserChangePasswordDTO;
 import com.epam.gym.app.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +17,7 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.epam.gym.app.utils.Constants.AUTH_REST_URL;
 import static org.hamcrest.Matchers.is;
@@ -42,9 +45,22 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     UserChangePasswordDTO userChangePasswordDTO;
+    AuthRequest authRequest;
+    AuthResponse authResponse;
 
     @BeforeEach
     public void setup() {
+
+        authRequest = AuthRequest
+                .builder()
+                .username("firstname.lastname")
+                .password("1234567890")
+                .build();
+
+        authResponse = AuthResponse
+                .builder()
+                .tokenName("token")
+                .build();
 
         userChangePasswordDTO = UserChangePasswordDTO
                 .builder()
@@ -52,6 +68,22 @@ class UserControllerTest {
                 .oldPassword("1234567890")
                 .newPassword("0987654321")
                 .build();
+    }
+
+    @Test
+    @DisplayName("login() method should return AuthResponse with Token when User is login successfully")
+    @WithMockUser
+    void login_shouldReturnAuthResponseWithToken_whenUserLoginSuccessfully() throws Exception {
+
+        given(userService.authenticate(any(AuthRequest.class))).willReturn(authResponse);
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.post(AUTH_REST_URL)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authRequest)));
+
+        response.andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tokenName", is(authResponse.getTokenName())));
     }
 
     @Test

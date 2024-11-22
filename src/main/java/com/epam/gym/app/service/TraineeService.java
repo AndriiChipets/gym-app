@@ -78,7 +78,7 @@ public class TraineeService {
         return AuthResponse.builder()
                 .username(trainee.getUsername())
                 .password(password)
-                .token(tokenName)
+                .tokenName(tokenName)
                 .build();
     }
 

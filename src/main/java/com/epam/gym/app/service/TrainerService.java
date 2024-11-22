@@ -76,7 +76,7 @@ public class TrainerService {
         return AuthResponse.builder()
                 .username(trainer.getUsername())
                 .password(password)
-                .token(tokenName)
+                .tokenName(tokenName)
                 .build();
     }
 
