@@ -5,7 +5,6 @@ import com.epam.gym.app.exception.UnsatisfiedActionException;
 import com.epam.gym.app.exception.UserNotAuthenticatedException;
 import com.epam.gym.app.exception.UserNotLoginException;
 import lombok.extern.log4j.Log4j2;
-import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;

@@ -7,7 +7,7 @@ VALUES ('Fitness'),
 
 INSERT INTO users (is_active, first_name, last_name, password, user_name)
 VALUES  (TRUE, 'Fn', 'Ln', '1234567890', 'Fn.Ln'),
-        (FALSE, 'FirstName1', 'LastName1', '0987654321', 'FirstName1.LastName1'),
+        (FALSE, 'FirstName', 'LastName', '0987654321', 'FirstName.LastName'),
         (TRUE, 'John', 'Doe', '1111111111', 'John.Doe'),
         (FALSE, 'Jane', 'Smith', '2222222222', 'Jane.Smith'),
         (TRUE, 'Mike', 'Brown', '3333333333', 'Mike.Brown'),
@@ -18,6 +18,26 @@ VALUES  (TRUE, 'Fn', 'Ln', '1234567890', 'Fn.Ln'),
         (FALSE, 'Sophia', 'Rodriguez', '8888888888', 'Sophia.Rodriguez'),
         (TRUE, 'Daniel', 'Wilson', '9999999999', 'Daniel.Wilson'),
         (FALSE, 'Olivia', 'Anderson', '0000000000', 'Olivia.Anderson');
+
+INSERT INTO roles (role_name)
+VALUES ('ROLE_USER'),
+       ('ROLE_ADMIN');
+
+INSERT INTO user_roles (user_id, role_id)
+VALUES
+(1, 1),
+(1, 2),
+(2, 1),
+(3, 2),
+(4, 1),
+(5, 1),
+(6, 1),
+(7, 1),
+(8, 1),
+(9, 2),
+(10, 2),
+(11, 2),
+(12, 2);
 
 INSERT INTO trainees (data_of_birth, id, address)
 VALUES ('2001-12-12', 1, 'Address1'),

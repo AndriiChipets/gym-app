@@ -7,7 +7,7 @@ import com.epam.gym.app.dto.trainee.TraineeTrainingDTO;
 import com.epam.gym.app.dto.trainee.TraineeTrainingFilterDTO;
 import com.epam.gym.app.dto.trainee.TraineeUpdDTO;
 import com.epam.gym.app.dto.trainer.TrainerListDTO;
-import com.epam.gym.app.dto.user.UserLoginDTO;
+import com.epam.gym.app.dto.user.AuthResponse;
 import com.epam.gym.app.entity.Trainee;
 import com.epam.gym.app.entity.Trainer;
 import com.epam.gym.app.entity.Training;
@@ -16,10 +16,12 @@ import com.epam.gym.app.mapper.trainee.TraineeGetMapper;
 import com.epam.gym.app.mapper.trainee.TraineeRegMapper;
 import com.epam.gym.app.mapper.trainee.TraineeTrainingMapper;
 import com.epam.gym.app.mapper.trainee.TraineeUpdMapper;
-import com.epam.gym.app.mapper.trainee.TraineeUserLoginMapper;
 import com.epam.gym.app.mapper.trainer.TrainerListMapper;
+import com.epam.gym.app.repository.RolesRepository;
+import com.epam.gym.app.repository.TokenRepository;
 import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.repository.TrainerRepository;
+import com.epam.gym.app.security.JwtService;
 import com.epam.gym.app.utils.UserUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +29,7 @@ import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -58,6 +61,9 @@ class TraineeServiceTest {
     TrainerRepository trainerRepository;
 
     @MockBean
+    RolesRepository rolesRepository;
+
+    @MockBean
     TraineeRegMapper traineeRegMapper;
 
     @MockBean
@@ -73,7 +79,13 @@ class TraineeServiceTest {
     TrainerListMapper trainerListMapper;
 
     @MockBean
-    TraineeUserLoginMapper traineeUserLoginMapper;
+    PasswordEncoder encoder;
+
+    @MockBean
+    JwtService jwtService;
+
+    @MockBean
+    TokenRepository tokenRepository;
 
     @Autowired
     TraineeService traineeService;
@@ -86,7 +98,6 @@ class TraineeServiceTest {
         String password = "123456789";
         Trainee trainee = Trainee.builder().build();
         TraineeRegDTO traineeDto = TraineeRegDTO.builder().build();
-        UserLoginDTO expUserLoginDTO = UserLoginDTO.builder().build();
 
         try (MockedStatic<UserUtil> utilClassMockedStatic = mockStatic(UserUtil.class)) {
             when(traineeRegMapper.mapTraineeDtoToTrainee(any(TraineeRegDTO.class))).thenReturn(trainee);
@@ -94,12 +105,10 @@ class TraineeServiceTest {
             utilClassMockedStatic.when(() -> UserUtil.generateUsername(
                     anyString(), anyString(), anyList(), anyList())).thenReturn(username);
             when(traineeRepository.save(any(Trainee.class))).thenReturn(trainee);
-            when(traineeUserLoginMapper.mapTraineeToUserLoginDTO(trainee)).thenReturn(expUserLoginDTO);
         }
-        UserLoginDTO actual = traineeService.save(traineeDto);
+        AuthResponse actual = traineeService.save(traineeDto);
 
         assertNotNull(actual);
-        assertEquals(expUserLoginDTO, actual);
         verify(traineeRepository).save(trainee);
     }
 

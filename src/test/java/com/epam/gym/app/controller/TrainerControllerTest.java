@@ -7,7 +7,7 @@ import com.epam.gym.app.dto.trainer.TrainerRegDTO;
 import com.epam.gym.app.dto.trainer.TrainerTrainingDTO;
 import com.epam.gym.app.dto.trainer.TrainerTrainingFilterDTO;
 import com.epam.gym.app.dto.trainer.TrainerUpdDTO;
-import com.epam.gym.app.dto.user.UserLoginDTO;
+import com.epam.gym.app.dto.user.AuthResponse;
 import com.epam.gym.app.service.TrainerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -41,6 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ActiveProfiles("test")
 @WebMvcTest(TrainerController.class)
 @DisplayName("TrainerControllerTest")
 class TrainerControllerTest {
@@ -56,6 +60,7 @@ class TrainerControllerTest {
 
     @Test
     @DisplayName("registerTrainer() method should register Trainer and return OK status when TrainerRegDTO is correct")
+    @WithMockUser
     void registerTrainer_shouldRegisterTrainerAndReturnOkStatus_whenTrainerRegDTOIsCorrect() throws Exception {
 
         String firstname = "firstname";
@@ -70,13 +75,14 @@ class TrainerControllerTest {
 
         String username = "firstname.lastname";
         String password = "1234567890";
-        UserLoginDTO userLoginDTO = UserLoginDTO.builder()
+        AuthResponse userLoginDTO = AuthResponse.builder()
                 .username(username)
                 .password(password)
                 .build();
 
         given(trainerService.save(any(TrainerRegDTO.class))).willReturn(userLoginDTO);
         ResultActions response = mockMvc.perform(post(TRAINER_REST_URL)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(trainerRegDTO)));
 
@@ -88,6 +94,7 @@ class TrainerControllerTest {
 
     @Test
     @DisplayName("getTrainer() method should return Trainer when Trainer with username is present")
+    @WithMockUser
     void getTrainer_shouldReturnTrainer_whenUserWithUsernameIsPresent() throws Exception {
 
         String username = "firstname.lastname";
@@ -117,6 +124,7 @@ class TrainerControllerTest {
 
     @Test
     @DisplayName("updateTrainer() method should update Trainer when TrainerUpdDTO is correct")
+    @WithMockUser
     void updateTrainer_shouldUpdateTrainer_whenTrainerUpdDTOIsCorrect() throws Exception {
 
         String username = "firstname.lastname";
@@ -133,6 +141,7 @@ class TrainerControllerTest {
 
         given(trainerService.update(any(TrainerUpdDTO.class))).willReturn(trainerUpdDTO);
         ResultActions response = mockMvc.perform(put(TRAINER_REST_URL)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(trainerUpdDTO)));
 
@@ -145,6 +154,7 @@ class TrainerControllerTest {
 
     @Test
     @DisplayName("getNotAssignedOnTraineeActiveTrainers() method should return list of Trainers not assigned on Trainee")
+    @WithMockUser
     void getNotAssignedOnTraineeActiveTrainers_shouldListOfTrainersNotAssignedOnTrainee() throws Exception {
 
         String traineeUsername = "firstname.lastname";
@@ -160,6 +170,7 @@ class TrainerControllerTest {
 
     @Test
     @DisplayName("getTrainerTrainingList() method should return list of Trainer's Trainings")
+    @WithMockUser
     void getTrainerTrainingList_shouldReturnListOfTrainerTrainings() throws Exception {
 
         String username = "firstname.lastname";
@@ -175,6 +186,7 @@ class TrainerControllerTest {
 
     @Test
     @DisplayName("activateDeactivateTrainer() method should change Trainer's isActive status")
+    @WithMockUser
     void activateDeactivateTrainer_shouldChangeTrainerIsActiveStatus() throws Exception {
 
         String username = "firstname.lastname";
@@ -182,6 +194,7 @@ class TrainerControllerTest {
 
         willDoNothing().given(trainerService).activateDeactivate(username, isActive);
         ResultActions response = mockMvc.perform(patch(TRAINER_REST_URL)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .param("username", username)
                 .param("isActive", String.valueOf(isActive)));
 
