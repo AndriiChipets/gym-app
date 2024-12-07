@@ -1,6 +1,5 @@
 package com.epam.gym.app.controller;
 
-import com.epam.gym.app.annotation.Authenticated;
 import com.epam.gym.app.dto.training.TrainingDTO;
 import com.epam.gym.app.service.TrainingService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +26,6 @@ public class TrainingController {
     TrainingService trainingService;
 
     @PostMapping
-    @Authenticated
     @Operation(summary = "Add new Training")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "New Training successfully added"),

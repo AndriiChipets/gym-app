@@ -7,22 +7,27 @@ import com.epam.gym.app.dto.trainee.TraineeTrainingDTO;
 import com.epam.gym.app.dto.trainee.TraineeTrainingFilterDTO;
 import com.epam.gym.app.dto.trainee.TraineeUpdDTO;
 import com.epam.gym.app.dto.trainer.TrainerListDTO;
-import com.epam.gym.app.dto.user.UserLoginDTO;
+import com.epam.gym.app.dto.user.AuthResponse;
+import com.epam.gym.app.entity.Token;
 import com.epam.gym.app.entity.Trainee;
 import com.epam.gym.app.entity.Trainer;
 import com.epam.gym.app.entity.Training;
+import com.epam.gym.app.entity.User;
 import com.epam.gym.app.mapper.trainee.TraineeGetMapper;
 import com.epam.gym.app.mapper.trainee.TraineeRegMapper;
 import com.epam.gym.app.mapper.trainee.TraineeTrainingMapper;
 import com.epam.gym.app.mapper.trainee.TraineeUpdMapper;
-import com.epam.gym.app.mapper.trainee.TraineeUserLoginMapper;
 import com.epam.gym.app.mapper.trainer.TrainerListMapper;
+import com.epam.gym.app.repository.RolesRepository;
+import com.epam.gym.app.repository.TokenRepository;
 import com.epam.gym.app.repository.TraineeRepository;
 import com.epam.gym.app.repository.TrainerRepository;
 import com.epam.gym.app.exception.NoEntityPresentException;
+import com.epam.gym.app.security.JwtService;
 import com.epam.gym.app.utils.UserUtil;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,32 +41,45 @@ public class TraineeService {
 
     private final TraineeRepository traineeRepository;
     private final TrainerRepository trainerRepository;
+    private final RolesRepository rolesRepository;
     private final TraineeRegMapper traineeRegMapper;
     private final TraineeGetMapper traineeGetMapper;
     private final TraineeUpdMapper traineeUpdMapper;
     private final TraineeTrainingMapper traineeTrainingMapper;
     private final TrainerListMapper trainerListMapper;
-    private final TraineeUserLoginMapper traineeUserLoginMapper;
+    private final PasswordEncoder encoder;
+    private final JwtService jwtService;
+    private final TokenRepository tokenRepository;
 
     @Transactional
-    public UserLoginDTO save(TraineeRegDTO traineeDto) {
+    public AuthResponse save(TraineeRegDTO traineeDto) {
         log.debug("Save Trainee with first name {} and last name {}",
                 traineeDto.getFirstname(), traineeDto.getLastname());
 
         Trainee trainee = traineeRegMapper.mapTraineeDtoToTrainee(traineeDto);
         String password = UserUtil.generateRandomPassword();
+        String encryptedPassword = encoder.encode(password);
         String username = UserUtil.generateUsername(trainee.getFirstname(),
                 trainee.getLastname(),
                 trainerRepository.findAll(),
                 traineeRepository.findAll());
         trainee.setIsActive(true);
-        trainee.setPassword(password);
+        trainee.setPassword(encryptedPassword);
         trainee.setUsername(username);
+        trainee.addAllRoles(rolesRepository.findAll());
 
         trainee = traineeRepository.save(trainee);
 
         log.debug("Trainee has been saved successfully");
-        return traineeUserLoginMapper.mapTraineeToUserLoginDTO(trainee);
+
+        String tokenName = jwtService.generateToken(trainee);
+        saveToken(tokenName, trainee);
+
+        return AuthResponse.builder()
+                .username(trainee.getUsername())
+                .password(password)
+                .tokenName(tokenName)
+                .build();
     }
 
     @Transactional
@@ -151,5 +169,14 @@ public class TraineeService {
                     log.error("There is no Trainee with provided username {}", username);
                     return new NoEntityPresentException("There is no Trainee with provided username: " + username);
                 });
+    }
+
+    private void saveToken(String tokenName, User user) {
+        Token token = Token.builder()
+                .name(tokenName)
+                .isLoggedOut(false)
+                .user(user)
+                .build();
+        tokenRepository.save(token);
     }
 }

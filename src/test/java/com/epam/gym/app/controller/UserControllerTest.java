@@ -1,7 +1,9 @@
 package com.epam.gym.app.controller;
 
+import com.epam.gym.app.dto.user.AuthRequest;
+import com.epam.gym.app.dto.user.AuthResponse;
 import com.epam.gym.app.dto.user.UserChangePasswordDTO;
-import com.epam.gym.app.service.AuthService;
+import com.epam.gym.app.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,28 +12,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.epam.gym.app.utils.Constants.AUTH_REST_URL;
 import static org.hamcrest.Matchers.is;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(AuthController.class)
-@DisplayName("AuthControllerTest")
-class AuthControllerTest {
+@ActiveProfiles("test")
+@WebMvcTest(UserController.class)
+@DisplayName("UserControllerTest")
+class UserControllerTest {
 
     @MockBean
-    private AuthService authService;
+    private UserService userService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -40,9 +45,22 @@ class AuthControllerTest {
     private MockMvc mockMvc;
 
     UserChangePasswordDTO userChangePasswordDTO;
+    AuthRequest authRequest;
+    AuthResponse authResponse;
 
     @BeforeEach
     public void setup() {
+
+        authRequest = AuthRequest
+                .builder()
+                .username("firstname.lastname")
+                .password("1234567890")
+                .build();
+
+        authResponse = AuthResponse
+                .builder()
+                .tokenName("token")
+                .build();
 
         userChangePasswordDTO = UserChangePasswordDTO
                 .builder()
@@ -53,44 +71,29 @@ class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("login() method should return OK status when User login successfully")
-    void login_shouldReturnOKStatus_whenUserLoginSuccessfully() throws Exception {
+    @DisplayName("login() method should return AuthResponse with Token when User is login successfully")
+    @WithMockUser
+    void login_shouldReturnAuthResponseWithToken_whenUserLoginSuccessfully() throws Exception {
 
-        String username = "firstname.lastname";
-        String password = "1234567890";
-
-        given(authService.login(anyString(), anyString())).willReturn(true);
-        ResultActions response = mockMvc.perform(get(AUTH_REST_URL)
-                .param("username", username)
-                .param("password", password));
-
-        response.andDo(print()).andExpect(status().isOk());
-    }
-
-    @Test
-    @DisplayName("login() method should throw UserNotLoginException when User is not login")
-    void login_shouldThrowUserNotLoginException_whenUserIsNotLogin() throws Exception {
-
-        String username = "wrong.username";
-        String password = "1234567890";
-
-        given(authService.login(anyString(), anyString())).willReturn(false);
-        ResultActions response = mockMvc.perform(get(AUTH_REST_URL)
-                .param("username", username)
-                .param("password", password));
+        given(userService.authenticate(any(AuthRequest.class))).willReturn(authResponse);
+        ResultActions response = mockMvc.perform(MockMvcRequestBuilders.post(AUTH_REST_URL)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(authRequest)));
 
         response.andDo(print())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message", is("NOT_LOGIN")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.tokenName", is(authResponse.getTokenName())));
     }
 
     @Test
     @DisplayName("changePassword() method should return OK status when User password changed successfully")
+    @WithMockUser
     void changePassword_shouldReturnOKStatus_whenUserPasswordChangedSuccessfully() throws Exception {
 
-        given(authService.changePassword(any(UserChangePasswordDTO.class))).willReturn(true);
+        given(userService.changePassword(any(UserChangePasswordDTO.class))).willReturn(true);
         ResultActions response = mockMvc.perform(put(AUTH_REST_URL)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userChangePasswordDTO)));
 
@@ -99,10 +102,12 @@ class AuthControllerTest {
 
     @Test
     @DisplayName("changePassword() method should throw UnsatisfiedActionException when password in not changed")
+    @WithMockUser
     void changePassword_shouldThrowUnsatisfiedActionException_whenPasswordIsNotChanged() throws Exception {
 
-        given(authService.changePassword(any(UserChangePasswordDTO.class))).willReturn(false);
+        given(userService.changePassword(any(UserChangePasswordDTO.class))).willReturn(false);
         ResultActions response = mockMvc.perform(put(AUTH_REST_URL)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userChangePasswordDTO)));
 

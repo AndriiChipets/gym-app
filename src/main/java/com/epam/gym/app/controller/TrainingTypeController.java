@@ -1,6 +1,5 @@
 package com.epam.gym.app.controller;
 
-import com.epam.gym.app.annotation.Authenticated;
 import com.epam.gym.app.dto.training_type.TrainingTypeDTO;
 import com.epam.gym.app.service.TrainingTypeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -27,7 +27,7 @@ public class TrainingTypeController {
     private final TrainingTypeService trainingTypeService;
 
     @GetMapping
-    @Authenticated
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @Operation(summary = "Get list of Training types")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "List of training types successfully retrieved"),

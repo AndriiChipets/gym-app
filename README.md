@@ -8,7 +8,6 @@
 4. [Additional Features](#additional-features)
 5. [Contributing](#contributing)
 6. [Pay attention](#pay-attention)
-7. [Challenges](#pay-attention)
 
 ## Introduction
 
@@ -22,6 +21,7 @@ The application handles gym CRM system.
 - Spring MVC
 - Spring AOP
 - Spring Actuator
+- Spring Security
 - Prometheus
 - Log4j2
 - JUnit, Mockito
@@ -69,27 +69,3 @@ Contributions are welcome! If you have ideas or improvements, feel free to submi
 ## Pay attention
 
 ### The application is still under development, so bugs and drawbacks are possible.
-
-## Challenges
-
-To implement custom authentication logic I used the Spring AOP functionality.
-That was challenging for me and I spent a lot of time to implement it.
-The problem was related to the annotation full qualified name which I had to use
-to make annotation @Authenticated active.
-So, for now to make methods requiring user authentication before access them
-you just need to add @Authenticated above the method signature e.g.
-
-```ruby
-    @DeleteMapping
-    @Authenticated
-    @Operation(summary = "Delete Trainee")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Trainee successfully deleted"),
-            @ApiResponse(responseCode = "404", description = "Trainee is not deleted"),
-            @ApiResponse(responseCode = "401", description = "User Authentication Required")
-    })
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteTrainee(@RequestParam @NotBlank String username) {
-        traineeService.delete(username);
-    }
-```

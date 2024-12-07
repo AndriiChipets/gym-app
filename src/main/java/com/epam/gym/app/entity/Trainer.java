@@ -32,7 +32,7 @@ public class Trainer extends User {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "training_type_id", nullable = false)
-    TrainingType specialization;
+    private TrainingType specialization;
 
     @Builder.Default
     @EqualsAndHashCode.Exclude

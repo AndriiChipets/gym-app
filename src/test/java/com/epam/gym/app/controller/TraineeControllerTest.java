@@ -10,12 +10,15 @@ import com.epam.gym.app.dto.trainer.TrainerListDTO;
 import com.epam.gym.app.service.TraineeService;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import com.epam.gym.app.dto.user.UserLoginDTO;
+import com.epam.gym.app.dto.user.AuthResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -43,6 +46,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ActiveProfiles("test")
 @WebMvcTest(TraineeController.class)
 @DisplayName("TraineeControllerTest")
 class TraineeControllerTest {
@@ -58,6 +62,7 @@ class TraineeControllerTest {
 
     @Test
     @DisplayName("registerTrainee() method should register Trainee and return OK status when TraineeRegDTO is correct")
+    @WithMockUser
     void registerTrainee_shouldRegisterTraineeAndReturnOkStatus_whenTraineeRegDTOIsCorrect() throws Exception {
 
         String firstname = "firstname";
@@ -74,13 +79,14 @@ class TraineeControllerTest {
 
         String username = "firstname.lastname";
         String password = "1234567890";
-        UserLoginDTO userLoginDTO = UserLoginDTO.builder()
+        AuthResponse userLoginDTO = AuthResponse.builder()
                 .username(username)
                 .password(password)
                 .build();
 
         given(traineeService.save(any(TraineeRegDTO.class))).willReturn(userLoginDTO);
         ResultActions response = mockMvc.perform(post(TRAINEE_REST_URL)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(traineeRegDTO)));
 
@@ -92,6 +98,7 @@ class TraineeControllerTest {
 
     @Test
     @DisplayName("getTrainee() method should return Trainee when Trainee with username is present")
+    @WithMockUser
     void getTrainee_shouldReturnTrainee_whenUserWithUsernameIsPresent() throws Exception {
 
         String username = "firstname.lastname";
@@ -120,6 +127,7 @@ class TraineeControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("updateTrainee() method should update Trainee when TraineeUpdDTO is correct")
     void updateTrainee_shouldUpdateTrainee_whenTraineeUpdDTOIsCorrect() throws Exception {
 
@@ -137,6 +145,7 @@ class TraineeControllerTest {
 
         given(traineeService.update(any(TraineeUpdDTO.class))).willReturn(traineeUpdDTO);
         ResultActions response = mockMvc.perform(put(TRAINEE_REST_URL)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(traineeUpdDTO)));
 
@@ -148,6 +157,7 @@ class TraineeControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("deleteTrainee() method should delete Trainee when Trainee with username is present")
     void getTrainee_shouldDeleteTrainee_whenUserWithUsernameIsPresent() throws Exception {
 
@@ -155,6 +165,7 @@ class TraineeControllerTest {
 
         willDoNothing().given(traineeService).delete(username);
         ResultActions response = mockMvc.perform(delete(TRAINEE_REST_URL)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .param("username", username));
 
         response.andDo(print())
@@ -162,6 +173,7 @@ class TraineeControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("updateTraineeTrainerList() method should update list of Trainee's Trainers")
     void updateTraineeTrainerList_shouldUpdateListOfTraineeTrainers() throws Exception {
 
@@ -175,6 +187,7 @@ class TraineeControllerTest {
 
         given(traineeService.updateTraineeTrainerList(any(TraineeTrainerListDTO.class))).willReturn(trainers);
         ResultActions response = mockMvc.perform(put(TRAINEE_REST_URL + TRAINERS_REST_URL)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(traineeTrainerListDTO)));
 
@@ -183,6 +196,7 @@ class TraineeControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("getTraineeTrainingList() method should return list of Trainee's Trainings")
     void getTraineeTrainingList_shouldReturnListOfTraineeTrainings() throws Exception {
 
@@ -198,6 +212,7 @@ class TraineeControllerTest {
     }
 
     @Test
+    @WithMockUser
     @DisplayName("activateDeactivateTrainee() method should change Trainee's isActive status")
     void activateDeactivateTrainee_shouldChangeTraineeIsActiveStatus() throws Exception {
 
@@ -206,6 +221,7 @@ class TraineeControllerTest {
 
         willDoNothing().given(traineeService).activateDeactivate(username, isActive);
         ResultActions response = mockMvc.perform(patch(TRAINEE_REST_URL)
+                .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .param("username", username)
                 .param("isActive", String.valueOf(isActive)));
 

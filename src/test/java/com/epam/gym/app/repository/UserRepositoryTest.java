@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest(includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = {
-        AuthRepository.class}))
+        UserRepository.class}))
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Sql(
         scripts = {
@@ -26,11 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         },
         executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
-@DisplayName("AuthRepositoryTest")
-class AuthRepositoryTest {
+@DisplayName("UserRepositoryTest")
+class UserRepositoryTest {
 
     @Autowired
-    AuthRepository authRepository;
+    UserRepository userRepository;
 
     @Test
     @DisplayName("findByUsername method should return User when User is present")
@@ -53,7 +53,7 @@ class AuthRepositoryTest {
                         .isActive(isActive)
                         .build());
 
-        Optional<User> actUserOpt = authRepository.findByUsername(username);
+        Optional<User> actUserOpt = userRepository.findByUsername(username);
 
         assertTrue(actUserOpt.isPresent());
         assertEquals(expUserOpt.get().getId(), actUserOpt.get().getId());
@@ -68,7 +68,7 @@ class AuthRepositoryTest {
         String username = "Invalid name";
         Optional<User> expUserOpt = Optional.empty();
 
-        Optional<User> actUserOpt = authRepository.findByUsername(username);
+        Optional<User> actUserOpt = userRepository.findByUsername(username);
 
         assertFalse(actUserOpt.isPresent());
         assertEquals(expUserOpt, actUserOpt);
@@ -81,7 +81,7 @@ class AuthRepositoryTest {
         String username = "Fn.Ln";
         String password = "1234567890";
 
-        boolean isExist = authRepository.existsByUsernameAndPassword(username, password);
+        boolean isExist = userRepository.existsByUsernameAndPassword(username, password);
 
         assertTrue(isExist);
     }
@@ -93,7 +93,7 @@ class AuthRepositoryTest {
         String username = "wrong.username";
         String password = "1234567890";
 
-        boolean isExist = authRepository.existsByUsernameAndPassword(username, password);
+        boolean isExist = userRepository.existsByUsernameAndPassword(username, password);
 
         assertFalse(isExist);
     }
